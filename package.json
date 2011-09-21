@@ -1,0 +1,23 @@
+{
+    "name": "each",
+    "version": "0.0.1",
+    "description": "Chained and parallel async iterator in one elegant function",
+    "author": "David Worms <david@adaltas.com>",
+    "contributors": [ 
+        { "name": "David Worms", "email": "david@adaltas.com" }
+    ],
+    "dependencies": {
+        "coffee-script": "latest"
+    },
+    "devDependencies": {
+        "expresso": "latest"
+    },
+    "engines": {
+        "node": ">= 0.4.0"
+    },
+    "keywords": ["array", "object", "each"],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/wdavidw/node-each.git"
+    }
+}
