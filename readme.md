@@ -11,19 +11,19 @@
 Node Each is a single elegant function to iterate asynchronously over elements 
 both in `sequential`, `parallel` and `concurrent` mode.
 
-The `each` function signature is: `each(subject, parallel=boolean||number, iterator_callback, [end_callback])`.
+The `each` function signature is: `each(subject, mode=boolean||number, iterator_callback, [end_callback])`.
 
 -   `subject`   
     The first argument is the subject to iterate. It can be an array, an object or 
     any other types in which case the behavior is similar to the one of an array.
 
--   `parallel`   
+-   `mode`   
     The second argument is optional and indicate wether or not you want the 
     iteration to run in `sequential`, `parallel` or `concurrent` mode. In 
     `sequential` mode, each callback is called once the previous callback is 
     completed after calling its `next` argument. In `parallel` mode, all the 
     callbacks are called at the same time. In `concurrent` mode, only a defined 
-    number of callbacks are run in parallel.   
+    number of callbacks is run in parallel.   
     If `parallel` is a number, the mode is `concurrent`.
     If `parallel` is true, the mode is `parallel`.
     Otherwise, the mode is `sequential`.
