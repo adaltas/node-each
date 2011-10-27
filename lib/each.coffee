@@ -15,20 +15,23 @@ module.exports = (elements, parallel, callback) ->
     i = 0
     keys = Object.keys elements if isObject
     l = if keys then keys.length else elements.length
-    if parallel
-        next = () ->
-            i++
-            return callback null, null if i is l
-        for key in keys ? elements
-            if keys
-            then args = [key, elements[key], next]
-            else args = [key, next]
-            callback.apply null, args
-    else
-        next = () ->
-            return callback null, null if i is l
-            if keys
-            then args = [keys[i], elements[keys[i++]], next]
-            else args = [elements[i++], next]
-            callback.apply null, args
-        process.nextTick next
+    # Concurrent
+    if typeof parallel is 'number'
+    # Parallel
+    else if parallel then parallel = l
+    # Sequential
+    else parallel = 1
+    parallel = Math.min(parallel, if keys then keys.length else elements.length)
+    next = () ->
+        i++
+        return callback null, null if i is l
+        return if parallel + i > l 
+        if keys
+        then args = [keys[parallel + i - 1], elements[keys[parallel + i - 1]], -> process.nextTick next]
+        else args = [elements[parallel + i - 1], -> process.nextTick next]
+        callback.apply null, args
+    for key in [0 ... parallel]
+        if keys
+        then args = [keys[key], elements[keys[key]], -> process.nextTick next]
+        else args = [elements[key], -> process.nextTick next]
+        callback.apply null, args

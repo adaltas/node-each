@@ -15,9 +15,7 @@ module.exports =
                 assert.eql current, 4
                 return next()
             assert.eql current, element.id
-            setTimeout () ->
-                n()
-            , 100
+            setTimeout n, 100
     'Chain # object': (next) ->
         current = 0
         each
@@ -31,9 +29,7 @@ module.exports =
                 return next()
             assert.eql "id_#{current}", key
             assert.eql current, value
-            setTimeout () ->
-                n()
-            , 100
+            setTimeout n, 100
     'Chain # undefined': (next) ->
         current = 0
         each undefined, (element, n) ->
@@ -42,9 +38,7 @@ module.exports =
                 assert.eql current, 2
                 return next()
             assert.eql undefined, element
-            setTimeout () ->
-                n()
-            , 100
+            setTimeout n, 100
     'Chain # null': (next) ->
         current = 0
         each null, (element, n) ->
@@ -53,9 +47,7 @@ module.exports =
                 assert.eql current, 2
                 return next()
             assert.eql null, element
-            setTimeout () ->
-                n()
-            , 100
+            setTimeout n, 100
     'Chain # string': (next) ->
         current = 0
         each 'id_1', (element, n) ->
@@ -64,9 +56,7 @@ module.exports =
                 assert.eql current, 2
                 return next()
             assert.eql "id_1", element
-            setTimeout () ->
-                n()
-            , 100
+            setTimeout n, 100
     'Chain # number': (next) ->
         current = 0
         each 3.14, (element, n) ->
@@ -75,7 +65,5 @@ module.exports =
                 assert.eql current, 2
                 return next()
             assert.eql 3.14, element
-            setTimeout () ->
-                n()
-            , 100
+            setTimeout n, 100
         
