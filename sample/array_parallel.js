@@ -10,6 +10,10 @@
     ], true, function(id, next) {
         console.log('id: ', id);
         setTimeout(next, 500);
-    }, function(){
-        console.log('Done');
+    }, function(err){
+        if(err){
+            console.log('Error '+err.message);
+        }else{
+            console.log('Done');
+        }
     });

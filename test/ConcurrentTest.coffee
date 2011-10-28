@@ -3,7 +3,7 @@ assert = require 'assert'
 each = require '../index'
 
 module.exports = 
-    'Concurrent # array # multiple elements # async callbacks': (next) ->
+    'Concurrent # array # multiple elements # async callbacks # no end callback': (next) ->
         current = 0
         source = [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ]
         each source, 4, (element, n) ->
@@ -13,6 +13,16 @@ module.exports =
             current++
             assert.eql current, element.id
             setTimeout n, 100
+    'Concurrent # array # multiple elements # async callbacks # end callback': (next) ->
+        current = 0
+        source = [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ]
+        each source, 4, (element, n) ->
+            current++
+            assert.eql current, element.id
+            setTimeout n, 100
+        , (err) ->
+            assert.eql current, 9
+            return setTimeout next, 100
     'Concurrent # array # one element # async callbacks': (next) ->
         current = 0
         source = [ {id: 1} ]

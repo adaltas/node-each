@@ -3,8 +3,12 @@
 each(elements, parallel=false, callback)
 Chained and parallel async iterator in one elegant function
 ###
-module.exports = (elements, parallel, callback) ->
-    unless callback
+module.exports = (elements, parallel, callback, end_callback) ->
+    if arguments.length is 2
+        callback = parallel
+        parallel = false
+    else if arguments.length is 3 and typeof parallel is 'function'
+        end_callback = callback
         callback = parallel
         parallel = false
     type = typeof elements
@@ -24,7 +28,7 @@ module.exports = (elements, parallel, callback) ->
     parallel = Math.min(parallel, if keys then keys.length else elements.length)
     next = () ->
         i++
-        return callback null, null if i is l
+        return (end_callback ? callback) null, null if i is l
         return if parallel + i > l 
         if keys
         then args = [keys[parallel + i - 1], elements[keys[parallel + i - 1]], -> process.nextTick next]

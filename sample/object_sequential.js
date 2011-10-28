@@ -8,6 +8,7 @@
         id_2: 2,
         id_3: 3
     }, function(key, value, next) {
+        if(next instanceof Error) return console.log('Error '+err.message);
         if(!next) return console.log('Done');
         console.log('key: ', key);
         console.log('value: ', value);

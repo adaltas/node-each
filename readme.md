@@ -35,7 +35,7 @@ The `each` function signature is: `each(subject, mode=boolean||number, iterator_
     value and the third argument the `next` callback used to notifiy the end of 
     the callback.
 
--   `end_callback`
+-   `end_callback`   
     The fourth argument is optional and is a callback called when the iteration 
     isfinished.
 
@@ -54,6 +54,7 @@ Without an `end_callback` in `sequential` mode:
         {id: 2},
         {id: 3}
     ], function(id, next) {
+        if(next instanceof Error) return console.log('Error '+err.message);
         if(!next) return console.log('Done');
         console.log('id: ', id);
         setTimeout(next, 500);
@@ -89,6 +90,7 @@ Without an `end_callback` in `sequential` mode:
         id_2: 2,
         id_3: 3
     }, function(key, value, next) {
+        if(next instanceof Error) return console.log('Error '+err.message);
         if(!next) return console.log('Done');
         console.log('key: ', key);
         console.log('value: ', value);

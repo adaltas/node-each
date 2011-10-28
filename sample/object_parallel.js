@@ -11,6 +11,10 @@
         console.log('key: ', key);
         console.log('value: ', value);
         setTimeout(next, 500);
-    }, function(){
-        console.log('Done');
+    }, function(err){
+        if(err){
+            console.log('Error '+err.message);
+        }else{
+            console.log('Done');
+        }
     });

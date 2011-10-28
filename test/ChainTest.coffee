@@ -3,7 +3,7 @@ assert = require 'assert'
 each = require '../index'
 
 module.exports = 
-    'Chain # array': (next) ->
+    'Chain # array # no end callback': (next) ->
         current = 0
         each [
             {id: 1}
@@ -16,7 +16,20 @@ module.exports =
             current++
             assert.eql current, element.id
             setTimeout n, 100
-    'Chain # object': (next) ->
+    'Chain # array # end callback': (next) ->
+        current = 0
+        each [
+            {id: 1}
+            {id: 2}
+            {id: 3}
+        ], (element, n) ->
+            current++
+            assert.eql current, element.id
+            setTimeout n, 100
+        , (err) ->
+            assert.eql current, 3
+            return next()
+    'Chain # object # no end callback': (next) ->
         current = 0
         each
             id_1: 1
@@ -30,6 +43,20 @@ module.exports =
             assert.eql "id_#{current}", key
             assert.eql current, value
             setTimeout n, 100
+    'Chain # object # end callback': (next) ->
+        current = 0
+        each
+            id_1: 1
+            id_2: 2
+            id_3: 3
+        , (key, value, n) ->
+            current++
+            assert.eql "id_#{current}", key
+            assert.eql current, value
+            setTimeout n, 100
+        , (err) ->
+            assert.eql current, 3
+            return next()
     'Chain # undefined': (next) ->
         current = 0
         each undefined, (element, n) ->
