@@ -10,10 +10,10 @@ module.exports =
             {id: 2}
             {id: 3}
         ], (element, n) ->
-            current++
             unless n
-                assert.eql current, 4
+                assert.eql current, 3
                 return next()
+            current++
             assert.eql current, element.id
             setTimeout n, 100
     'Chain # object': (next) ->
@@ -23,10 +23,10 @@ module.exports =
             id_2: 2
             id_3: 3
         , (key, value, n) ->
-            current++
             unless n
-                assert.eql current, 4
+                assert.eql current, 3
                 return next()
+            current++
             assert.eql "id_#{current}", key
             assert.eql current, value
             setTimeout n, 100

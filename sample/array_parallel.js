@@ -8,7 +8,6 @@
         {id: 2},
         {id: 3}
     ], true, function(id, next) {
-        if(next === null) return done();
         console.log('id: ', id);
         setTimeout(next, 500);
     }, function(){

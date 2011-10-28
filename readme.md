@@ -54,13 +54,10 @@ Without an `end_callback` in `sequential` mode:
         {id: 2},
         {id: 3}
     ], function(id, next) {
-        if(next === null) return done();
+        if(!next) return console.log('Done');
         console.log('id: ', id);
         setTimeout(next, 500);
     });
-    function done(){
-        console.log('Done');
-    }
 ```
 
 With an `end_callback` in `parallel` mode:
@@ -92,14 +89,11 @@ Without an `end_callback` in `sequential` mode:
         id_2: 2,
         id_3: 3
     }, function(key, value, next) {
-        if(next === null) return done();
+        if(!next) return console.log('Done');
         console.log('key: ', key);
         console.log('value: ', value);
         setTimeout(next, 500);
     });
-    function done(){
-        console.log('Done');
-    }
 ```
 
 With an `end_callback` in `parallel` mode:
