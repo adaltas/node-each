@@ -23,12 +23,45 @@ module.exports =
             {id: 2}
             {id: 3}
         ], true, (element, n) ->
-            unless n
-                assert.eql current, 3
-                return next()
             current++
             assert.eql current, element.id
             setTimeout n, 100
+        , (err) ->
+            assert.eql current, 3
+            return next()
+    'Chain # array # send error # no end callback': (next) ->
+        each [
+            {id: 1}
+            {id: 2}
+            {id: 3}
+            {id: 4}
+        ], true, (element, n) ->
+            if n instanceof Error
+                assert.eql '2 error(s)', n.message
+                assert.eql 2, n.errors.length
+                assert.eql 'Testing error in 1', n.errors[0].message
+                assert.eql 'Testing error in 3', n.errors[1].message
+                return next()
+            if element.id is 1 or element.id is 3
+                n( new Error "Testing error in #{element.id}" )
+            else setTimeout n, 100
+    'Chain # array # send error # end callback': (next) ->
+        each [
+            {id: 1}
+            {id: 2}
+            {id: 3}
+            {id: 4}
+        ], true, (element, n) ->
+            if element.id is 1 or element.id is 3
+                n( new Error "Testing error in #{element.id}" )
+            else setTimeout n, 100
+        , (err) ->
+            assert.ok err instanceof Error
+            assert.eql '2 error(s)', err.message
+            assert.eql 2, err.errors.length
+            assert.eql 'Testing error in 1', err.errors[0].message
+            assert.eql 'Testing error in 3', err.errors[1].message
+            next()
     'Chain # object # no end callback': (next) ->
         current = 0
         each

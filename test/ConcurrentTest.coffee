@@ -13,6 +13,21 @@ module.exports =
             current++
             assert.eql current, element.id
             setTimeout n, 100
+    'Concurrent # array # error # async callbacks # no end callback': (next) ->
+        current = 0
+        source = [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ]
+        each source, 4, (element, n) ->
+            if n instanceof Error
+                assert.eql 8, current
+                assert.eql '2 error(s)', n.message
+                assert.eql 2, n.errors.length
+                assert.eql 'Testing error in 6', n.errors[0].message
+                assert.eql 'Testing error in 7', n.errors[1].message
+                return next()
+            current++
+            if element.id is 6 or element.id is 7
+                n( new Error "Testing error in #{element.id}" )
+            else setTimeout n, 100
     'Concurrent # array # multiple elements # async callbacks # end callback': (next) ->
         current = 0
         source = [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ]

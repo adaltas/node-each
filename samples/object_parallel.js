@@ -13,7 +13,10 @@
         setTimeout(next, 500);
     }, function(err){
         if(err){
-            console.log('Error '+err.message);
+            console.log(err.message);
+            err.errors.forEach(function(error){
+                console.log('  '+error.message);
+            });
         }else{
             console.log('Done');
         }

@@ -19,14 +19,8 @@ The `each` function signature is: `each(subject, mode=boolean||number, iterator_
 
 -   `mode`   
     The second argument is optional and indicate wether or not you want the 
-    iteration to run in `sequential`, `parallel` or `concurrent` mode. In 
-    `sequential` mode, each callback is called once the previous callback is 
-    completed after calling its `next` argument. In `parallel` mode, all the 
-    callbacks are called at the same time. In `concurrent` mode, only a defined 
-    number of callbacks is run in parallel.   
-    If `parallel` is a number, the mode is `concurrent`.
-    If `parallel` is true, the mode is `parallel`.
-    Otherwise, the mode is `sequential`.
+    iteration to run in `sequential`, `parallel` or `concurrent` mode. See below
+    for more details about the different modes.
 
 -   `iterator_callback`   
     The third argument is a callback function function called for each iterated 
@@ -42,6 +36,37 @@ The `each` function signature is: `each(subject, mode=boolean||number, iterator_
 If no `end_callback` is provided, the `iterator_callback` will be called one more 
 time with the `next` argument set to null.
 
+Defining a mode
+---------------
+
+-   `sequential`   
+    Mode is `false`, default if no mode is defined.
+    Callbacks are chained meaning each callback is called once the previous 
+    callback is completed (after calling the `next` argument).
+-   `parallel`
+    Mode is `true`.
+    All the callbacks are called at the same time and run in parallel.
+-   `concurrent`
+    Mode is an integer.
+    Only the defined number of callbacks is run in parallel.
+
+Dealing with errors
+-------------------
+
+Error are declared to each by calling `next` with an error object as its first
+argument. The behavior is aligned with Node conventions. Throwing an error won't
+be handled by each.
+
+When an `end_callback` is defined, it will recieve an error object as its first
+argument. When no `end_callback` is defined, the `next` argument is swiched to 
+an error object instead of a function.
+
+In `sequential` mode, the error object is the one passed to the `next` 
+callback. In `parallel` and `concurrent` modes, a new error object is created 
+because multiple errors may be thrown at the same time. For conveniency, it 
+contains an `errors` key which is an array of all the errors sent to the 
+`next` callback.
+
 Traversing an array
 -------------------
 
@@ -54,7 +79,7 @@ Without an `end_callback` in `sequential` mode:
         {id: 2},
         {id: 3}
     ], function(id, next) {
-        if(next instanceof Error) return console.log('Error '+err.message);
+        if(next instanceof Error) return console.log(err.message);
         if(!next) return console.log('Done');
         console.log('id: ', id);
         setTimeout(next, 500);
@@ -70,11 +95,17 @@ With an `end_callback` in `parallel` mode:
         {id: 2},
         {id: 3}
     ], true, function(id, next) {
-        if(next === null) return done();
         console.log('id: ', id);
         setTimeout(next, 500);
-    }, function(){
-        console.log('Done');
+    }, function(err){
+        if(err){
+            console.log(err.message);
+            err.errors.forEach(function(error){
+                console.log('  '+error.message);
+            });
+        }else{
+            console.log('Done');
+        }
     });
 ```
 
@@ -90,7 +121,7 @@ Without an `end_callback` in `sequential` mode:
         id_2: 2,
         id_3: 3
     }, function(key, value, next) {
-        if(next instanceof Error) return console.log('Error '+err.message);
+        if(next instanceof Error) return console.log(err.message);
         if(!next) return console.log('Done');
         console.log('key: ', key);
         console.log('value: ', value);
@@ -107,12 +138,18 @@ With an `end_callback` in `parallel` mode:
         id_2: 2,
         id_3: 3
     }, true, function(key, value, next) {
-        if(next === null) return done();
         console.log('key: ', key);
         console.log('value: ', value);
         setTimeout(next, 500);
-    }, function(){
-        console.log('Done');
+    }, function(err){
+        if(err){
+            console.log(err.message);
+            err.errors.forEach(function(error){
+                console.log('  '+error.message);
+            });
+        }else{
+            console.log('Done');
+        }
     });
 ```
 

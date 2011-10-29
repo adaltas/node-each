@@ -29,6 +29,18 @@ module.exports =
         , (err) ->
             assert.eql current, 3
             return next()
+    'Chain # array # send error # no end callback': (next) ->
+        each [
+            {id: 1}
+            {id: 2}
+            {id: 3}
+        ], (element, n) ->
+            if n instanceof Error
+                assert.eql 'Testing error', n.message
+                return next()
+            if element.id is 2
+                n( new Error 'Testing error' )
+            else setTimeout n, 100
     'Chain # object # no end callback': (next) ->
         current = 0
         each
