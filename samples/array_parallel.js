@@ -1,22 +1,17 @@
 
     var each = require('each');
     
-    // With an `end_callback` in `parallel` mode:
-    
-    each([
-        {id: 1},
-        {id: 2},
-        {id: 3}
-    ], true, function(id, next) {
+    each( [{id: 1}, {id: 2}, {id: 3}], true )
+    .on('data', function(next, id) {
         console.log('id: ', id);
         setTimeout(next, 500);
-    }, function(err){
-        if(err){
-            console.log(err.message);
-            err.errors.forEach(function(error){
-                console.log('  '+error.message);
-            });
-        }else{
-            console.log('Done');
-        }
+    })
+    .on('error', function(err, errors){
+        console.log(err.message);
+        errors.forEach(function(error){
+            console.log('  '+error.message);
+        });
+    })
+    .on('end', function(){
+        console.log('Done');
     });

@@ -11,7 +11,7 @@
 Node Each is a single elegant function to iterate asynchronously over elements 
 both in `sequential`, `parallel` and `concurrent` mode.
 
-The `each` function signature is: `each(subject, mode=boolean||number, iterator_callback, [end_callback])`.
+The `each` function signature is: `each(subject, mode=boolean)`. 
 
 -   `subject`   
     The first argument is the subject to iterate. It can be an array, an object or 
@@ -22,16 +22,20 @@ The `each` function signature is: `each(subject, mode=boolean||number, iterator_
     iteration to run in `sequential`, `parallel` or `concurrent` mode. See below
     for more details about the different modes.
 
--   `iterator_callback`   
-    The third argument is a callback function function called for each iterated 
-    element. The number of arguments depends on the subject type. For an object, 
-    the first argument will be the key, the second argument the key associated 
-    value and the third argument the `next` callback used to notifiy the end of 
-    the callback.
+The return object is an instance of `EventEmitter`. The following events are send:
 
--   `end_callback`   
-    The fourth argument is optional and is a callback called when the iteration 
-    isfinished.
+-   `data`   
+    Called for each iterated element. The number of arguments depends on the 
+    subject type.
+    The first argument is a function to call at the end of your callback. It may
+    be called with an error instance to trigger the `error` event.
+    For objects, the second and third arguments are the key and value 
+    of each elements. For anything else, the second and thirds argument are the 
+    value and the index (starting at 0) of each elements.
+-   `error`   
+    Called only if an error occured. The iteration will be stoped on error.
+-   `end`   
+    Called only if no error occured once all the data has been handled.
 
 If no `end_callback` is provided, the `iterator_callback` will be called one more 
 time with the `next` argument set to null.
@@ -54,58 +58,52 @@ Dealing with errors
 -------------------
 
 Error are declared to each by calling `next` with an error object as its first
-argument. The behavior is aligned with Node conventions. Throwing an error won't
-be handled by each.
+argument. An event `error` will be triggered and the iteration will be stoped. Note
+that in case of parallel and concurrent mode, the current callbacks are not 
+canceled but no new element will be send to the `data` event.
 
-When an `end_callback` is defined, it will recieve an error object as its first
-argument. When no `end_callback` is defined, the `next` argument is swiched to 
-an error object instead of a function.
-
-In `sequential` mode, the error object is the one passed to the `next` 
-callback. In `parallel` and `concurrent` modes, a new error object is created 
-because multiple errors may be thrown at the same time. For conveniency, it 
-contains an `errors` key which is an array of all the errors sent to the 
-`next` callback.
+The first element send to the `error` event is an error instance. In 
+`sequential` mode, it is the event sent in the previous data `callback`. In 
+`parallel` and `concurrent` modes, the second argument is an array will all 
+the error sent since multiple errors may be thrown at the same time.
 
 Traversing an array
 -------------------
 
-Without an `end_callback` in `sequential` mode:
+In `sequential` mode:
 
 ```javascript
     var each = require('each');
-    each([
-        {id: 1},
-        {id: 2},
-        {id: 3}
-    ], function(id, next) {
-        if(next instanceof Error) return console.log(err.message);
-        if(!next) return console.log('Done');
+    each( [{id: 1}, {id: 2}, {id: 3}] )
+    .on('data', function(next, id) {
         console.log('id: ', id);
         setTimeout(next, 500);
+    })
+    .on('error', function(err) {
+        console.log(err.message);
+    })
+    .on('end', function() {
+        console.log('Done');
     });
 ```
 
-With an `end_callback` in `parallel` mode:
+In `parallel` mode:
 
 ```javascript
     var each = require('each');
-    each([
-        {id: 1},
-        {id: 2},
-        {id: 3}
-    ], true, function(id, next) {
+    each( [{id: 1}, {id: 2}, {id: 3}], true )
+    .on('data', function(next, id) {
         console.log('id: ', id);
         setTimeout(next, 500);
-    }, function(err){
-        if(err){
-            console.log(err.message);
-            err.errors.forEach(function(error){
-                console.log('  '+error.message);
-            });
-        }else{
-            console.log('Done');
-        }
+    })
+    .on('error', function(err, errors){
+        console.log(err.message);
+        errors.forEach(function(error){
+            console.log('  '+error.message);
+        });
+    })
+    .on('end', function(){
+        console.log('Done');
     });
 ```
 
@@ -116,40 +114,38 @@ Without an `end_callback` in `sequential` mode:
 
 ```javascript
     var each = require('each');
-    each({
-        id_1: 1,
-        id_2: 2,
-        id_3: 3
-    }, function(key, value, next) {
-        if(next instanceof Error) return console.log(err.message);
-        if(!next) return console.log('Done');
+    each( {id_1: 1, id_2: 2, id_3: 3} )
+    .on('data', function(next, key, value) {
         console.log('key: ', key);
         console.log('value: ', value);
         setTimeout(next, 500);
+    })
+    .on('error', function(err) {
+        console.log(err.message);
+    })
+    .on('end', function() {
+        console.log('Done');
     });
 ```
 
-With an `end_callback` in `parallel` mode:
+In `parallel` mode:
 
 ```javascript
     var each = require('each');
-    each({
-        id_1: 1,
-        id_2: 2,
-        id_3: 3
-    }, true, function(key, value, next) {
+    each( {id_1: 1, id_2: 2, id_3: 3}, true )
+    .on('data', function(next, key, value) {
         console.log('key: ', key);
         console.log('value: ', value);
         setTimeout(next, 500);
-    }, function(err){
-        if(err){
-            console.log(err.message);
-            err.errors.forEach(function(error){
-                console.log('  '+error.message);
-            });
-        }else{
-            console.log('Done');
-        }
+    })
+    .on('error', function(err, errors){
+        console.log(err.message);
+        errors.forEach(function(error){
+            console.log('  '+error.message);
+        });
+    })
+    .on('end', function(){
+        console.log('Done');
     });
 ```
 
@@ -169,3 +165,14 @@ Via [npm](http://github.com/isaacs/npm):
 ```bash
     $ npm install each
 ```
+
+Testing
+-------
+
+Install `expresso` and run
+```bash
+    $ expresso -s test
+```
+
+    
+

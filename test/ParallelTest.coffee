@@ -3,129 +3,77 @@ assert = require 'assert'
 each = require '../index'
 
 module.exports = 
-    'Chain # array # no end callback': (next) ->
+    'Parallel # array': (next) ->
         current = 0
-        each [
-            {id: 1}
-            {id: 2}
-            {id: 3}
-        ], true, (element, n) ->
-            unless n
-                assert.eql current, 3
-                return next()
+        each( [{id: 1}, {id: 2}, {id: 3}], true )
+        .on 'data', (n, element) ->
             current++
             assert.eql current, element.id
             setTimeout n, 100
-    'Chain # array # end callback': (next) ->
-        current = 0
-        each [
-            {id: 1}
-            {id: 2}
-            {id: 3}
-        ], true, (element, n) ->
-            current++
-            assert.eql current, element.id
-            setTimeout n, 100
-        , (err) ->
+        .on 'end', ->
             assert.eql current, 3
-            return next()
-    'Chain # array # send error # no end callback': (next) ->
-        each [
-            {id: 1}
-            {id: 2}
-            {id: 3}
-            {id: 4}
-        ], true, (element, n) ->
-            if n instanceof Error
-                assert.eql '2 error(s)', n.message
-                assert.eql 2, n.errors.length
-                assert.eql 'Testing error in 1', n.errors[0].message
-                assert.eql 'Testing error in 3', n.errors[1].message
-                return next()
-            if element.id is 1 or element.id is 3
-                n( new Error "Testing error in #{element.id}" )
-            else setTimeout n, 100
-    'Chain # array # send error # end callback': (next) ->
-        each [
-            {id: 1}
-            {id: 2}
-            {id: 3}
-            {id: 4}
-        ], true, (element, n) ->
-            if element.id is 1 or element.id is 3
-                n( new Error "Testing error in #{element.id}" )
-            else setTimeout n, 100
-        , (err) ->
-            assert.ok err instanceof Error
-            assert.eql '2 error(s)', err.message
-            assert.eql 2, err.errors.length
-            assert.eql 'Testing error in 1', err.errors[0].message
-            assert.eql 'Testing error in 3', err.errors[1].message
             next()
-    'Chain # object # no end callback': (next) ->
+    'Parallel # array # send error # no end callback': (next) ->
+        each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}], true )
+        .on 'data', (n, element) ->
+            if element.id is 1 or element.id is 3
+                n( new Error "Testing error in #{element.id}" )
+            else setTimeout n, 100
+        .on 'error', (err, errs) ->
+            assert.eql '2 error(s)', err.message
+            assert.eql 2, errs.length
+            assert.eql 'Testing error in 1', errs[0].message
+            assert.eql 'Testing error in 3', errs[1].message
+            return next()
+    'Parallel # object': (next) ->
         current = 0
-        each
-            id_1: 1
-            id_2: 2
-            id_3: 3
-        , true
-        , (key, value, n) ->
+        each( {id_1: 1, id_2: 2, id_3: 3}, true )
+        .on 'data', (n, key, value) ->
             current++
             assert.eql "id_#{current}", key
             assert.eql current, value
             setTimeout n, 100
-        , (err) ->
+        .on 'end', (err) ->
             assert.eql current, 3
-            return next()
-    'Chain # object # end callback': (next) ->
+            next()
+    'Parallel # undefined': (next) ->
         current = 0
-        each
-            id_1: 1
-            id_2: 2
-            id_3: 3
-        , true
-        , (key, value, n) ->
+        each( undefined, true )
+        .on 'data', (n, element) ->
             current++
-            assert.eql "id_#{current}", key
-            assert.eql current, value
-            n()
-        , (err) ->
-            assert.eql current, 3
-            return next()
-    'Chain # undefined': (next) ->
-        current = 0
-        each undefined, true, (element, n) ->
-            current++
-            unless n
-                assert.eql current, 2
-                return next()
             assert.eql undefined, element
             setTimeout n, 100
-    'Chain # null': (next) ->
+        .on 'end', ->
+            assert.eql current, 1
+            next()
+    'Parallel # null': (next) ->
         current = 0
-        each null, true, (element, n) ->
+        each( null, true )
+        .on 'data', (n, element) ->
             current++
-            unless n
-                assert.eql current, 2
-                return next()
             assert.eql null, element
             setTimeout n, 100
-    'Chain # string': (next) ->
+        .on 'end', ->
+            assert.eql current, 1
+            next()
+    'Parallel # string': (next) ->
         current = 0
-        each 'id_1', true, (element, n) ->
+        each( 'id_1', true )
+        .on 'data', (n, element) ->
             current++
-            unless n
-                assert.eql current, 2
-                return next()
             assert.eql "id_1", element
             setTimeout n, 100
-    'Chain # number': (next) ->
+        .on 'end', ->
+            assert.eql current, 1
+            next()
+    'Parallel # number': (next) ->
         current = 0
-        each 3.14, true, (element, n) ->
+        each(3.14, true)
+        .on 'data', (n, element) ->
             current++
-            unless n
-                assert.eql current, 2
-                return next()
             assert.eql 3.14, element
             setTimeout n, 100
+        .on 'end', ->
+            assert.eql current, 1
+            next()
         
