@@ -7,7 +7,8 @@ module.exports =
         current = 0
         source = [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ]
         each(source, 4)
-        .on 'data', (n, element) ->
+        .on 'data', (n, element, index) ->
+            assert.eql current, index
             current++
             assert.eql current, element.id
             setTimeout n, 100
@@ -18,7 +19,8 @@ module.exports =
         current = 0
         source = [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ]
         each(source, 4)
-        .on 'data', (n, element) ->
+        .on 'data', (n, element, index) ->
+            assert.eql current, index
             current++
             if element.id is 6 or element.id is 7
                 n( new Error "Testing error in #{element.id}" )
@@ -34,7 +36,8 @@ module.exports =
         current = 0
         source = [ {id: 1} ]
         each(source, 4)
-        .on 'data', (n, element) ->
+        .on 'data', (n, element, index) ->
+            assert.eql current, index
             current++
             assert.eql current, element.id
             setTimeout n, 100
@@ -45,7 +48,8 @@ module.exports =
         current = 0
         source = [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ]
         each(source, 4)
-        .on 'data', (n, element) ->
+        .on 'data', (n, element, index) ->
+            assert.eql current, index
             current++
             assert.eql current, element.id
             n()

@@ -6,7 +6,8 @@ module.exports =
     'Chain # array': (next) ->
         current = 0
         each( [ {id: 1}, {id: 2}, {id: 3} ] )
-        .on 'data', (n, element) ->
+        .on 'data', (n, element, index) ->
+            assert.eql current, index
             current++
             assert.eql current, element.id
             setTimeout n, 100
@@ -14,8 +15,11 @@ module.exports =
             assert.eql current, 3
             next()
     'Chain # array # send error': (next) ->
+        current = 0
         each( [ {id: 1}, {id: 2}, {id: 3} ] )
-        .on 'data', (n, element) ->
+        .on 'data', (n, element, index) ->
+            assert.eql current, index
+            current++
             if element.id is 2
                 n( new Error 'Testing error' )
             else setTimeout n, 100
@@ -36,7 +40,8 @@ module.exports =
     'Chain # undefined': (next) ->
         current = 0
         each( undefined )
-        .on 'data', (n, element) ->
+        .on 'data', (n, element, index) ->
+            assert.eql current, index
             current++
             assert.eql undefined, element
             setTimeout n, 100
@@ -46,7 +51,8 @@ module.exports =
     'Chain # null': (next) ->
         current = 0
         each( null )
-        .on 'data', (n, element) ->
+        .on 'data', (n, element, index) ->
+            assert.eql current, index
             current++
             assert.eql null, element
             setTimeout n, 100
@@ -56,7 +62,8 @@ module.exports =
     'Chain # string': (next) ->
         current = 0
         each( 'id_1' )
-        .on 'data', (n, element) ->
+        .on 'data', (n, element, index) ->
+            assert.eql current, index
             current++
             assert.eql "id_1", element
             setTimeout n, 100
@@ -66,7 +73,8 @@ module.exports =
     'Chain # number': (next) ->
         current = 0
         each( 3.14 )
-        .on 'data', (n, element) ->
+        .on 'data', (n, element, index) ->
+            assert.eql current, index
             current++
             assert.eql 3.14, element
             setTimeout n, 100

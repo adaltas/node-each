@@ -31,7 +31,7 @@ module.exports = (elements, parallel) ->
     run = (i) ->
         if keys
         then args = [next, keys[i], elements[keys[i]]]
-        else args = [next, elements[i]]
+        else args = [next, elements[i], started]
         started++
         try
             process.nextTick () ->

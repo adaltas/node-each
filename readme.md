@@ -25,7 +25,7 @@ The `each` function signature is: `each(subject, mode=boolean)`.
 The return object is an instance of `EventEmitter`. The following events are send:
 
 -   `data`   
-    Called for each iterated element. The number of arguments depends on the 
+    Called for each iterated element. The arguments depends on the 
     subject type.
     The first argument is a function to call at the end of your callback. It may
     be called with an error instance to trigger the `error` event.
@@ -33,9 +33,13 @@ The return object is an instance of `EventEmitter`. The following events are sen
     of each elements. For anything else, the second and thirds argument are the 
     value and the index (starting at 0) of each elements.
 -   `error`   
-    Called only if an error occured. The iteration will be stoped on error.
+    Called only if an error occured. The iteration will be stoped on error meaning
+    no `data` event will be called other than the ones already provisionned. 
+-   `success`   
+    Called only if all the callback have been handled successfully.
 -   `end`   
-    Called only if no error occured once all the data has been handled.
+    Called only once all the data has been handled. Return the same argument 
+    than the `error` or `success` event depending on the operation outturn.
 
 If no `end_callback` is provided, the `iterator_callback` will be called one more 
 time with the `next` argument set to null.
@@ -75,8 +79,8 @@ In `sequential` mode:
 ```javascript
     var each = require('each');
     each( [{id: 1}, {id: 2}, {id: 3}] )
-    .on('data', function(next, id) {
-        console.log('id: ', id);
+    .on('data', function(next, element, index) {
+        console.log('element: ', element, '@', index);
         setTimeout(next, 500);
     })
     .on('error', function(err) {
@@ -92,8 +96,8 @@ In `parallel` mode:
 ```javascript
     var each = require('each');
     each( [{id: 1}, {id: 2}, {id: 3}], true )
-    .on('data', function(next, id) {
-        console.log('id: ', id);
+    .on('data', function(next, element, index) {
+        console.log('element: ', element, '@', index);
         setTimeout(next, 500);
     })
     .on('error', function(err, errors){
