@@ -44,13 +44,15 @@ module.exports = (elements, parallel) ->
         # This is the end
         if done is total or (errors.length and started is done)
             if parallel isnt 1 and errors.length
-                err = new Error "#{errors.length} error(s)"
-                return eacher.emit 'error', err, errors
+                args = [new Error("#{errors.length} error(s)"), errors]
+                eacher.emit 'error', args...
             else if errors.length
-                return eacher.emit 'error', errors[0]
+                args = [errors[0]]
+                eacher.emit 'error', args...
             else
-                args = if keys then [null, null, err] else [null, err]
-                return eacher.emit 'end', null, args...
+                args = []
+                eacher.emit 'success'
+            return eacher.emit 'end', args...
         # No more parallel iteration
         return if parallel + done > total
         # Run next iteration

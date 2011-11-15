@@ -5,14 +5,18 @@ each = require '../index'
 module.exports = 
     'Parallel # array': (next) ->
         current = 0
+        success_called = false
         each( [{id: 1}, {id: 2}, {id: 3}], true )
         .on 'data', (n, element, index) ->
             assert.eql current, index
             current++
             assert.eql current, element.id
             setTimeout n, 100
-        .on 'end', ->
+        .on 'success', ->
             assert.eql current, 3
+            success_called = true
+        .on 'end', ->
+            assert.ok success_called
             next()
     'Parallel # array # send error # no end callback': (next) ->
         current = 0

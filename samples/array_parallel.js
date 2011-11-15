@@ -12,6 +12,6 @@
             console.log('  '+error.message);
         });
     })
-    .on('end', function(){
+    .on('success', function(){
         console.log('Done');
     });

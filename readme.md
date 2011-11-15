@@ -86,7 +86,7 @@ In `sequential` mode:
     .on('error', function(err) {
         console.log(err.message);
     })
-    .on('end', function() {
+    .on('success', function() {
         console.log('Done');
     });
 ```
@@ -106,7 +106,7 @@ In `parallel` mode:
             console.log('  '+error.message);
         });
     })
-    .on('end', function(){
+    .on('success', function(){
         console.log('Done');
     });
 ```
@@ -127,7 +127,7 @@ Without an `end_callback` in `sequential` mode:
     .on('error', function(err) {
         console.log(err.message);
     })
-    .on('end', function() {
+    .on('success', function() {
         console.log('Done');
     });
 ```
@@ -148,7 +148,7 @@ In `parallel` mode:
             console.log('  '+error.message);
         });
     })
-    .on('end', function(){
+    .on('success', function(){
         console.log('Done');
     });
 ```
