@@ -6,10 +6,15 @@ class Eacher extends EventEmitter
 
 
 ###
-each(elements, parallel=false, callback)
+each(elements)
+.mode(parallel=false|true|integer)
+.on('data', callback)
+.on('error', callback)
+.on('success', callback)
+.on('end', callback)
 Chained and parallel async iterator in one elegant function
 ###
-module.exports = (elements, parallel) ->
+module.exports = (elements) ->
     eacher = new EventEmitter
     type = typeof elements
     if elements is null or type is 'undefined' or type is 'number' or type is 'string' or type is 'function'
@@ -19,15 +24,17 @@ module.exports = (elements, parallel) ->
     keys = Object.keys elements if isObject
     started = 0
     done = 0
-    total = if keys then keys.length else elements.length
-    # Concurrent
-    if typeof parallel is 'number'
-    # Parallel
-    else if parallel then parallel = total
-    # Sequential
-    else parallel = 1
-    parallel = Math.min(parallel, if keys then keys.length else elements.length)
     errors = []
+    total = if keys then keys.length else elements.length
+    parallel = 1
+    eacher.parallel = (mode) ->
+        # Concurrent
+        if typeof mode is 'number' then parallel = Math.min(mode, total)
+        # Parallel
+        else if mode then parallel = total
+        # Sequential (in case parallel is called multiple times)
+        else parallel = 1
+        eacher
     run = (i) ->
         if keys
         then args = [next, keys[i], elements[keys[i]]]
@@ -57,6 +64,7 @@ module.exports = (elements, parallel) ->
         return if parallel + done > total
         # Run next iteration
         run parallel + done - 1 unless errors.length
-    for key in [0 ... parallel]
-        run key
+    process.nextTick ->
+        for key in [0 ... parallel]
+            run key
     eacher

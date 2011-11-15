@@ -6,8 +6,8 @@ module.exports =
     'Concurrent # array # multiple elements # async callbacks': (next) ->
         current = 0
         success_called = false
-        source = [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ]
-        each(source, 4)
+        each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
+        .parallel( 4 )
         .on 'data', (n, element, index) ->
             assert.eql current, index
             current++
@@ -28,8 +28,8 @@ module.exports =
             assert.eql 2, errors.length
             assert.eql 'Testing error in 6', errors[0].message
             assert.eql 'Testing error in 7', errors[1].message
-        source = [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ]
-        each(source, 4)
+        each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ] )
+        .parallel( 4 )
         .on 'data', (n, element, index) ->
             assert.eql current, index
             current++
@@ -45,8 +45,8 @@ module.exports =
             next()
     'Concurrent # array # one element # async callbacks': (next) ->
         current = 0
-        source = [ {id: 1} ]
-        each(source, 4)
+        each( [ {id: 1} ] )
+        .parallel( 4 )
         .on 'data', (n, element, index) ->
             assert.eql current, index
             current++
@@ -57,8 +57,8 @@ module.exports =
             setTimeout next, 100
     'Concurrent # array sync callback': (next) ->
         current = 0
-        source = [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ]
-        each(source, 4)
+        each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
+        .parallel( 4 )
         .on 'data', (n, element, index) ->
             assert.eql current, index
             current++
@@ -69,8 +69,8 @@ module.exports =
             next()
     'Concurrent # object async callbacks': (next) ->
         current = 0
-        source = id_1: 1, id_2: 2, id_3: 3, id_4: 4, id_5: 5, id_6: 6, id_7: 7, id_8: 8, id_9: 9
-        each(source, 4)
+        each( id_1: 1, id_2: 2, id_3: 3, id_4: 4, id_5: 5, id_6: 6, id_7: 7, id_8: 8, id_9: 9 )
+        .parallel( 4 )
         .on 'data', (n, key, value) ->
             current++
             assert.eql "id_#{current}", key
@@ -81,8 +81,8 @@ module.exports =
             setTimeout next, 100
     'Concurrent # object sync callbacks': (next) ->
         current = 0
-        source = id_1: 1, id_2: 2, id_3: 3, id_4: 4, id_5: 5, id_6: 6, id_7: 7, id_8: 8, id_9: 9
-        each(source, 4)
+        each( id_1: 1, id_2: 2, id_3: 3, id_4: 4, id_5: 5, id_6: 6, id_7: 7, id_8: 8, id_9: 9 )
+        .parallel( 4 )
         .on 'data', (n, key, value) ->
             current++
             assert.eql "id_#{current}", key
@@ -93,8 +93,8 @@ module.exports =
             next()
     'Concurrent # function': (next) ->
         current = 0
-        source = (c) -> c()
-        each(source, 4)
+        each( (c) -> c() )
+        .parallel( 4 )
         .on 'data', (n, element, index) ->
             assert.eql current, index
             current++

@@ -1,7 +1,8 @@
 
     var each = require('each');
     
-    each( {id_1: 1, id_2: 2, id_3: 3}, true )
+    each( {id_1: 1, id_2: 2, id_3: 3} )
+    .parallel( 2 )
     .on('data', function(next, key, value) {
         console.log('key: ', key);
         console.log('value: ', value);

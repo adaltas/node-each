@@ -6,7 +6,8 @@ module.exports =
     'Parallel # array': (next) ->
         current = 0
         success_called = false
-        each( [{id: 1}, {id: 2}, {id: 3}], true )
+        each( [{id: 1}, {id: 2}, {id: 3}])
+        .parallel( true )
         .on 'data', (n, element, index) ->
             assert.eql current, index
             current++
@@ -20,7 +21,8 @@ module.exports =
             next()
     'Parallel # array # send error # no end callback': (next) ->
         current = 0
-        each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}], true )
+        each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
+        .parallel( true )
         .on 'data', (n, element, index) ->
             assert.eql current, index
             current++
@@ -35,7 +37,8 @@ module.exports =
             return next()
     'Parallel # object': (next) ->
         current = 0
-        each( {id_1: 1, id_2: 2, id_3: 3}, true )
+        each( {id_1: 1, id_2: 2, id_3: 3} )
+        .parallel( true )
         .on 'data', (n, key, value) ->
             current++
             assert.eql "id_#{current}", key
@@ -46,7 +49,8 @@ module.exports =
             next()
     'Parallel # undefined': (next) ->
         current = 0
-        each( undefined, true )
+        each( undefined )
+        .parallel( true )
         .on 'data', (n, element, index) ->
             assert.eql current, index
             current++
@@ -57,7 +61,8 @@ module.exports =
             next()
     'Parallel # null': (next) ->
         current = 0
-        each( null, true )
+        each( null )
+        .parallel( true )
         .on 'data', (n, element, index) ->
             assert.eql current, index
             current++
@@ -68,7 +73,8 @@ module.exports =
             next()
     'Parallel # string': (next) ->
         current = 0
-        each( 'id_1', true )
+        each( 'id_1' )
+        .parallel( true )
         .on 'data', (n, element, index) ->
             assert.eql current, index
             current++
@@ -79,7 +85,8 @@ module.exports =
             next()
     'Parallel # number': (next) ->
         current = 0
-        each(3.14, true)
+        each( 3.14 )
+        .parallel( true )
         .on 'data', (n, element, index) ->
             assert.eql current, index
             current++
@@ -91,7 +98,8 @@ module.exports =
     'Parallel # function': (next) ->
         current = 0
         source = (c) -> c()
-        each(source, true)
+        each( source )
+        .parallel( true )
         .on 'data', (n, element, index) ->
             assert.eql current, index
             current++
