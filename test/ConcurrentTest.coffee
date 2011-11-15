@@ -80,3 +80,15 @@ module.exports =
         .on 'end', ->
             assert.eql current, 9
             next()
+    'Concurrent # function': (next) ->
+        current = 0
+        source = (c) -> c()
+        each(source, 4)
+        .on 'data', (n, element, index) ->
+            assert.eql current, index
+            current++
+            assert.eql typeof element, 'function'
+            element n
+        .on 'end', ->
+            assert.eql current, 1
+            next()

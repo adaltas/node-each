@@ -3,7 +3,7 @@ assert = require 'assert'
 each = require '../index'
 
 module.exports = 
-    'Chain # array': (next) ->
+    'Sequential # array': (next) ->
         current = 0
         each( [ {id: 1}, {id: 2}, {id: 3} ] )
         .on 'data', (n, element, index) ->
@@ -14,7 +14,7 @@ module.exports =
         .on 'end', ->
             assert.eql current, 3
             next()
-    'Chain # array # send error': (next) ->
+    'Sequential # array # send error': (next) ->
         current = 0
         each( [ {id: 1}, {id: 2}, {id: 3} ] )
         .on 'data', (n, element, index) ->
@@ -26,7 +26,7 @@ module.exports =
         .on 'error', (err) ->
             assert.eql 'Testing error', err.message
             next()
-    'Chain # object': (next) ->
+    'Sequential # object': (next) ->
         current = 0
         each( {id_1: 1, id_2: 2, id_3: 3} )
         .on 'data', (n, key, value) ->
@@ -37,7 +37,7 @@ module.exports =
         .on 'end', ->
             assert.eql current, 3
             next()
-    'Chain # undefined': (next) ->
+    'Sequential # undefined': (next) ->
         current = 0
         each( undefined )
         .on 'data', (n, element, index) ->
@@ -48,7 +48,7 @@ module.exports =
         .on 'end', ->
             assert.eql current, 1
             next()
-    'Chain # null': (next) ->
+    'Sequential # null': (next) ->
         current = 0
         each( null )
         .on 'data', (n, element, index) ->
@@ -59,7 +59,7 @@ module.exports =
         .on 'end', ->
             assert.eql current, 1
             next()
-    'Chain # string': (next) ->
+    'Sequential # string': (next) ->
         current = 0
         each( 'id_1' )
         .on 'data', (n, element, index) ->
@@ -70,7 +70,7 @@ module.exports =
         .on 'end', ->
             assert.eql current, 1
             next()
-    'Chain # number': (next) ->
+    'Sequential # number': (next) ->
         current = 0
         each( 3.14 )
         .on 'data', (n, element, index) ->
@@ -78,6 +78,18 @@ module.exports =
             current++
             assert.eql 3.14, element
             setTimeout n, 100
+        .on 'end', ->
+            assert.eql current, 1
+            next()
+    'Sequential # function': (next) ->
+        current = 0
+        source = (c) -> c()
+        each(source)
+        .on 'data', (n, element, index) ->
+            assert.eql current, index
+            current++
+            assert.eql typeof element, 'function'
+            element n
         .on 'end', ->
             assert.eql current, 1
             next()

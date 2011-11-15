@@ -12,7 +12,7 @@ Chained and parallel async iterator in one elegant function
 module.exports = (elements, parallel) ->
     eacher = new EventEmitter
     type = typeof elements
-    if elements is null or type is 'undefined' or type is 'number' or type is 'string' # or type is 'function'
+    if elements is null or type is 'undefined' or type is 'number' or type is 'string' or type is 'function'
         elements = [elements]
     else unless Array.isArray elements
         isObject = true
