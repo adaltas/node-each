@@ -3,7 +3,7 @@
     
     each( [{id: 1}, {id: 2}, {id: 3}] )
     .parallel( true )
-    .on('data', function(next, element, index) {
+    .on('item', function(next, element, index) {
         console.log('element: ', element, '@', index);
         setTimeout(next, 500);
     })

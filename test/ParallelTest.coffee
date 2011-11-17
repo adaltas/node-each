@@ -8,7 +8,7 @@ module.exports =
         success_called = false
         each( [{id: 1}, {id: 2}, {id: 3}])
         .parallel( true )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             assert.eql current, index
             current++
             assert.eql current, element.id
@@ -23,7 +23,7 @@ module.exports =
         current = 0
         each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
         .parallel( true )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             assert.eql current, index
             current++
             if element.id is 1 or element.id is 3
@@ -39,7 +39,7 @@ module.exports =
         current = 0
         each( {id_1: 1, id_2: 2, id_3: 3} )
         .parallel( true )
-        .on 'data', (n, key, value) ->
+        .on 'item', (n, key, value) ->
             current++
             assert.eql "id_#{current}", key
             assert.eql current, value
@@ -51,7 +51,7 @@ module.exports =
         current = 0
         each( undefined )
         .parallel( true )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             assert.eql current, index
             current++
             assert.eql undefined, element
@@ -63,7 +63,7 @@ module.exports =
         current = 0
         each( null )
         .parallel( true )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             assert.eql current, index
             current++
             assert.eql null, element
@@ -75,7 +75,7 @@ module.exports =
         current = 0
         each( 'id_1' )
         .parallel( true )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             assert.eql current, index
             current++
             assert.eql "id_1", element
@@ -87,7 +87,7 @@ module.exports =
         current = 0
         each( 3.14 )
         .parallel( true )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             assert.eql current, index
             current++
             assert.eql 3.14, element
@@ -100,7 +100,7 @@ module.exports =
         source = (c) -> c()
         each( source )
         .parallel( true )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             assert.eql current, index
             current++
             assert.eql typeof element, 'function'

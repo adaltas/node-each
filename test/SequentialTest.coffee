@@ -7,7 +7,7 @@ module.exports =
         current = 0
         success_called = false
         each( [ {id: 1}, {id: 2}, {id: 3} ] )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             assert.eql current, index
             current++
             assert.eql current, element.id
@@ -21,7 +21,7 @@ module.exports =
     'Sequential # array # send error': (next) ->
         current = 0
         each( [ {id: 1}, {id: 2}, {id: 3} ] )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             assert.eql current, index
             current++
             if element.id is 2
@@ -33,7 +33,7 @@ module.exports =
     'Sequential # object': (next) ->
         current = 0
         each( {id_1: 1, id_2: 2, id_3: 3} )
-        .on 'data', (n, key, value) ->
+        .on 'item', (n, key, value) ->
             current++
             assert.eql "id_#{current}", key
             assert.eql current, value
@@ -44,7 +44,7 @@ module.exports =
     'Sequential # undefined': (next) ->
         current = 0
         each( undefined )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             assert.eql current, index
             current++
             assert.eql undefined, element
@@ -55,7 +55,7 @@ module.exports =
     'Sequential # null': (next) ->
         current = 0
         each( null )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             assert.eql current, index
             current++
             assert.eql null, element
@@ -66,7 +66,7 @@ module.exports =
     'Sequential # string': (next) ->
         current = 0
         each( 'id_1' )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             assert.eql current, index
             current++
             assert.eql "id_1", element
@@ -77,7 +77,7 @@ module.exports =
     'Sequential # number': (next) ->
         current = 0
         each( 3.14 )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             assert.eql current, index
             current++
             assert.eql 3.14, element
@@ -89,7 +89,7 @@ module.exports =
         current = 0
         source = (c) -> c()
         each(source)
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             assert.eql current, index
             current++
             assert.eql typeof element, 'function'

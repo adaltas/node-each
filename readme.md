@@ -28,7 +28,7 @@ The following functions are available:
 
 The following events are send:
 
--   `data`   
+-   `item`   
     Called for each iterated element. The arguments depends on the 
     subject type.
     The first argument, `next`, is a function to call at the end of your 
@@ -38,11 +38,11 @@ The following events are send:
     value and the index (starting at 0) of each elements.
 -   `error`   
     Called only if an error occured. The iteration will be stoped on error meaning
-    no `data` event will be called other than the ones already provisionned. 
+    no `item` event will be called other than the ones already provisionned. 
 -   `success`   
     Called only if all the callback have been handled successfully.
 -   `end`   
-    Called only once all the data has been handled. Return the same argument 
+    Called only once all the items have been handled. Return the same argument 
     than the `error` or `success` event depending on the operation outturn.
 
 Parallelization modes
@@ -62,14 +62,14 @@ Parallelization modes
 Dealing with errors
 -------------------
 
-Error are declared by calling `next` argument in the `data` event with an error 
+Error are declared by calling `next` argument in the `item` event with an error 
 object as its first argument. An event `error` will be triggered and the 
 iteration will be stoped. Note that in case of parallel and concurrent mode, 
 the current callbacks are not canceled but no new element will be send to the 
-`data` event.
+`item` event.
 
 The first element send to the `error` event is an error instance. In 
-`sequential` mode, it is the event sent in the previous data `callback`. In 
+`sequential` mode, it is the event sent in the previous item `callback`. In 
 `parallel` and `concurrent` modes, the second argument is an array will all 
 the error sent since multiple errors may be thrown at the same time.
 
@@ -81,7 +81,7 @@ In `sequential` mode:
 ```javascript
     var each = require('each');
     each( [{id: 1}, {id: 2}, {id: 3}] )
-    .on('data', function(next, element, index) {
+    .on('item', function(next, element, index) {
         console.log('element: ', element, '@', index);
         setTimeout(next, 500);
     })
@@ -99,7 +99,7 @@ In `parallel` mode:
     var each = require('each');
     each( [{id: 1}, {id: 2}, {id: 3}] )
     .parallel( true )
-    .on('data', function(next, element, index) {
+    .on('item', function(next, element, index) {
         console.log('element: ', element, '@', index);
         setTimeout(next, 500);
     })
@@ -122,7 +122,7 @@ In `sequential` mode:
 ```javascript
     var each = require('each');
     each( {id_1: 1, id_2: 2, id_3: 3} )
-    .on('data', function(next, key, value) {
+    .on('item', function(next, key, value) {
         console.log('key: ', key);
         console.log('value: ', value);
         setTimeout(next, 500);
@@ -141,7 +141,7 @@ In `concurrent` mode with 2 parallels executions
     var each = require('each');
     each( {id_1: 1, id_2: 2, id_3: 3} )
     .parallel( 2 )
-    .on('data', function(next, key, value) {
+    .on('item', function(next, key, value) {
         console.log('key: ', key);
         console.log('value: ', value);
         setTimeout(next, 500);
@@ -168,7 +168,7 @@ functions.
     var each = require('each');
     var eacher = each( {id_1: 1, id_2: 2, id_3: 3} )
     .parallel( 10 )
-    .on('data', function(next, key, value) {
+    .on('item', function(next, key, value) {
         if(value === 1){
             eacher.pause()
             setTimeout(function(){

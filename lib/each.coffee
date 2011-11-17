@@ -4,7 +4,7 @@ EventEmitter = require('events').EventEmitter
 ###
 each(elements)
 .mode(parallel=false|true|integer)
-.on('data', callback)
+.on('item', callback)
 .on('error', callback)
 .on('success', callback)
 .on('end', callback)
@@ -44,7 +44,7 @@ module.exports = (elements) ->
         started++
         process.nextTick () ->
             try
-                    eacher.emit 'data', args...
+                    eacher.emit 'item', args...
             catch e
                 next e
     run = () ->

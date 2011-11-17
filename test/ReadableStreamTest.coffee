@@ -6,7 +6,7 @@ module.exports =
     'Throttle # next before resume': (next) ->
         eacher = each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
         .parallel( 4 )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             if element.id is 2
                 eacher.pause()
                 setTimeout ->
@@ -18,7 +18,7 @@ module.exports =
     'Throttle # next after resume': (next) ->
         eacher = each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
         .parallel( 4 )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             if element.id is 2
                 eacher.pause()
                 setTimeout ->
@@ -32,7 +32,7 @@ module.exports =
     'Throttle # multiple pause # next before resume': (next) ->
         eacher = each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
         .parallel( 4 )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             if element.id % 2 is 0
                 eacher.pause()
                 setTimeout ->
@@ -46,7 +46,7 @@ module.exports =
     'Throttle # multiple pause # next after resume': (next) ->
         eacher = each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
         .parallel( 4 )
-        .on 'data', (n, element, index) ->
+        .on 'item', (n, element, index) ->
             if element.id % 2 is 0
                 eacher.pause()
                 setTimeout ->
