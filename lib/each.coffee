@@ -53,10 +53,10 @@ module.exports = (elements) ->
         if done is total or (errors.length and started is done)
             if parallel isnt 1 and errors.length
                 args = [new Error("#{errors.length} error(s)"), errors]
-                eacher.emit 'error', args...
+                eacher.emit 'error', args... if eacher.listeners('error').length
             else if errors.length
                 args = [errors[0]]
-                eacher.emit 'error', args...
+                eacher.emit 'error', args... if eacher.listeners('error').length
             else
                 args = []
                 eacher.emit 'success'

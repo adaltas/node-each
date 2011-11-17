@@ -19,22 +19,6 @@ module.exports =
         .on 'end', ->
             assert.ok success_called
             next()
-    'Parallel # array # send error # no end callback': (next) ->
-        current = 0
-        each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
-        .parallel( true )
-        .on 'item', (n, element, index) ->
-            assert.eql current, index
-            current++
-            if element.id is 1 or element.id is 3
-                n( new Error "Testing error in #{element.id}" )
-            else setTimeout n, 100
-        .on 'error', (err, errs) ->
-            assert.eql '2 error(s)', err.message
-            assert.eql 2, errs.length
-            assert.eql 'Testing error in 1', errs[0].message
-            assert.eql 'Testing error in 3', errs[1].message
-            return next()
     'Parallel # object': (next) ->
         current = 0
         each( {id_1: 1, id_2: 2, id_3: 3} )

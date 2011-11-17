@@ -18,18 +18,6 @@ module.exports =
         .on 'end', ->
             assert.ok success_called
             next()
-    'Sequential # array # send error': (next) ->
-        current = 0
-        each( [ {id: 1}, {id: 2}, {id: 3} ] )
-        .on 'item', (n, element, index) ->
-            assert.eql current, index
-            current++
-            if element.id is 2
-                n( new Error 'Testing error' )
-            else setTimeout n, 100
-        .on 'error', (err) ->
-            assert.eql 'Testing error', err.message
-            next()
     'Sequential # object': (next) ->
         current = 0
         each( {id_1: 1, id_2: 2, id_3: 3} )
