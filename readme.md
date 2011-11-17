@@ -157,6 +157,37 @@ In `concurrent` mode with 2 parallels executions
     });
 ```
 
+Readable Stream
+---------------
+
+The deferred object return by each partially implement the Node Readable Stream 
+API. It can be used to throttle the iteration with the `pause` and `resume` 
+functions.
+
+```javascript
+    var each = require('each');
+    var eacher = each( {id_1: 1, id_2: 2, id_3: 3} )
+    .parallel( 10 )
+    .on('data', function(next, key, value) {
+        if(value === 1){
+            eacher.pause()
+            setTimeout(function(){
+                eacher.resume()
+                next()
+            }, 500);
+        }else{
+            eacher.pause()
+            setTimeout(function(){
+                eacher.resume()
+            }, 500);
+            next()
+        }
+    })
+    .on('success', function(){
+        console.log('Done');
+    });
+```
+
 Installing
 ----------
 
@@ -172,16 +203,26 @@ Then, simply copy or link the project inside a discoverable Node directory
 Via [npm](http://github.com/isaacs/npm):
 
 ```bash
-    $ npm install each
+    npm install each
 ```
 
 Testing
 -------
 
-Install `expresso` and run
+Run the samples:
 
 ```bash
-    $ expresso -s test
+    node samples/array_parallel.js
+    node samples/array_sequential.js
+    node samples/object_concurrent.js
+    node samples/object_sequential.js
+    node samples/readable_stream.js
+```
+
+Run the tests with `expresso`:
+
+```bash
+    expresso -s test
 ```
 
     

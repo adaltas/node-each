@@ -1,10 +1,6 @@
 
 EventEmitter = require('events').EventEmitter
 
-class Eacher extends EventEmitter
-    
-
-
 ###
 each(elements)
 .mode(parallel=false|true|integer)
@@ -15,7 +11,6 @@ each(elements)
 Chained and parallel async iterator in one elegant function
 ###
 module.exports = (elements) ->
-    eacher = new EventEmitter
     type = typeof elements
     if elements is null or type is 'undefined' or type is 'number' or type is 'string' or type is 'function'
         elements = [elements]
@@ -24,30 +19,36 @@ module.exports = (elements) ->
     keys = Object.keys elements if isObject
     started = 0
     done = 0
+    pause = 0
     errors = []
     total = if keys then keys.length else elements.length
     parallel = 1
+    eacher = new EventEmitter
     eacher.parallel = (mode) ->
         # Concurrent
-        if typeof mode is 'number' then parallel = Math.min(mode, total)
+        if typeof mode is 'number' then parallel = mode
         # Parallel
         else if mode then parallel = total
         # Sequential (in case parallel is called multiple times)
         else parallel = 1
         eacher
-    run = (i) ->
+    eacher.pause = () ->
+        pause++
+    eacher.resume = () ->
+        pause--
+        run()
+    call = () ->
         if keys
-        then args = [next, keys[i], elements[keys[i]]]
-        else args = [next, elements[i], started]
+        then args = [next, keys[started], elements[keys[started]]]
+        else args = [next, elements[started], started]
         started++
-        try
-            process.nextTick () ->
-                eacher.emit 'data', args...
-        catch e
-            next e
-    next = (err) ->
-        errors.push err if err? and err instanceof Error
-        done++
+        process.nextTick () ->
+            try
+                    eacher.emit 'data', args...
+            catch e
+                next e
+    run = () ->
+        return if pause
         # This is the end
         if done is total or (errors.length and started is done)
             if parallel isnt 1 and errors.length
@@ -60,11 +61,11 @@ module.exports = (elements) ->
                 args = []
                 eacher.emit 'success'
             return eacher.emit 'end', args...
-        # No more parallel iteration
-        return if parallel + done > total
-        # Run next iteration
-        run parallel + done - 1 unless errors.length
+        call() for key in [0 ... Math.min( (parallel - started + done), (total - started) )] unless errors.length
+    next = (err) ->
+        errors.push err if err? and err instanceof Error
+        done++
+        run()
     process.nextTick ->
-        for key in [0 ... parallel]
-            run key
+        run() for key in [0 ... Math.min(parallel, total)]
     eacher

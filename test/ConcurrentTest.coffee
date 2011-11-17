@@ -18,7 +18,7 @@ module.exports =
             success_called = true
         .on 'end', ->
             assert.ok success_called
-            setTimeout next, 100
+            next()
     'Concurrent # array # error # async callbacks': (next) ->
         current = 0
         error_called = false
