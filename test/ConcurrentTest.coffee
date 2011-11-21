@@ -31,6 +31,16 @@ module.exports =
         .on 'end', ->
             assert.eql current, 1
             setTimeout next, 100
+    'Concurrent # array # empty': (next) ->
+        current = 0
+        each( [] )
+        .parallel( 4 )
+        .on 'item', (n, element, index) ->
+            current++
+            n()
+        .on 'end', ->
+            assert.eql current, 0
+            next()
     'Concurrent # array sync callback': (next) ->
         current = 0
         each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )

@@ -37,20 +37,28 @@ module.exports = (elements) ->
     eacher.resume = () ->
         pause--
         run()
+    eacher.readable = true
     call = () ->
         if keys
         then args = [next, keys[started], elements[keys[started]]]
         else args = [next, elements[started], started]
         started++
-        process.nextTick () ->
-            try
-                    eacher.emit 'item', args...
-            catch e
-                next e
+        #process.nextTick () ->
+            #try
+                    #eacher.emit 'item', args...
+            #catch e
+                #next e
+        try
+            eacher.emit 'item', args...
+        catch e
+            # prevent next to be called if an error occurend inside the
+            # error, success or end callbacks
+            next e if eacher.readable
     run = () ->
         return if pause
         # This is the end
         if done is total or (errors.length and started is done)
+            eacher.readable = false
             if parallel isnt 1 and errors.length
                 args = [new Error("#{errors.length} error(s)"), errors]
                 eacher.emit 'error', args... if eacher.listeners('error').length
@@ -61,11 +69,15 @@ module.exports = (elements) ->
                 args = []
                 eacher.emit 'success'
             return eacher.emit 'end', args...
-        call() for key in [0 ... Math.min( (parallel - started + done), (total - started) )] unless errors.length
+        return if errors.length
+        call() while Math.min( (parallel - started + done), (total - started) )
+        #call() for key in [0 ... Math.min( (parallel - started + done), (total - started) )] unless errors.length
     next = (err) ->
         errors.push err if err? and err instanceof Error
         done++
         run()
     process.nextTick ->
+        # No object to iterate
+        return run() if total is 0
         run() for key in [0 ... Math.min(parallel, total)]
     eacher
