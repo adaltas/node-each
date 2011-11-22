@@ -32,22 +32,19 @@ module.exports = (elements) ->
         # Sequential (in case parallel is called multiple times)
         else parallel = 1
         eacher
-    eacher.pause = () ->
+    eacher.pause = ->
         pause++
-    eacher.resume = () ->
+    eacher.resume = ->
         pause--
         run()
+    eacher.destroy = ->
+        # nothing
     eacher.readable = true
     call = () ->
         if keys
         then args = [next, keys[started], elements[keys[started]]]
         else args = [next, elements[started], started]
         started++
-        #process.nextTick () ->
-            #try
-                    #eacher.emit 'item', args...
-            #catch e
-                #next e
         try
             eacher.emit 'item', args...
         catch e
@@ -70,14 +67,14 @@ module.exports = (elements) ->
                 eacher.emit 'success'
             return eacher.emit 'end', args...
         return if errors.length
+        # Dont use for... since done may change in sync mode
         call() while Math.min( (parallel - started + done), (total - started) )
-        #call() for key in [0 ... Math.min( (parallel - started + done), (total - started) )] unless errors.length
     next = (err) ->
         errors.push err if err? and err instanceof Error
         done++
         run()
     process.nextTick ->
-        # No object to iterate
+        # Empty iteration
         return run() if total is 0
         run() for key in [0 ... Math.min(parallel, total)]
     eacher
