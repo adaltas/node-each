@@ -10,6 +10,6 @@
     .on('error', function(err) {
         console.log(err.message);
     })
-    .on('success', function() {
+    .on('end', function() {
         console.log('Done');
     });

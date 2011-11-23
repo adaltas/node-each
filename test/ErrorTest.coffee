@@ -3,7 +3,7 @@ assert = require 'assert'
 each = require '../index'
 
 module.exports = 
-    'Error # Concurrent # error and end callbacks': (next) ->
+    'Error # Concurrent # error and both callbacks': (next) ->
         current = 0
         error_called = false
         error_assert = (err, errs) ->
@@ -27,6 +27,8 @@ module.exports =
             error_assert.call null, err, errs
             error_called = true
         .on 'end', (err, errs) ->
+            assert.ok false
+        .on 'both', (err, errs) ->
             assert.ok error_called
             error_assert.call null, err, errs
             next()
@@ -49,7 +51,9 @@ module.exports =
             assert.eql 'Testing error in 1', errs[0].message
             assert.eql 'Testing error in 3', errs[1].message
             return next()
-    'Error # Parallel # async # end callback': (next) ->
+        .on 'end', (err, errs) ->
+            assert.ok false
+    'Error # Parallel # async # both callback': (next) ->
         current = 0
         each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
         .parallel( true )
@@ -62,13 +66,15 @@ module.exports =
                 else
                     n()
             , 100
-        .on 'end', (err, errs) ->
+        .on 'both', (err, errs) ->
             assert.eql '2 error(s)', err.message
             assert.eql 2, errs.length
             assert.eql 'Testing error in 1', errs[0].message
             assert.eql 'Testing error in 3', errs[1].message
             return next()
-    'Error # Parallel # sync # end callback': (next) ->
+        .on 'end', (err, errs) ->
+            assert.ok false
+    'Error # Parallel # sync # both callback': (next) ->
         current = 0
         each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
         .parallel( true )
@@ -78,7 +84,7 @@ module.exports =
             if element.id is 1 or element.id is 3
                 n( new Error "Testing error in #{element.id}" )
             else setTimeout n, 100
-        .on 'end', (err, errs) ->
+        .on 'both', (err, errs) ->
             assert.eql '2 error(s)', err.message
             assert.eql 2, errs.length
             assert.eql 'Testing error in 1', errs[0].message
@@ -96,4 +102,6 @@ module.exports =
         .on 'error', (err) ->
             assert.eql 'Testing error', err.message
             next()
+        .on 'end', (err, errs) ->
+            assert.ok false
     

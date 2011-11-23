@@ -6,8 +6,8 @@ each(elements)
 .mode(parallel=false|true|integer)
 .on('item', callback)
 .on('error', callback)
-.on('success', callback)
 .on('end', callback)
+.on('both', callback)
 Chained and parallel async iterator in one elegant function
 ###
 module.exports = (elements) ->
@@ -49,7 +49,7 @@ module.exports = (elements) ->
             eacher.emit 'item', args...
         catch e
             # prevent next to be called if an error occurend inside the
-            # error, success or end callbacks
+            # error, end or both callbacks
             next e if eacher.readable
     run = () ->
         return if pause
@@ -64,8 +64,8 @@ module.exports = (elements) ->
                 eacher.emit 'error', args... if eacher.listeners('error').length
             else
                 args = []
-                eacher.emit 'success'
-            return eacher.emit 'end', args...
+                eacher.emit 'end'
+            return eacher.emit 'both', args...
         return if errors.length
         # Dont use for... since done may change in sync mode
         call() while Math.min( (parallel - started + done), (total - started) )

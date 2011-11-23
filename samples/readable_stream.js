@@ -18,6 +18,6 @@
             next()
         }
     })
-    .on('success', function(){
+    .on('end', function(){
         console.log('Done');
     });

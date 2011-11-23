@@ -5,18 +5,19 @@ each = require '../index'
 module.exports = 
     'Sequential # array': (next) ->
         current = 0
-        success_called = false
+        end_called = false
         each( [ {id: 1}, {id: 2}, {id: 3} ] )
         .on 'item', (n, element, index) ->
             assert.eql current, index
             current++
             assert.eql current, element.id
             setTimeout n, 100
-        .on 'success', ->
-            assert.eql current, 3
-            success_called = true
         .on 'end', ->
-            assert.ok success_called
+            assert.eql current, 3
+            end_called = true
+        .on 'both', (err) ->
+            assert.ifError err
+            assert.ok end_called
             next()
     'Sequential # object': (next) ->
         current = 0
@@ -26,6 +27,8 @@ module.exports =
             assert.eql "id_#{current}", key
             assert.eql current, value
             setTimeout n, 100
+        .on 'error', (err) ->
+            assert.ifError err
         .on 'end', ->
             assert.eql current, 3
             next()
@@ -37,6 +40,8 @@ module.exports =
             current++
             assert.eql undefined, element
             setTimeout n, 100
+        .on 'error', (err) ->
+            assert.ifError err
         .on 'end', ->
             assert.eql current, 1
             next()
@@ -48,6 +53,8 @@ module.exports =
             current++
             assert.eql null, element
             setTimeout n, 100
+        .on 'error', (err) ->
+            assert.ifError err
         .on 'end', ->
             assert.eql current, 1
             next()
@@ -59,6 +66,8 @@ module.exports =
             current++
             assert.eql "id_1", element
             setTimeout n, 100
+        .on 'error', (err) ->
+            assert.ifError err
         .on 'end', ->
             assert.eql current, 1
             next()
@@ -70,6 +79,8 @@ module.exports =
             current++
             assert.eql 3.14, element
             setTimeout n, 100
+        .on 'error', (err) ->
+            assert.ifError err
         .on 'end', ->
             assert.eql current, 1
             next()
@@ -82,6 +93,8 @@ module.exports =
             current++
             assert.eql typeof element, 'function'
             element n
+        .on 'error', (err) ->
+            assert.ifError err
         .on 'end', ->
             assert.eql current, 1
             next()

@@ -39,11 +39,12 @@ The following events are send:
 -   `error`   
     Called only if an error occured. The iteration will be stoped on error meaning
     no `item` event will be called other than the ones already provisionned. 
--   `success`   
-    Called only if all the callback have been handled successfully.
 -   `end`   
-    Called only once all the items have been handled. Return the same argument 
-    than the `error` or `success` event depending on the operation outturn.
+    Called only if all the callback have been handled successfully.
+-   `both`   
+    Called only once all the items have been handled. It is a conveniency event
+    combining the `error` and `end` event in one call. Return the same argument 
+    than the `error` or `end` event depending on the operation outturn.
 
 Parallelization modes
 ---------------------
@@ -88,7 +89,7 @@ In `sequential` mode:
     .on('error', function(err) {
         console.log(err.message);
     })
-    .on('success', function() {
+    .on('end', function() {
         console.log('Done');
     });
 ```
@@ -109,7 +110,7 @@ In `parallel` mode:
             console.log('  '+error.message);
         });
     })
-    .on('success', function(){
+    .on('end', function(){
         console.log('Done');
     });
 ```
@@ -130,7 +131,7 @@ In `sequential` mode:
     .on('error', function(err) {
         console.log(err.message);
     })
-    .on('success', function() {
+    .on('end', function() {
         console.log('Done');
     });
 ```
@@ -152,7 +153,7 @@ In `concurrent` mode with 2 parallels executions
             console.log('  '+error.message);
         });
     })
-    .on('success', function(){
+    .on('end', function(){
         console.log('Done');
     });
 ```
@@ -183,7 +184,7 @@ functions.
             next()
         }
     })
-    .on('success', function(){
+    .on('end', function(){
         console.log('Done');
     });
 ```
