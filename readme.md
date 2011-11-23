@@ -11,6 +11,47 @@
 Node Each is a single elegant function to iterate asynchronously over elements 
 both in `sequential`, `parallel` and `concurrent` mode.
 
+Installing
+----------
+
+Via git (or downloaded tarball):
+
+```bash
+    git clone http://github.com/wdavidw/node-each.git
+```
+
+Then, simply copy or link the project inside a discoverable Node directory 
+(eg './node_modules').
+
+Via [npm](http://github.com/isaacs/npm):
+
+```bash
+    npm install each
+```
+
+Quick example
+-------------
+
+The following code traverse an array in `sequential` mode.
+
+```javascript
+    var each = require('each');
+    each( [{id: 1}, {id: 2}, {id: 3}] )
+    .on('item', function(next, element, index) {
+        console.log('element: ', element, '@', index);
+        setTimeout(next, 500);
+    })
+    .on('error', function(err) {
+        console.log(err.message);
+    })
+    .on('end', function() {
+        console.log('Done');
+    });
+```
+
+API
+---
+
 The `each` function signature is: `each(subject)`. 
 
 -   `subject`   
@@ -43,7 +84,7 @@ The following events are send:
     Called only if all the callback have been handled successfully.
 -   `both`   
     Called only once all the items have been handled. It is a conveniency event
-    combining the `error` and `end` event in one call. Return the same argument 
+    combining the `error` and `end` event in one call. Return the same arguments 
     than the `error` or `end` event depending on the operation outturn.
 
 Parallelization modes
@@ -79,20 +120,7 @@ Traversing an array
 
 In `sequential` mode:
 
-```javascript
-    var each = require('each');
-    each( [{id: 1}, {id: 2}, {id: 3}] )
-    .on('item', function(next, element, index) {
-        console.log('element: ', element, '@', index);
-        setTimeout(next, 500);
-    })
-    .on('error', function(err) {
-        console.log(err.message);
-    })
-    .on('end', function() {
-        console.log('Done');
-    });
-```
+See the "Quick example" section.
 
 In `parallel` mode:
 
@@ -100,6 +128,27 @@ In `parallel` mode:
     var each = require('each');
     each( [{id: 1}, {id: 2}, {id: 3}] )
     .parallel( true )
+    .on('item', function(next, element, index) {
+        console.log('element: ', element, '@', index);
+        setTimeout(next, 500);
+    })
+    .on('error', function(err, errors){
+        console.log(err.message);
+        errors.forEach(function(error){
+            console.log('  '+error.message);
+        });
+    })
+    .on('end', function(){
+        console.log('Done');
+    });
+```
+
+In `concurrent` mode with 4 parallel executions:
+
+```javascript
+    var each = require('each');
+    each( [{id: 1}, {id: 2}, {id: 3}] )
+    .parallel( 4 )
     .on('item', function(next, element, index) {
         console.log('element: ', element, '@', index);
         setTimeout(next, 500);
@@ -189,30 +238,13 @@ functions.
     });
 ```
 
-Installing
-----------
-
-Via git (or downloaded tarball):
-
-```bash
-    git clone http://github.com/wdavidw/node-each.git
-```
-
-Then, simply copy or link the project inside a discoverable Node directory 
-(eg './node_modules').
-
-Via [npm](http://github.com/isaacs/npm):
-
-```bash
-    npm install each
-```
-
 Testing
 -------
 
 Run the samples:
 
 ```bash
+    node samples/array_concurrent.js
     node samples/array_parallel.js
     node samples/array_sequential.js
     node samples/object_concurrent.js
@@ -223,7 +255,7 @@ Run the samples:
 Run the tests with `expresso`:
 
 ```bash
-    expresso -s test
+    expresso -s
 ```
 
     

@@ -56,12 +56,18 @@ module.exports = (elements) ->
         # This is the end
         if done is total or (errors.length and started is done)
             eacher.readable = false
-            if parallel isnt 1 and errors.length
-                args = [new Error("#{errors.length} error(s)"), errors]
-                eacher.emit 'error', args... if eacher.listeners('error').length
-            else if errors.length
-                args = [errors[0]]
-                eacher.emit 'error', args... if eacher.listeners('error').length
+            if errors.length
+                if parallel isnt 1
+                    args = [new Error("#{errors.length} error(s)"), errors]
+                else
+                    args = [errors[0]]
+                # emit error only if
+                # - there is an error callback
+                # - there is no error callback and no both callback
+                lerror = eacher.listeners('error').length
+                lboth = eacher.listeners('both').length
+                emitError = lerror or (not lerror and not lboth)
+                eacher.emit 'error', args... if emitError
             else
                 args = []
                 eacher.emit 'end'
