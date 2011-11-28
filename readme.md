@@ -35,18 +35,18 @@ Quick example
 The following code traverse an array in `sequential` mode.
 
 ```javascript
-    var each = require('each');
-    each( [{id: 1}, {id: 2}, {id: 3}] )
-    .on('item', function(next, element, index) {
-        console.log('element: ', element, '@', index);
-        setTimeout(next, 500);
-    })
-    .on('error', function(err) {
-        console.log(err.message);
-    })
-    .on('end', function() {
-        console.log('Done');
-    });
+var each = require('each');
+each( [{id: 1}, {id: 2}, {id: 3}] )
+.on('item', function(next, element, index) {
+    console.log('element: ', element, '@', index);
+    setTimeout(next, 500);
+})
+.on('error', function(err) {
+    console.log(err.message);
+})
+.on('end', function() {
+    console.log('Done');
+});
 ```
 
 API
@@ -125,43 +125,43 @@ See the "Quick example" section.
 In `parallel` mode:
 
 ```javascript
-    var each = require('each');
-    each( [{id: 1}, {id: 2}, {id: 3}] )
-    .parallel( true )
-    .on('item', function(next, element, index) {
-        console.log('element: ', element, '@', index);
-        setTimeout(next, 500);
-    })
-    .on('error', function(err, errors){
-        console.log(err.message);
-        errors.forEach(function(error){
-            console.log('  '+error.message);
-        });
-    })
-    .on('end', function(){
-        console.log('Done');
+var each = require('each');
+each( [{id: 1}, {id: 2}, {id: 3}] )
+.parallel( true )
+.on('item', function(next, element, index) {
+    console.log('element: ', element, '@', index);
+    setTimeout(next, 500);
+})
+.on('error', function(err, errors){
+    console.log(err.message);
+    errors.forEach(function(error){
+        console.log('  '+error.message);
     });
+})
+.on('end', function(){
+    console.log('Done');
+});
 ```
 
 In `concurrent` mode with 4 parallel executions:
 
 ```javascript
-    var each = require('each');
-    each( [{id: 1}, {id: 2}, {id: 3}] )
-    .parallel( 4 )
-    .on('item', function(next, element, index) {
-        console.log('element: ', element, '@', index);
-        setTimeout(next, 500);
-    })
-    .on('error', function(err, errors){
-        console.log(err.message);
-        errors.forEach(function(error){
-            console.log('  '+error.message);
-        });
-    })
-    .on('end', function(){
-        console.log('Done');
+var each = require('each');
+each( [{id: 1}, {id: 2}, {id: 3}] )
+.parallel( 4 )
+.on('item', function(next, element, index) {
+    console.log('element: ', element, '@', index);
+    setTimeout(next, 500);
+})
+.on('error', function(err, errors){
+    console.log(err.message);
+    errors.forEach(function(error){
+        console.log('  '+error.message);
     });
+})
+.on('end', function(){
+    console.log('Done');
+});
 ```
 
 Traversing an object
@@ -170,41 +170,41 @@ Traversing an object
 In `sequential` mode:
 
 ```javascript
-    var each = require('each');
-    each( {id_1: 1, id_2: 2, id_3: 3} )
-    .on('item', function(next, key, value) {
-        console.log('key: ', key);
-        console.log('value: ', value);
-        setTimeout(next, 500);
-    })
-    .on('error', function(err) {
-        console.log(err.message);
-    })
-    .on('end', function() {
-        console.log('Done');
-    });
+var each = require('each');
+each( {id_1: 1, id_2: 2, id_3: 3} )
+.on('item', function(next, key, value) {
+    console.log('key: ', key);
+    console.log('value: ', value);
+    setTimeout(next, 500);
+})
+.on('error', function(err) {
+    console.log(err.message);
+})
+.on('end', function() {
+    console.log('Done');
+});
 ```
 
 In `concurrent` mode with 2 parallels executions
 
 ```javascript
-    var each = require('each');
-    each( {id_1: 1, id_2: 2, id_3: 3} )
-    .parallel( 2 )
-    .on('item', function(next, key, value) {
-        console.log('key: ', key);
-        console.log('value: ', value);
-        setTimeout(next, 500);
-    })
-    .on('error', function(err, errors){
-        console.log(err.message);
-        errors.forEach(function(error){
-            console.log('  '+error.message);
-        });
-    })
-    .on('end', function(){
-        console.log('Done');
+var each = require('each');
+each( {id_1: 1, id_2: 2, id_3: 3} )
+.parallel( 2 )
+.on('item', function(next, key, value) {
+    console.log('key: ', key);
+    console.log('value: ', value);
+    setTimeout(next, 500);
+})
+.on('error', function(err, errors){
+    console.log(err.message);
+    errors.forEach(function(error){
+        console.log('  '+error.message);
     });
+})
+.on('end', function(){
+    console.log('Done');
+});
 ```
 
 Readable Stream
@@ -216,23 +216,23 @@ functions or to pipe the result to a writeable stream in which case it is your
 responsibility to emit the `data` event.
 
 ```javascript
-    var fs = require('fs');
-    var each = require('each');
-    
-    var eacher = each( {id_1: 1, id_2: 2, id_3: 3} )
-    .on('item', function(next, key, value) {
-        setTimeout(function(){
-            eacher.emit('data', key + ',' + value + '\n');
-            next();
-        }, 1);
-    })
-    .on('end', function(){
-        console.log('Done');
-    });
-    
-    eacher.pipe(
-        fs.createWriteStream(__dirname + '/out.csv', { flags: 'w', encoding: null, mode: 0666 })
-    );
+var fs = require('fs');
+var each = require('each');
+
+var eacher = each( {id_1: 1, id_2: 2, id_3: 3} )
+.on('item', function(next, key, value) {
+    setTimeout(function(){
+        eacher.emit('data', key + ',' + value + '\n');
+        next();
+    }, 1);
+})
+.on('end', function(){
+    console.log('Done');
+});
+
+eacher.pipe(
+    fs.createWriteStream(__dirname + '/out.csv', { flags: 'w', encoding: null, mode: 0666 })
+);
 ```
 
 Testing
@@ -241,18 +241,18 @@ Testing
 Run the samples:
 
 ```bash
-    node samples/array_concurrent.js
-    node samples/array_parallel.js
-    node samples/array_sequential.js
-    node samples/object_concurrent.js
-    node samples/object_sequential.js
-    node samples/readable_stream.js
+node samples/array_concurrent.js
+node samples/array_parallel.js
+node samples/array_sequential.js
+node samples/object_concurrent.js
+node samples/object_sequential.js
+node samples/readable_stream.js
 ```
 
 Run the tests with `expresso`:
 
 ```bash
-    expresso -s
+expresso -s
 ```
 
     
