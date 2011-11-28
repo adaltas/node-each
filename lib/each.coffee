@@ -1,5 +1,5 @@
 
-EventEmitter = require('events').EventEmitter
+Stream = require 'stream'
 
 ###
 each(elements)
@@ -19,11 +19,19 @@ module.exports = (elements) ->
     keys = Object.keys elements if isObject
     started = 0
     done = 0
-    pause = 0
     errors = []
     total = if keys then keys.length else elements.length
     parallel = 1
-    eacher = new EventEmitter
+    eacher = new Stream
+    eacher.paused = 0
+    eacher.pause = ->
+        eacher.paused++
+    eacher.resume = ->
+        eacher.paused--
+        run()
+    eacher.destroy = ->
+        # nothing
+    eacher.readable = true
     eacher.parallel = (mode) ->
         # Concurrent
         if typeof mode is 'number' then parallel = mode
@@ -32,14 +40,6 @@ module.exports = (elements) ->
         # Sequential (in case parallel is called multiple times)
         else parallel = 1
         eacher
-    eacher.pause = ->
-        pause++
-    eacher.resume = ->
-        pause--
-        run()
-    eacher.destroy = ->
-        # nothing
-    eacher.readable = true
     call = () ->
         if keys
         then args = [next, keys[started], elements[keys[started]]]
@@ -52,7 +52,7 @@ module.exports = (elements) ->
             # error, end or both callbacks
             next e if eacher.readable
     run = () ->
-        return if pause
+        return if eacher.paused
         # This is the end
         if done is total or (errors.length and started is done)
             eacher.readable = false

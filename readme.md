@@ -212,30 +212,27 @@ Readable Stream
 
 The deferred object return by each partially implement the Node Readable Stream 
 API. It can be used to throttle the iteration with the `pause` and `resume` 
-functions.
+functions or to pipe the result to a writeable stream in which case it is your
+responsibility to emit the `data` event.
 
 ```javascript
+    var fs = require('fs');
     var each = require('each');
+    
     var eacher = each( {id_1: 1, id_2: 2, id_3: 3} )
-    .parallel( 10 )
     .on('item', function(next, key, value) {
-        if(value === 1){
-            eacher.pause()
-            setTimeout(function(){
-                eacher.resume()
-                next()
-            }, 500);
-        }else{
-            eacher.pause()
-            setTimeout(function(){
-                eacher.resume()
-            }, 500);
-            next()
-        }
+        setTimeout(function(){
+            eacher.emit('data', key + ',' + value + '\n');
+            next();
+        }, 1);
     })
     .on('end', function(){
         console.log('Done');
     });
+    
+    eacher.pipe(
+        fs.createWriteStream(__dirname + '/out.csv', { flags: 'w', encoding: null, mode: 0666 })
+    );
 ```
 
 Testing
