@@ -58,7 +58,9 @@ module.exports = (elements) ->
             eacher.readable = false
             if errors.length
                 if parallel isnt 1
-                    args = [new Error("#{errors.length} error(s)"), errors]
+                    if errors.length is 1
+                    then args = [errors[0], errors]
+                    else args = [new Error("Multiple errors (#{errors.length})"), errors]
                 else
                     args = [errors[0]]
                 # emit error only if

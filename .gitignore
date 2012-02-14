@@ -1,4 +1,5 @@
 .*
 /node_modules
+/samples/out.csv
 /shell
 !.gitignore

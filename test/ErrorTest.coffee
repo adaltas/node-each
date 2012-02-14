@@ -8,7 +8,7 @@ module.exports =
         error_called = false
         error_assert = (err, errs) ->
             assert.eql 9, current
-            assert.eql '2 error(s)', err.message
+            assert.eql 'Multiple errors (2)', err.message
             assert.eql 2, errs.length
             assert.eql 'Testing error in 6', errs[0].message
             assert.eql 'Testing error in 7', errs[1].message
@@ -32,7 +32,11 @@ module.exports =
             assert.ok error_called
             error_assert.call null, err, errs
             next()
-    'Error # Parallel # error callback': (next) ->
+    'Error # Parallel # multiple errors # error callback': (next) ->
+        # when multiple errors are thrown, a new error object is created
+        # with a message indicating the number of errors. The original 
+        # errors are available as an array in the second argument of the
+        # `error` event.
         current = 0
         each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
         .parallel( true )
@@ -46,10 +50,33 @@ module.exports =
                     n()
             , 100
         .on 'error', (err, errs) ->
-            assert.eql '2 error(s)', err.message
+            assert.eql 'Multiple errors (2)', err.message
             assert.eql 2, errs.length
             assert.eql 'Testing error in 1', errs[0].message
             assert.eql 'Testing error in 3', errs[1].message
+            return next()
+        .on 'end', (err, errs) ->
+            assert.ok false
+    'Error # Parallel # single error # error callback': (next) ->
+        # when on one error is thrown, the error is passed to
+        # the `error` event as is as well as a single element array 
+        # of the second argument.
+        current = 0
+        each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
+        .parallel( true )
+        .on 'item', (n, element, index) ->
+            assert.eql current, index
+            current++
+            setTimeout ->
+                if element.id is 3
+                    n( new Error "Testing error in #{element.id}" )
+                else
+                    n()
+            , 100
+        .on 'error', (err, errs) ->
+            assert.eql 'Testing error in 3', err.message
+            assert.eql 1, errs.length
+            assert.eql 'Testing error in 3', errs[0].message
             return next()
         .on 'end', (err, errs) ->
             assert.ok false
@@ -67,7 +94,7 @@ module.exports =
                     n()
             , 100
         .on 'both', (err, errs) ->
-            assert.eql '2 error(s)', err.message
+            assert.eql 'Multiple errors (2)', err.message
             assert.eql 2, errs.length
             assert.eql 'Testing error in 1', errs[0].message
             assert.eql 'Testing error in 3', errs[1].message
@@ -85,7 +112,7 @@ module.exports =
                 n( new Error "Testing error in #{element.id}" )
             else setTimeout n, 100
         .on 'both', (err, errs) ->
-            assert.eql '2 error(s)', err.message
+            assert.eql 'Multiple errors (2)', err.message
             assert.eql 2, errs.length
             assert.eql 'Testing error in 1', errs[0].message
             assert.eql 'Testing error in 3', errs[1].message
