@@ -12,7 +12,7 @@ Chained and parallel async iterator in one elegant function
 ###
 module.exports = (elements) ->
     type = typeof elements
-    if elements is null or type is 'undefined' or type is 'number' or type is 'string' or type is 'function'
+    if elements is null or type is 'undefined' or type is 'number' or type is 'string' or type is 'function' or type is 'boolean'
         elements = [elements]
     else unless Array.isArray elements
         isObject = true
@@ -24,14 +24,14 @@ module.exports = (elements) ->
     parallel = 1
     eacher = new Stream
     eacher.paused = 0
+    eacher.readable = true
     eacher.pause = ->
         eacher.paused++
     eacher.resume = ->
         eacher.paused--
         run()
-    eacher.destroy = ->
+    # eacher.destroy = ->
         # nothing
-    eacher.readable = true
     eacher.parallel = (mode) ->
         # Concurrent
         if typeof mode is 'number' then parallel = mode

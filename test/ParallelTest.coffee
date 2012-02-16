@@ -90,6 +90,34 @@ module.exports =
         .on 'end', ->
             assert.eql current, 1
             next()
+    'Parallel # boolean': (next) ->
+        # Current tick
+        current = 0
+        each( false )
+        .parallel( true )
+        .on 'item', (next, element, index) ->
+            assert.eql index, 0
+            current++
+            assert.eql false, element
+            next()
+        .on 'error', (err) ->
+            assert.ifError err
+        .on 'end', ->
+            assert.eql current, 1
+            # New tick
+            current = 0
+            each( true )
+            .parallel( true )
+            .on 'item', (next, element, index) ->
+                assert.eql index, 0
+                current++
+                assert.eql true, element
+                setTimeout next, 100
+            .on 'error', (err) ->
+                assert.ifError err
+            .on 'end', ->
+                assert.eql current, 1
+                next()
     'Parallel # function': (next) ->
         current = 0
         source = (c) -> c()
