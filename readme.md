@@ -78,12 +78,16 @@ The `each` function signature is: `each(subject)`.
 
 The return object is an instance of `EventEmitter`.
 
-The following functions are available:
+The following properties and functions are available:
 
 -   `parallel`   
     The second argument is optional and indicate wether or not you want the 
     iteration to run in `sequential`, `parallel` or `concurrent` mode. See below
     for more details about the different modes.
+-   `paused`
+    Indicate the state of the current event emitter
+-   `readable`
+    Indicate if the stream will emit more event
 
 The following events are send:
 
@@ -93,17 +97,20 @@ The following events are send:
     The first argument, `next`, is a function to call at the end of your 
     callback. It may be called with an error instance to trigger the `error` event.
     For objects, the second and third arguments are the key and value 
-    of each elements. For anything else, the second and thirds argument are the 
+    of each elements. For anything else, the second and third arguments are the 
     value and the index (starting at 0) of each elements.
 -   `error`   
     Called only if an error occured. The iteration will be stoped on error meaning
-    no `item` event will be called other than the ones already provisionned. 
+    no `item` event will be called other than the ones already provisionned. Recieves
+    an error object as its first argument and eventually a second argument. See 
+    the `dealing with errors` section for more information.
 -   `end`   
-    Called only if all the callback have been handled successfully.
+    Called only if all the callback have been handled successfully. No argument is 
+    provided in the callback.
 -   `both`   
     Called only once all the items have been handled. It is a conveniency event
     combining the `error` and `end` event in one call. Return the same arguments 
-    than the `error` or `end` event depending on the operation outturn.
+    than the `error` or `end` events depending on the operation outturn.
 
 Parallelization modes
 ---------------------
