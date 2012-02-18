@@ -8,11 +8,11 @@ module.exports =
         end_called = false
         each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
         .parallel( 4 )
-        .on 'item', (n, element, index) ->
+        .on 'item', (nnext, element, index) ->
             assert.eql current, index
             current++
             assert.eql current, element.id
-            setTimeout n, 100
+            setTimeout next, 100
         .on 'end', ->
             assert.eql current, 9
             end_called = true
@@ -24,11 +24,11 @@ module.exports =
         current = 0
         each( [ {id: 1} ] )
         .parallel( 4 )
-        .on 'item', (n, element, index) ->
+        .on 'item', (next, element, index) ->
             assert.eql current, index
             current++
             assert.eql current, element.id
-            setTimeout n, 100
+            setTimeout next, 100
         .on 'error', (err) ->
             assert.ifError err
         .on 'end', ->
@@ -38,9 +38,9 @@ module.exports =
         current = 0
         each( [] )
         .parallel( 4 )
-        .on 'item', (n, element, index) ->
+        .on 'item', (next, element, index) ->
             current++
-            n()
+            next()
         .on 'error', (err) ->
             assert.ifError err
         .on 'both', ->
@@ -50,11 +50,11 @@ module.exports =
         current = 0
         each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
         .parallel( 4 )
-        .on 'item', (n, element, index) ->
+        .on 'item', (next, element, index) ->
             assert.eql current, index
             current++
             assert.eql current, element.id
-            n()
+            next()
         .on 'error', (err) ->
             assert.ifError err
         .on 'end', ->
@@ -64,11 +64,11 @@ module.exports =
         current = 0
         each( id_1: 1, id_2: 2, id_3: 3, id_4: 4, id_5: 5, id_6: 6, id_7: 7, id_8: 8, id_9: 9 )
         .parallel( 4 )
-        .on 'item', (n, key, value) ->
+        .on 'item', (next, key, value) ->
             current++
             assert.eql "id_#{current}", key
             assert.eql current, value
-            setTimeout n, 100
+            setTimeout next, 100
         .on 'error', (err) ->
             assert.ifError err
         .on 'end', ->
@@ -78,11 +78,11 @@ module.exports =
         current = 0
         each( id_1: 1, id_2: 2, id_3: 3, id_4: 4, id_5: 5, id_6: 6, id_7: 7, id_8: 8, id_9: 9 )
         .parallel( 4 )
-        .on 'item', (n, key, value) ->
+        .on 'item', (next, key, value) ->
             current++
             assert.eql "id_#{current}", key
             assert.eql current, value
-            n()
+            next()
         .on 'error', (err) ->
             assert.ifError err
         .on 'end', ->
@@ -92,11 +92,11 @@ module.exports =
         current = 0
         each( (c) -> c() )
         .parallel( 4 )
-        .on 'item', (n, element, index) ->
+        .on 'item', (next, element, index) ->
             assert.eql current, index
             current++
             assert.eql typeof element, 'function'
-            element n
+            element next
         .on 'error', (err) ->
             assert.ifError err
         .on 'end', ->

@@ -8,11 +8,11 @@ module.exports =
         end_called = false
         each( [{id: 1}, {id: 2}, {id: 3}])
         .parallel( true )
-        .on 'item', (n, element, index) ->
+        .on 'item', (next, element, index) ->
             assert.eql current, index
             current++
             assert.eql current, element.id
-            setTimeout n, 100
+            setTimeout next, 100
         .on 'end', ->
             assert.eql current, 3
             end_called = true
@@ -24,11 +24,11 @@ module.exports =
         current = 0
         each( {id_1: 1, id_2: 2, id_3: 3} )
         .parallel( true )
-        .on 'item', (n, key, value) ->
+        .on 'item', (next, key, value) ->
             current++
             assert.eql "id_#{current}", key
             assert.eql current, value
-            setTimeout n, 100
+            setTimeout next, 100
         .on 'error', (err) ->
             assert.ifError err
         .on 'end', ->
@@ -38,11 +38,11 @@ module.exports =
         current = 0
         each( undefined )
         .parallel( true )
-        .on 'item', (n, element, index) ->
+        .on 'item', (next, element, index) ->
             assert.eql current, index
             current++
             assert.eql undefined, element
-            setTimeout n, 100
+            setTimeout next, 100
         .on 'error', (err) ->
             assert.ifError err
         .on 'end', ->
@@ -52,11 +52,11 @@ module.exports =
         current = 0
         each( null )
         .parallel( true )
-        .on 'item', (n, element, index) ->
+        .on 'item', (next, element, index) ->
             assert.eql current, index
             current++
             assert.eql null, element
-            setTimeout n, 100
+            setTimeout next, 100
         .on 'error', (err) ->
             assert.ifError err
         .on 'end', ->
@@ -66,11 +66,11 @@ module.exports =
         current = 0
         each( 'id_1' )
         .parallel( true )
-        .on 'item', (n, element, index) ->
+        .on 'item', (next, element, index) ->
             assert.eql current, index
             current++
             assert.eql "id_1", element
-            setTimeout n, 100
+            setTimeout next, 100
         .on 'error', (err) ->
             assert.ifError err
         .on 'end', ->
@@ -80,11 +80,11 @@ module.exports =
         current = 0
         each( 3.14 )
         .parallel( true )
-        .on 'item', (n, element, index) ->
+        .on 'item', (next, element, index) ->
             assert.eql current, index
             current++
             assert.eql 3.14, element
-            setTimeout n, 100
+            setTimeout next, 100
         .on 'error', (err) ->
             assert.ifError err
         .on 'end', ->
@@ -123,11 +123,11 @@ module.exports =
         source = (c) -> c()
         each( source )
         .parallel( true )
-        .on 'item', (n, element, index) ->
+        .on 'item', (next, element, index) ->
             assert.eql current, index
             current++
             assert.eql typeof element, 'function'
-            element n
+            element next
         .on 'error', (err) ->
             assert.ifError err
         .on 'end', ->
