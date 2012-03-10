@@ -116,7 +116,7 @@ Parallelization modes
 ---------------------
 
 -   `sequential`   
-    Parallel is `false`, default if no parallel mode is defined.
+    Parallel is `false` or set to `1`, default if no parallel mode is defined.
     Callbacks are chained meaning each callback is called once the previous 
     callback is completed (after calling the `next` function argument).
 -   `parallel`
@@ -275,10 +275,10 @@ node samples/object_sequential.js
 node samples/readable_stream.js
 ```
 
-Run the tests with `expresso`:
+Run all the tests:
 
 ```bash
-expresso -s
+make test
 ```
 
     
