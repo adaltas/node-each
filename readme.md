@@ -1,3 +1,4 @@
+[![Build Status](https://secure.travis-ci.org/wdavidw/node-each.png)](http://travis-ci.org/wdavidw/node-each)
 
 <pre style="font-family:courier">
  _   _           _        ______           _     
