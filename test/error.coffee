@@ -14,14 +14,14 @@ describe 'Error', ->
             errs[1].message.should.eql 'Testing error in 7'
         each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ] )
         .parallel( 4 )
-        .on 'item', (n, element, index) ->
+        .on 'item', (next, element, index) ->
             index.should.eql current
             current++
             setTimeout ->
                 if element.id is 6 or element.id is 7
-                    n new Error "Testing error in #{element.id}"
+                    next new Error "Testing error in #{element.id}"
                 else 
-                    n()
+                    next()
             , 100
         .on 'error', (err, errs) ->
             error_assert.call null, err, errs
@@ -40,14 +40,14 @@ describe 'Error', ->
         current = 0
         each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
         .parallel( true )
-        .on 'item', (n, element, index) ->
+        .on 'item', (next, element, index) ->
             index.should.eql current
             current++
             setTimeout ->
                 if element.id is 1 or element.id is 3
-                    n( new Error "Testing error in #{element.id}" )
+                    next( new Error "Testing error in #{element.id}" )
                 else
-                    n()
+                    next()
             , 100
         .on 'error', (err, errs) ->
             err.message.should.eql 'Multiple errors (2)'
@@ -64,14 +64,14 @@ describe 'Error', ->
         current = 0
         each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
         .parallel( true )
-        .on 'item', (n, element, index) ->
+        .on 'item', (next, element, index) ->
             index.should.eql current
             current++
             setTimeout ->
                 if element.id is 3
-                    n( new Error "Testing error in #{element.id}" )
+                    next( new Error "Testing error in #{element.id}" )
                 else
-                    n()
+                    next()
             , 100
         .on 'error', (err, errs) ->
             err.message.should.eql 'Testing error in 3'
@@ -84,14 +84,14 @@ describe 'Error', ->
         current = 0
         each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
         .parallel( true )
-        .on 'item', (n, element, index) ->
+        .on 'item', (next, element, index) ->
             index.should.eql current
             current++
             setTimeout ->
                 if element.id is 1 or element.id is 3
-                    n( new Error "Testing error in #{element.id}" )
+                    next( new Error "Testing error in #{element.id}" )
                 else
-                    n()
+                    next()
             , 100
         .on 'both', (err, errs) ->
             err.message.should.eql 'Multiple errors (2)'
@@ -105,27 +105,44 @@ describe 'Error', ->
         current = 0
         each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
         .parallel( true )
-        .on 'item', (n, element, index) ->
+        .on 'item', (next, element, index) ->
             index.should.eql current
             current++
             if element.id is 1 or element.id is 3
-                n( new Error "Testing error in #{element.id}" )
-            else setTimeout n, 100
+                next( new Error "Testing error in #{element.id}" )
+            else setTimeout next, 100
         .on 'both', (err, errs) ->
-            err.message.should.eql 'Multiple errors (2)'
-            errs.length.should.eql 2
-            errs[0].message.should.eql 'Testing error in 1'
-            errs[1].message.should.eql 'Testing error in 3'
-            return next()
-    it 'Sequential # error callback', (next) ->
+            # In this specific case, since the item handler
+            # send error sequentially, we are only receiving
+            # one error
+            err.message.should.eql 'Testing error in 1'
+            errs.length.should.eql 1
+            next()
+    it 'Sequential # sync # error callback', (next) ->
         current = 0
         each( [ {id: 1}, {id: 2}, {id: 3} ] )
-        .on 'item', (n, element, index) ->
+        .on 'item', (next, element, index) ->
             index.should.eql current
             current++
             if element.id is 2
-                n( new Error 'Testing error' )
-            else setTimeout n, 100
+                next( new Error 'Testing error' )
+            else next()
+        .on 'error', (err) ->
+            err.message.should.eql 'Testing error'
+            next()
+        .on 'end', (err, errs) ->
+            false.should.be.ok 
+    it 'Sequential # async # error callback', (next) ->
+        current = 0
+        each( [ {id: 1}, {id: 2}, {id: 3} ] )
+        .on 'item', (next, element, index) ->
+            index.should.eql current
+            current++
+            if element.id is 2
+                setTimeout -> 
+                    next( new Error 'Testing error' )
+                , 100
+            else setTimeout next, 100
         .on 'error', (err) ->
             err.message.should.eql 'Testing error'
             next()

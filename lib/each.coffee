@@ -45,6 +45,7 @@ module.exports = (elements) ->
         then args = [next, keys[started], elements[keys[started]]]
         else args = [next, elements[started], started]
         started++
+        # console.log 'start'
         try
             eacher.emit 'item', args...
         catch e
@@ -54,6 +55,7 @@ module.exports = (elements) ->
     run = () ->
         return if eacher.paused
         # This is the end
+        # console.log (done is total or (errors.length and started is done)), '=====', done, total, 'OR', errors.length isnt 0, started, done
         if done is total or (errors.length and started is done)
             eacher.readable = false
             if errors.length
@@ -74,15 +76,15 @@ module.exports = (elements) ->
                 args = []
                 eacher.emit 'end'
             return eacher.emit 'both', args...
-        return if errors.length
-        # Dont use for... since done may change in sync mode
-        call() while Math.min( (parallel - started + done), (total - started) )
+        return if errors.length isnt 0
+        while Math.min( (parallel - started + done), (total - started) )
+            # Stop on synchronously sent error
+            break if errors.length isnt 0
+            call() 
+        # call()
     next = (err) ->
         errors.push err if err? and err instanceof Error
         done++
         run()
-    process.nextTick ->
-        # Empty iteration
-        return run() if total is 0
-        run() for key in [0 ... Math.min(parallel, total)]
+    process.nextTick run
     eacher
