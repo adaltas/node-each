@@ -1,136 +1,136 @@
 
-assert = require 'assert'
+should = require 'should'
 each = require '../index'
 
-module.exports = 
-    'Parallel # array': (next) ->
+describe 'Parallel', ->
+    it 'Parallel # array', (next) ->
         current = 0
         end_called = false
         each( [{id: 1}, {id: 2}, {id: 3}])
         .parallel( true )
         .on 'item', (next, element, index) ->
-            assert.eql current, index
+            index.should.eql current
             current++
-            assert.eql current, element.id
+            element.id.should.eql current
             setTimeout next, 100
         .on 'end', ->
-            assert.eql current, 3
+            current.should.eql 3
             end_called = true
         .on 'both', (err) ->
-            assert.ifError err
-            assert.ok end_called
+            should.not.exist err
+            end_called.should.be.ok
             next()
-    'Parallel # object': (next) ->
+    it 'Parallel # object', (next) ->
         current = 0
         each( {id_1: 1, id_2: 2, id_3: 3} )
         .parallel( true )
         .on 'item', (next, key, value) ->
             current++
-            assert.eql "id_#{current}", key
-            assert.eql current, value
+            key.should.eql "id_#{current}"
+            value.should.eql current
             setTimeout next, 100
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 3
+            current.should.eql 3
             next()
-    'Parallel # undefined': (next) ->
+    it 'Parallel # undefined', (next) ->
         current = 0
         each( undefined )
         .parallel( true )
         .on 'item', (next, element, index) ->
-            assert.eql current, index
+            index.should.eql current
             current++
-            assert.eql undefined, element
+            should.not.exist element
             setTimeout next, 100
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 1
+            current.should.eql 1
             next()
-    'Parallel # null': (next) ->
+    it 'Parallel # null', (next) ->
         current = 0
         each( null )
         .parallel( true )
         .on 'item', (next, element, index) ->
-            assert.eql current, index
+            index.should.eql current
             current++
-            assert.eql null, element
+            should.not.exist element
             setTimeout next, 100
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 1
+            current.should.eql 1
             next()
-    'Parallel # string': (next) ->
+    it 'Parallel # string', (next) ->
         current = 0
         each( 'id_1' )
         .parallel( true )
         .on 'item', (next, element, index) ->
-            assert.eql current, index
+            index.should.eql current
             current++
-            assert.eql "id_1", element
+            element.should.eql "id_1"
             setTimeout next, 100
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 1
+            current.should.eql 1
             next()
-    'Parallel # number': (next) ->
+    it 'Parallel # number', (next) ->
         current = 0
         each( 3.14 )
         .parallel( true )
         .on 'item', (next, element, index) ->
-            assert.eql current, index
+            index.should.eql current
             current++
-            assert.eql 3.14, element
+            element.should.eql 3.14
             setTimeout next, 100
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 1
+            current.should.eql 1
             next()
-    'Parallel # boolean': (next) ->
+    it 'Parallel # boolean', (next) ->
         # Current tick
         current = 0
         each( false )
         .parallel( true )
         .on 'item', (next, element, index) ->
-            assert.eql index, 0
+            index.should.eql 0
             current++
-            assert.eql false, element
+            element.should.not.be.ok
             next()
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 1
+            current.should.eql 1
             # New tick
             current = 0
             each( true )
             .parallel( true )
             .on 'item', (next, element, index) ->
-                assert.eql index, 0
+                index.should.eql 0
                 current++
-                assert.eql true, element
+                element.should.be.ok
                 setTimeout next, 100
             .on 'error', (err) ->
-                assert.ifError err
+                should.not.exist err
             .on 'end', ->
-                assert.eql current, 1
+                current.should.eql 1
                 next()
-    'Parallel # function': (next) ->
+    it 'Parallel # function', (next) ->
         current = 0
         source = (c) -> c()
         each( source )
         .parallel( true )
         .on 'item', (next, element, index) ->
-            assert.eql current, index
+            index.should.eql current
             current++
-            assert.eql typeof element, 'function'
+            element.should.be.a 'function'
             element next
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 1
+            current.should.eql 1
             next()
         

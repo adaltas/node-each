@@ -1,101 +1,101 @@
 
-assert = require 'assert'
+should = require 'should'
 each = require '../index'
 
-module.exports = 
-    'Sequential # array': (next) ->
+describe 'Sequential', ->
+    it 'array', (next) ->
         current = 0
         end_called = false
         each( [ {id: 1}, {id: 2}, {id: 3} ] )
         .on 'item', (next, element, index) ->
-            assert.eql current, index
+            index.should.eql current
             current++
-            assert.eql current, element.id
+            element.id.should.eql current
             setTimeout next, 100
         .on 'end', ->
-            assert.eql current, 3
+            current.should.eql 3
             end_called = true
         .on 'both', (err) ->
-            assert.ifError err
-            assert.ok end_called
+            should.not.exist err
+            end_called.should.be.ok
             next()
-    'Sequential # object': (next) ->
+    it 'object', (next) ->
         current = 0
         each( {id_1: 1, id_2: 2, id_3: 3} )
         .on 'item', (next, key, value) ->
             current++
-            assert.eql "id_#{current}", key
-            assert.eql current, value
+            key.should.eql "id_#{current}"
+            value.should.eql current
             setTimeout next, 100
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 3
+            current.should.eql 3
             next()
-    'Sequential # undefined': (next) ->
+    it 'undefined', (next) ->
         current = 0
         each( undefined )
         .on 'item', (next, element, index) ->
-            assert.eql current, index
+            index.should.eql current
             current++
-            assert.eql undefined, element
+            should.not.exist element
             setTimeout next, 100
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 1
+            current.should.eql 1
             next()
-    'Sequential # null': (next) ->
+    it 'null', (next) ->
         current = 0
         each( null )
         .on 'item', (next, element, index) ->
-            assert.eql current, index
+            index.should.eql current
             current++
-            assert.eql null, element
+            should.not.exist element
             setTimeout next, 100
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 1
+            current.should.eql 1
             next()
-    'Sequential # string': (next) ->
+    it 'string', (next) ->
         current = 0
         each( 'id_1' )
         .on 'item', (nnext, element, index) ->
-            assert.eql current, index
+            index.should.eql current
             current++
-            assert.eql "id_1", element
+            element.should.eql "id_1"
             setTimeout next, 100
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 1
+            current.should.eql 1
             next()
-    'Sequential # number': (next) ->
+    it 'number', (next) ->
         current = 0
         each( 3.14 )
         .on 'item', (next, element, index) ->
-            assert.eql current, index
+            index.should.eql current
             current++
-            assert.eql 3.14, element
+            element.should.eql 3.14
             setTimeout next, 100
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 1
+            current.should.eql 1
             next()
-    'Sequential # function': (next) ->
+    it 'function', (next) ->
         current = 0
         source = (c) -> c()
         each(source)
         .on 'item', (next, element, index) ->
-            assert.eql current, index
+            index.should.eql current
             current++
-            assert.eql typeof element, 'function'
+            element.should.be.a 'function'
             element next
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 1
+            current.should.eql 1
             next()
 

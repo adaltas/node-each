@@ -9,6 +9,10 @@
     "dependencies": {
         "coffee-script": "latest"
     },
+    "devDependencies": {
+        "should": "latest",
+        "mocha": "latest"
+    },
     "engines": {
         "node": ">= 0.4.0"
     },

@@ -1,40 +1,40 @@
 
-assert = require 'assert'
+should = require 'should'
 each = require '../index'
 
-module.exports = 
-    'Concurrent # array # multiple elements # async callbacks': (next) ->
+describe 'Concurrent', ->
+    it 'array # multiple elements # async callbacks', (next) ->
         current = 0
         end_called = false
         each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
         .parallel( 4 )
-        .on 'item', (nnext, element, index) ->
-            assert.eql current, index
+        .on 'item', (next, element, index) ->
+            index.should.eql current
             current++
-            assert.eql current, element.id
+            element.id.should.eql current, 
             setTimeout next, 100
         .on 'end', ->
-            assert.eql current, 9
+            current.should.eql 9
             end_called = true
         .on 'both', (err) ->
-            assert.ifError err
-            assert.ok end_called
+            should.not.exist err
+            end_called.should.be.ok
             next()
-    'Concurrent # array # one element # async callbacks': (next) ->
+    it 'array # one element # async callbacks', (next) ->
         current = 0
         each( [ {id: 1} ] )
         .parallel( 4 )
         .on 'item', (next, element, index) ->
-            assert.eql current, index
+            index.should.eql current
             current++
-            assert.eql current, element.id
+            element.id.should.eql current
             setTimeout next, 100
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 1
+            current.should.eql 1
             setTimeout next, 100
-    'Concurrent # array # empty': (next) ->
+    it 'array # empty', (next) ->
         current = 0
         each( [] )
         .parallel( 4 )
@@ -42,63 +42,63 @@ module.exports =
             current++
             next()
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'both', ->
-            assert.eql current, 0
+            current.should.eql 0
             next()
-    'Concurrent # array sync callback': (next) ->
+    it 'array sync callback', (next) ->
         current = 0
         each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
         .parallel( 4 )
         .on 'item', (next, element, index) ->
-            assert.eql current, index
+            index.should.eql current
             current++
-            assert.eql current, element.id
+            element.id.should.eql current
             next()
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 9
+            current.should.eql 9
             next()
-    'Concurrent # object async callbacks': (next) ->
+    it 'object async callbacks', (next) ->
         current = 0
         each( id_1: 1, id_2: 2, id_3: 3, id_4: 4, id_5: 5, id_6: 6, id_7: 7, id_8: 8, id_9: 9 )
         .parallel( 4 )
         .on 'item', (next, key, value) ->
             current++
-            assert.eql "id_#{current}", key
-            assert.eql current, value
+            key.should.eql "id_#{current}"
+            value.should.eql current
             setTimeout next, 100
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 9
+            current.should.eql 9
             setTimeout next, 100
-    'Concurrent # object sync callbacks': (next) ->
+    it 'object sync callbacks', (next) ->
         current = 0
         each( id_1: 1, id_2: 2, id_3: 3, id_4: 4, id_5: 5, id_6: 6, id_7: 7, id_8: 8, id_9: 9 )
         .parallel( 4 )
         .on 'item', (next, key, value) ->
             current++
-            assert.eql "id_#{current}", key
-            assert.eql current, value
+            key.should.eql "id_#{current}"
+            value.should.eql current
             next()
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 9
+            current.should.eql 9
             next()
-    'Concurrent # function': (next) ->
+    it 'function', (next) ->
         current = 0
         each( (c) -> c() )
         .parallel( 4 )
         .on 'item', (next, element, index) ->
-            assert.eql current, index
+            index.should.eql current
             current++
-            assert.eql typeof element, 'function'
+            element.should.be.a 'function'
             element next
         .on 'error', (err) ->
-            assert.ifError err
+            should.not.exist err
         .on 'end', ->
-            assert.eql current, 1
+            current.should.eql 1
             next()
