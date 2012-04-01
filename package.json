@@ -6,6 +6,9 @@
     "contributors": [ 
         { "name": "David Worms", "email": "david@adaltas.com" }
     ],
+    "scripts": {
+        "test": "make test"
+    },
     "dependencies": {
         "coffee-script": "latest"
     },

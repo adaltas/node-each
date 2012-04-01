@@ -6,7 +6,7 @@ describe 'Parallel', ->
     it 'Parallel # array', (next) ->
         current = 0
         end_called = false
-        each( [{id: 1}, {id: 2}, {id: 3}])
+        each( [{id: 1}, {id: 2}, {id: 3}] )
         .parallel( true )
         .on 'item', (next, element, index) ->
             index.should.eql current
