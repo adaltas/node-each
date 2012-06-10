@@ -40,22 +40,9 @@ module.exports = (elements) ->
         # Sequential (in case parallel is called multiple times)
         else parallel = 1
         eacher
-    call = () ->
-        if keys
-        then args = [next, keys[started], elements[keys[started]]]
-        else args = [next, elements[started], started]
-        started++
-        # console.log 'start'
-        try
-            eacher.emit 'item', args...
-        catch e
-            # prevent next to be called if an error occurend inside the
-            # error, end or both callbacks
-            next e if eacher.readable
     run = () ->
         return if eacher.paused
         # This is the end
-        # console.log (done is total or (errors.length and started is done)), '=====', done, total, 'OR', errors.length isnt 0, started, done
         if done is total or (errors.length and started is done)
             eacher.readable = false
             if errors.length
@@ -80,7 +67,17 @@ module.exports = (elements) ->
         while Math.min( (parallel - started + done), (total - started) )
             # Stop on synchronously sent error
             break if errors.length isnt 0
-            call() 
+            # Time to call our iterator
+            if keys
+            then args = [next, keys[started], elements[keys[started]]]
+            else args = [next, elements[started], started]
+            started++
+            try
+                eacher.emit 'item', args...
+            catch e
+                # prevent next to be called if an error occurend inside the
+                # error, end or both callbacks
+                next e if eacher.readable
         # call()
     next = (err) ->
         errors.push err if err? and err instanceof Error
