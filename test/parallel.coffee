@@ -20,6 +20,13 @@ describe 'Parallel', ->
             should.not.exist err
             end_called.should.be.ok
             next()
+    it 'should handle very large array', (next) ->
+        values = for i in [0..Math.pow(2, 14)] then Math.random()
+        eacher = each(values)
+        .on 'item', (next, val, i) ->
+            setTimeout next, 1
+        .on 'both', (err) ->
+            next()
     it 'Parallel # object', (next) ->
         current = 0
         each( {id_1: 1, id_2: 2, id_3: 3} )
