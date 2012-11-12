@@ -18,7 +18,7 @@ Installing
 Via git (or downloaded tarball):
 
 ```bash
-    git clone http://github.com/wdavidw/node-each.git
+git clone http://github.com/wdavidw/node-each.git
 ```
 
 Then, simply copy or link the project inside a discoverable Node directory 
@@ -27,7 +27,7 @@ Then, simply copy or link the project inside a discoverable Node directory
 Via [npm](http://github.com/isaacs/npm):
 
 ```bash
-    npm install each
+npm install each
 ```
 
 Quick example
