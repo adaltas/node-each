@@ -9,10 +9,8 @@
     "scripts": {
         "test": "make test"
     },
-    "dependencies": {
-        "coffee-script": "latest"
-    },
     "devDependencies": {
+        "coffee-script": "latest",
         "should": "latest",
         "mocha": "latest"
     },
