@@ -39,15 +39,15 @@ The following code traverse an array in `sequential` mode.
 var each = require('each');
 each( [{id: 1}, {id: 2}, {id: 3}] )
 .on('item', function(next, element, index) {
-    console.log('element: ', element, '@', index);
-    setTimeout(next, 500);
+  console.log('element: ', element, '@', index);
+  setTimeout(next, 500);
 })
 .on('both', function(err) {
-    if(err){
-        console.log(err.message);
-    }else{
-        console.log('Done');
-    }
+  if(err){
+    console.log(err.message);
+  }else{
+    console.log('Done');
+  }
 });
 ```
 
@@ -57,14 +57,14 @@ Or alternatively using the `error` and `end` events:
 var each = require('each');
 each( [{id: 1}, {id: 2}, {id: 3}] )
 .on('item', function(next, element, index) {
-    console.log('element: ', element, '@', index);
-    setTimeout(next, 500);
+  console.log('element: ', element, '@', index);
+  setTimeout(next, 500);
 })
 .on('error', function(err) {
-    console.log(err.message);
+  console.log(err.message);
 })
 .on('end', function() {
-    console.log('Done');
+  console.log('Done');
 });
 ```
 
@@ -155,14 +155,14 @@ var each = require('each');
 each( [{id: 1}, {id: 2}, {id: 3}] )
 .parallel( true )
 .on('item', function(next, element, index) {
-    console.log('element: ', element, '@', index);
-    setTimeout(next, 500);
+  console.log('element: ', element, '@', index);
+  setTimeout(next, 500);
 })
 .on('error', function(err, errors){
-    console.log(err.message);
-    errors.forEach(function(error){
-        console.log('  '+error.message);
-    });
+  console.log(err.message);
+  errors.forEach(function(error){
+    console.log('  '+error.message);
+  });
 })
 .on('end', function(){
     console.log('Done');
@@ -176,17 +176,17 @@ var each = require('each');
 each( [{id: 1}, {id: 2}, {id: 3}] )
 .parallel( 4 )
 .on('item', function(next, element, index) {
-    console.log('element: ', element, '@', index);
-    setTimeout(next, 500);
+  console.log('element: ', element, '@', index);
+  setTimeout(next, 500);
 })
 .on('error', function(err, errors){
-    console.log(err.message);
-    errors.forEach(function(error){
-        console.log('  '+error.message);
-    });
+  console.log(err.message);
+  errors.forEach(function(error){
+    console.log('  '+error.message);
+  });
 })
 .on('end', function(){
-    console.log('Done');
+  console.log('Done');
 });
 ```
 
@@ -199,15 +199,15 @@ In `sequential` mode:
 var each = require('each');
 each( {id_1: 1, id_2: 2, id_3: 3} )
 .on('item', function(next, key, value) {
-    console.log('key: ', key);
-    console.log('value: ', value);
-    setTimeout(next, 500);
+  console.log('key: ', key);
+  console.log('value: ', value);
+  setTimeout(next, 500);
 })
 .on('error', function(err) {
-    console.log(err.message);
+  console.log(err.message);
 })
 .on('end', function() {
-    console.log('Done');
+  console.log('Done');
 });
 ```
 
@@ -218,18 +218,18 @@ var each = require('each');
 each( {id_1: 1, id_2: 2, id_3: 3} )
 .parallel( 2 )
 .on('item', function(next, key, value) {
-    console.log('key: ', key);
-    console.log('value: ', value);
-    setTimeout(next, 500);
+  console.log('key: ', key);
+  console.log('value: ', value);
+  setTimeout(next, 500);
 })
 .on('error', function(err, errors){
-    console.log(err.message);
-    errors.forEach(function(error){
-        console.log('  '+error.message);
-    });
+  console.log(err.message);
+  errors.forEach(function(error){
+    console.log('  '+error.message);
+  });
 })
 .on('end', function(){
-    console.log('Done');
+  console.log('Done');
 });
 ```
 
@@ -248,17 +248,17 @@ var each = require('each');
 var eacher = each( {id_1: 1, id_2: 2, id_3: 3} )
 .parallel(2)
 .on('item', function(next, key, value) {
-    setTimeout(function(){
-        eacher.emit('data', key + ',' + value + '\n');
-        next();
-    }, 100);
+  setTimeout(function(){
+    eacher.emit('data', key + ',' + value + '\n');
+    next();
+  }, 100);
 })
 .on('end', function(){
-    console.log('Done');
+  console.log('Done');
 });
 
 eacher.pipe(
-    fs.createWriteStream(__dirname + '/out.csv', { flags: 'w' })
+  fs.createWriteStream(__dirname + '/out.csv', { flags: 'w' })
 );
 ```
 

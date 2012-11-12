@@ -3,13 +3,13 @@ var each = require('each');
 
 each( {id_1: 1, id_2: 2, id_3: 3} )
 .on('item', function(next, key, value) {
-    console.log('key: ', key);
-    console.log('value: ', value);
-    setTimeout(next, 500);
+  console.log('key: ', key);
+  console.log('value: ', value);
+  setTimeout(next, 500);
 })
 .on('error', function(err) {
-    console.log(err.message);
+  console.log(err.message);
 })
 .on('end', function() {
-    console.log('Done');
+  console.log('Done');
 });

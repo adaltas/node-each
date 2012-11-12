@@ -4,16 +4,16 @@ var each = require('each');
 each( {id_1: 1, id_2: 2, id_3: 3} )
 .parallel( 2 )
 .on('item', function(next, key, value) {
-    console.log('key: ', key);
-    console.log('value: ', value);
-    setTimeout(next, 500);
+  console.log('key: ', key);
+  console.log('value: ', value);
+  setTimeout(next, 500);
 })
 .on('error', function(err, errors){
-    console.log(err.message);
-    errors.forEach(function(error){
-        console.log('  '+error.message);
-    });
+  console.log(err.message);
+  errors.forEach(function(error){
+    console.log('  '+error.message);
+  });
 })
 .on('end', function(){
-    console.log('Done');
+  console.log('Done');
 });
