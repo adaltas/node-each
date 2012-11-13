@@ -1,6 +1,6 @@
 
 should = require 'should'
-each = require '../index'
+each = if process.env.EACH_COV then require '../lib-cov/each' else require '../lib/each'
 
 describe 'Readable Stream', ->
   it 'next before resume', (next) ->

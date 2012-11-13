@@ -1,6 +1,6 @@
 
 should = require 'should'
-each = require '../index'
+each = if process.env.EACH_COV then require '../lib-cov/each' else require '../lib/each'
 
 describe 'Error', ->
   it 'Concurrent # error and both callbacks', (next) ->
@@ -23,6 +23,32 @@ describe 'Error', ->
         else 
           next()
       , 100
+    .on 'error', (err, errs) ->
+      error_assert.call null, err, errs
+      error_called = true
+    .on 'end', (err, errs) ->
+      assert.ok false
+    .on 'both', (err, errs) ->
+      error_called.should.be.ok 
+      error_assert.call null, err, errs
+      next()
+  it 'Concurrent # throw error', (next) ->
+    current = 0
+    error_called = false
+    error_assert = (err, errs) ->
+      current.should.eql 6
+      err.message.should.eql 'Testing error in 6'
+      errs.length.should.eql 1
+      errs[0].message.should.eql 'Testing error in 6'
+    each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ] )
+    .parallel( 4 )
+    .on 'item', (next, element, index) ->
+      index.should.eql current
+      current++
+      if element.id is 6 or element.id is 7
+        throw new Error "Testing error in #{element.id}"
+      else 
+        next()
     .on 'error', (err, errs) ->
       error_assert.call null, err, errs
       error_called = true

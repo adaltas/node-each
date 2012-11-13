@@ -1,6 +1,4 @@
 
-Stream = require 'stream'
-
 ###
 each(elements)
 .mode(parallel=false|true|integer)
@@ -88,6 +86,7 @@ module.exports = (elements) ->
         # prevent next to be called if an error occurend inside the
         # error, end or both callbacks
         next e if eacher.readable
+    null
   next = (err) ->
     errors.push err if err? and err instanceof Error
     eacher.done++

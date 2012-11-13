@@ -1,8 +1,21 @@
 
 should = require 'should'
-each = require '../index'
+each = if process.env.EACH_COV then require '../lib-cov/each' else require '../lib/each'
 
 describe 'Sequential', ->
+  it 'should be the default mode', (next) ->
+    current = 0
+    id2_called = false
+    each( [ {id: 1}, {id: 2}, {id: 3} ] )
+    .parallel(null)
+    .on 'item', (next, element, index) ->
+      id2_called = true if element.id is 2
+      if index is 0 then setTimeout ->
+        id2_called.should.not.be.ok
+        next()
+      , 100 else next()
+    .on 'end', ->
+      next()
   it 'array', (next) ->
     current = 0
     end_called = false
