@@ -1,6 +1,6 @@
 {
     "name": "each",
-    "version": "0.1.4",
+    "version": "0.2.0",
     "description": "Chained and parallel async iterator in one elegant function",
     "author": "David Worms <david@adaltas.com>",
     "contributors": [ 
