@@ -1,25 +1,26 @@
 {
-    "name": "each",
-    "version": "0.2.0",
-    "description": "Chained and parallel async iterator in one elegant function",
-    "author": "David Worms <david@adaltas.com>",
-    "contributors": [ 
-        { "name": "David Worms", "email": "david@adaltas.com" }
-    ],
-    "scripts": {
-        "test": "make test"
-    },
-    "devDependencies": {
-        "coffee-script": "latest",
-        "should": "latest",
-        "mocha": "latest"
-    },
-    "engines": {
-        "node": ">= 0.4.0"
-    },
-    "keywords": ["control flow", "asynchronous", "array", "object", "each"],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/wdavidw/node-each.git"
-    }
+  "name": "each",
+  "version": "0.2.0",
+  "description": "Chained and parallel async iterator in one elegant function",
+  "homepage": "http://www.adaltas.com/projects/node-each/",
+  "author": "David Worms <david@adaltas.com>",
+  "contributors": [ 
+    { "name": "David Worms", "email": "david@adaltas.com" }
+  ],
+  "scripts": {
+    "test": "make test"
+  },
+  "devDependencies": {
+    "coffee-script": "latest",
+    "should": "latest",
+    "mocha": "latest"
+  },
+  "engines": {
+    "node": ">= 0.4.0"
+  },
+  "keywords": ["control flow", "asynchronous", "array", "object", "each"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wdavidw/node-each.git"
+  }
 }
