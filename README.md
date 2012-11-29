@@ -9,6 +9,9 @@
 |_| \_|\___/ \__,_|\___| |______\__,_|\___|_| |_| New BSD License
 </pre>
 
+
+[Full documentation for the Each is available here](http://www.adaltas.com/projects/node-each/).
+
 Node Each is a single elegant function to iterate asynchronously over elements 
 both in `sequential`, `parallel` and `concurrent` mode.
 
