@@ -279,7 +279,7 @@ Repetition with `times`
 With the addition of the `times` function, you may now traverse an array 
 or call a function multiple times.
 
-We first implemented this functionnality while doing performance 
+We first implemented this functionality while doing performance 
 assessment and needing to repeat a same set of metrics multiple times. The 
 following sample will call 3 times the function `doSomeMetrics` with the same 
 arguments.
