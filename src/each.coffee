@@ -22,10 +22,12 @@ module.exports = (elements) ->
     error: []
     end: []
     both: []
+  times = []
   eacher = {}
   eacher.total = if keys then keys.length else elements.length
   eacher.started = 0
   eacher.done = 0
+  times = 1
   eacher.paused = 0
   eacher.readable = true
   eacher.pause = ->
@@ -37,9 +39,13 @@ module.exports = (elements) ->
     # Concurrent
     if typeof mode is 'number' then parallel = mode
     # Parallel
-    else if mode then parallel = eacher.total
+    # else if mode then parallel = eacher.total
+    else if mode then parallel = mode
     # Sequential (in case parallel is called multiple times)
     else parallel = 1
+    eacher
+  eacher.times = (t) ->
+    times = t
     eacher
   eacher.on = (ev, callback) ->
     events[ev].push callback
@@ -47,7 +53,7 @@ module.exports = (elements) ->
   run = () ->
     return if eacher.paused
     # This is the end
-    if eacher.done is eacher.total or (errors.length and eacher.started is eacher.done)
+    if eacher.done is eacher.total * times or (errors.length and eacher.started is eacher.done)
       eacher.readable = false
       if errors.length
         if parallel isnt 1
@@ -62,26 +68,27 @@ module.exports = (elements) ->
         lerror = events.error.length
         lboth = events.both.length
         emitError = lerror or (not lerror and not lboth)
-        for e in events.error then e args... if emitError
+        for emit in events.error then emit args... if emitError
       else
         args = []
         # eacher.emit 'end'
-        for e in events.end then e()
+        for emit in events.end then emit()
       # return eacher.emit 'both', args...
-      for e in events.both then e args...
+      for emit in events.both then emit args...
       return
     return if errors.length isnt 0
-    while Math.min( (parallel - eacher.started + eacher.done), (eacher.total - eacher.started) )
+    while (if parallel is true then (eacher.total * times - eacher.started) > 0 else Math.min( (parallel - eacher.started + eacher.done), (eacher.total * times - eacher.started) ) )
       # Stop on synchronously sent error
       break if errors.length isnt 0
       # Time to call our iterator
+      index = Math.floor(eacher.started / times)
       if keys
-      then args = [next, keys[eacher.started], elements[keys[eacher.started]]]
-      else args = [next, elements[eacher.started], eacher.started]
+      then args = [next, keys[index], elements[keys[index]]]
+      else args = [next, elements[index], index]
       eacher.started++
       try
         # eacher.emit 'item', args...
-        for e in events.item then e args...
+        for emit in events.item then emit args...
       catch e
         # prevent next to be called if an error occurend inside the
         # error, end or both callbacks
