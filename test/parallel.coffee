@@ -23,6 +23,7 @@ describe 'Parallel', ->
   it 'should handle very large array', (next) ->
     values = for i in [0..Math.pow(2, 14)] then Math.random()
     eacher = each(values)
+    .parallel( true )
     .on 'item', (next, val, i) ->
       setTimeout next, 1
     .on 'both', (err) ->
