@@ -71,9 +71,7 @@ module.exports = (elements) ->
         for emit in events.error then emit args... if emitError
       else
         args = []
-        # eacher.emit 'end'
         for emit in events.end then emit()
-      # return eacher.emit 'both', args...
       for emit in events.both then emit args...
       return
     return if errors.length isnt 0
@@ -82,12 +80,8 @@ module.exports = (elements) ->
       break if errors.length isnt 0
       # Time to call our iterator
       index = Math.floor(eacher.started / times)
-      # if keys
-      # then args = [keys[index], elements[keys[index]], next]
-      # else args = [elements[index], index, next]
       eacher.started++
       try
-        # eacher.emit 'item', args...
         for emit in events.item
           switch emit.length
             when 1
