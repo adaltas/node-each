@@ -82,13 +82,6 @@ describe 'Parallel', ->
 describe 'Concurrent', ->
   it 'should run nothing 10 times', (next) ->
     started = ended = 0
-    runnings = []
-    interval = null
-    interval = setInterval ->
-      running = started - ended
-      runnings[running] ?= 0
-      runnings[running]++
-    , 10
     each()
     .parallel(3)
     .times(10)
@@ -96,16 +89,11 @@ describe 'Concurrent', ->
       process.nextTick -> started++
       setTimeout ->
         ended++
+        (started % 3).should.eql 0 unless started is 10
+        ended.should.be.above started - 3
         next()
       , 100
     .on 'end', ->
-      clearInterval interval
-      (
-        (typeof runnings[0] is 'undefined' or runnings[0] is 1) and
-        (runnings[1] >= 9 and runnings[1] <= 11) and
-        (typeof runnings[2] is 'undefined' or runnings[2] is 1) and
-        (runnings[3] >= 26 and runnings[3] <= 28)
-      ).should.be.ok
       started.should.eql 10
       next()
   it 'should run an array 10 times', (next) ->
