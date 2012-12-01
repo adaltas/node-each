@@ -29,7 +29,7 @@ The following code traverse an array in `sequential` mode.
 ```javascript
 var each = require('each');
 each( [{id: 1}, {id: 2}, {id: 3}] )
-.on('item', function(next, element, index) {
+.on('item', function(element, index, next) {
   console.log('element: ', element, '@', index);
   setTimeout(next, 500);
 })
@@ -46,7 +46,7 @@ Or alternatively using the `both` event which combine the `error` and `end` even
 ```javascript
 var each = require('each');
 each( [{id: 1}, {id: 2}, {id: 3}] )
-.on('item', function(next, element, index) {
+.on('item', function(element, index, next) {
   console.log('element: ', element, '@', index);
   setTimeout(next, 500);
 })
@@ -94,29 +94,25 @@ The following properties and functions are available:
     The second argument is optional and indicate wether or not you want the 
     iteration to run in `sequential`, `parallel` or `concurrent` mode. See below
     for more details about the different modes.
--   `paused`
+-   `paused`   
     Indicate the state of the current event emitter
--   `readable`
+-   `readable`   
     Indicate if the stream will emit more event
 
-The following events are send:
+The following events are emitted:
 
 -   `item`   
-    Called for each iterated element. The arguments depends on the 
-    subject type.
-    The first argument, `next`, is a function to call at the end of your 
-    callback. It may be called with an error instance to trigger the `error` event.
-    For objects, the second and third arguments are the key and value 
-    of each elements. For anything else, the second and third arguments are the 
-    value and the index (starting at 0) of each elements.
+    Called for each iterated element. Provided arguments depends on the 
+    subject type and the number of arguments defined in the callback. More information
+    below.
 -   `error`   
     Called only if an error occured. The iteration will be stoped on error meaning
     no `item` event will be called other than the ones already provisionned. Recieves
     an error object as its first argument and eventually a second argument. See 
-    the `dealing with errors` section for more information.
+    the `dealing with errors` section for more information.   
 -   `end`   
     Called only if all the callback have been handled successfully. No argument is 
-    provided in the callback.
+    provided in the callback.   
 -   `both`   
     Called only once all the items have been handled. It is a conveniency event
     combining the `error` and `end` event in one call. Return the same arguments 
@@ -135,6 +131,46 @@ Parallelization modes
 -   `concurrent`
     Parallel is an integer.
     Only the defined number of callbacks is run in parallel.
+
+Callback arguments in "item" events
+-----------------------------------
+
+The last argument, `next`, is a function to call at the end 
+of your callback. It may be called with an error instance to 
+trigger the `error` event. An example worth a tousand words, 
+see the code examples below for usage.
+
+Inside array iteration, callback signature is `function([value], [index], next)`
+
+```javascript
+each({})
+// 1 argument
+.on('item', function(next){})
+// 2 arguments
+.on('item', function(value, next){})
+// 3 arguments
+.on('item', function(value, next){})
+// 4 arguments
+.on('item', function(value, index, next){})
+// done
+.on('end', function())
+```
+
+Inside object iteration, callback signature is `function([key], [value], [counter], next)`
+
+```javascript
+each({})
+// 1 argument
+.on('item', function(next){})
+// 2 arguments
+.on('item', function(value, next){})
+// 3 arguments
+.on('item', function(key, value, next){})
+// 4 arguments
+.on('item', function(key, value, counter, next){})
+// done
+.on('end', function())
+```
 
 Dealing with errors
 -------------------
@@ -163,7 +199,7 @@ In `parallel` mode:
 var each = require('each');
 each( [{id: 1}, {id: 2}, {id: 3}] )
 .parallel( true )
-.on('item', function(next, element, index) {
+.on('item', function(element, index, next) {
   console.log('element: ', element, '@', index);
   setTimeout(next, 500);
 })
@@ -184,7 +220,7 @@ In `concurrent` mode with 4 parallel executions:
 var each = require('each');
 each( [{id: 1}, {id: 2}, {id: 3}] )
 .parallel( 4 )
-.on('item', function(next, element, index) {
+.on('item', function(element, index, next) {
   console.log('element: ', element, '@', index);
   setTimeout(next, 500);
 })
@@ -207,7 +243,7 @@ In `sequential` mode:
 ```javascript
 var each = require('each');
 each( {id_1: 1, id_2: 2, id_3: 3} )
-.on('item', function(next, key, value) {
+.on('item', function(key, value, next) {
   console.log('key: ', key);
   console.log('value: ', value);
   setTimeout(next, 500);
@@ -226,7 +262,7 @@ In `concurrent` mode with 2 parallels executions
 var each = require('each');
 each( {id_1: 1, id_2: 2, id_3: 3} )
 .parallel( 2 )
-.on('item', function(next, key, value) {
+.on('item', function(key, value, next) {
   console.log('key: ', key);
   console.log('value: ', value);
   setTimeout(next, 500);
@@ -256,7 +292,7 @@ var each = require('each');
 
 var eacher = each( {id_1: 1, id_2: 2, id_3: 3} )
 .parallel(2)
-.on('item', function(next, key, value) {
+.on('item', function(key, value, next) {
   setTimeout(function(){
     eacher.emit('data', key + ',' + value + '\n');
     next();
@@ -285,7 +321,7 @@ arguments.
 ```javascript
 each([64, 128, 256, 512])
 .times(3)
-.on('item', function(next, testsize){
+.on('item', function(testsize, next){
   doSomeMetrics(testsize, next);
 }).on('end', function(){
   console.log 'done'

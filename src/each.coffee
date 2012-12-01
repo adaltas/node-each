@@ -82,13 +82,31 @@ module.exports = (elements) ->
       break if errors.length isnt 0
       # Time to call our iterator
       index = Math.floor(eacher.started / times)
-      if keys
-      then args = [next, keys[index], elements[keys[index]]]
-      else args = [next, elements[index], index]
+      # if keys
+      # then args = [keys[index], elements[keys[index]], next]
+      # else args = [elements[index], index, next]
       eacher.started++
       try
         # eacher.emit 'item', args...
-        for emit in events.item then emit args...
+        for emit in events.item
+          switch emit.length
+            when 1
+              args = [next]
+            when 2
+              if keys
+              then args = [elements[keys[index]], next]
+              else args = [elements[index], next]
+            when 3
+              if keys
+              then args = [keys[index], elements[keys[index]], next]
+              else args = [elements[index], index, next]
+            when 4
+              if keys
+              then args = [keys[index], elements[keys[index]], index, next]
+              else return next new Error 'Invalid arguments in item callback'
+            else
+              return next new Error 'Invalid arguments in item callback'
+          emit args...
       catch e
         # prevent next to be called if an error occurend inside the
         # error, end or both callbacks

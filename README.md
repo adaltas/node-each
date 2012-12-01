@@ -23,7 +23,7 @@ The following code traverse an array in `sequential` mode. See the documentation
 ```javascript
 var each = require('each');
 each( [{id: 1}, {id: 2}, {id: 3}] )
-.on('item', function(next, element, index) {
+.on('item', function(element, index, next) {
   console.log('element: ', element, '@', index);
   setTimeout(next, 500);
 })

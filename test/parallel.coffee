@@ -8,7 +8,7 @@ describe 'Parallel', ->
     end_called = false
     each( [{id: 1}, {id: 2}, {id: 3}] )
     .parallel( true )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       element.id.should.eql current
@@ -24,7 +24,7 @@ describe 'Parallel', ->
     values = for i in [0..Math.pow(2, 14)] then Math.random()
     eacher = each(values)
     .parallel( true )
-    .on 'item', (next, val, i) ->
+    .on 'item', (val, i, next) ->
       setTimeout next, 1
     .on 'both', (err) ->
       next()
@@ -32,7 +32,7 @@ describe 'Parallel', ->
     current = 0
     each( {id_1: 1, id_2: 2, id_3: 3} )
     .parallel( true )
-    .on 'item', (next, key, value) ->
+    .on 'item', (key, value, next) ->
       current++
       key.should.eql "id_#{current}"
       value.should.eql current
@@ -46,7 +46,7 @@ describe 'Parallel', ->
     current = 0
     each( undefined )
     .parallel( true )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       should.not.exist element
@@ -60,7 +60,7 @@ describe 'Parallel', ->
     current = 0
     each( null )
     .parallel( true )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       should.not.exist element
@@ -74,7 +74,7 @@ describe 'Parallel', ->
     current = 0
     each( 'id_1' )
     .parallel( true )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       element.should.eql "id_1"
@@ -88,7 +88,7 @@ describe 'Parallel', ->
     current = 0
     each( 3.14 )
     .parallel( true )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       element.should.eql 3.14
@@ -103,7 +103,7 @@ describe 'Parallel', ->
     current = 0
     each( false )
     .parallel( true )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql 0
       current++
       element.should.not.be.ok
@@ -116,7 +116,7 @@ describe 'Parallel', ->
       current = 0
       each( true )
       .parallel( true )
-      .on 'item', (next, element, index) ->
+      .on 'item', (element, index, next) ->
         index.should.eql 0
         current++
         element.should.be.ok
@@ -131,7 +131,7 @@ describe 'Parallel', ->
     source = (c) -> c()
     each( source )
     .parallel( true )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       element.should.be.a 'function'

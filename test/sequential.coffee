@@ -8,7 +8,7 @@ describe 'Sequential', ->
     id2_called = false
     each( [ {id: 1}, {id: 2}, {id: 3} ] )
     .parallel(null)
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       id2_called = true if element.id is 2
       if index is 0 then setTimeout ->
         id2_called.should.not.be.ok
@@ -20,7 +20,7 @@ describe 'Sequential', ->
     current = 0
     end_called = false
     each( [ {id: 1}, {id: 2}, {id: 3} ] )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       element.id.should.eql current
@@ -35,7 +35,7 @@ describe 'Sequential', ->
   it 'object', (next) ->
     current = 0
     each( {id_1: 1, id_2: 2, id_3: 3} )
-    .on 'item', (next, key, value) ->
+    .on 'item', (key, value, next) ->
       current++
       key.should.eql "id_#{current}"
       value.should.eql current
@@ -48,7 +48,7 @@ describe 'Sequential', ->
   it 'undefined', (next) ->
     current = 0
     each( undefined )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       should.not.exist element
@@ -61,7 +61,7 @@ describe 'Sequential', ->
   it 'null', (next) ->
     current = 0
     each( null )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       should.not.exist element
@@ -74,7 +74,7 @@ describe 'Sequential', ->
   it 'string', (next) ->
     current = 0
     each( 'id_1' )
-    .on 'item', (nnext, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       element.should.eql "id_1"
@@ -87,7 +87,7 @@ describe 'Sequential', ->
   it 'number', (next) ->
     current = 0
     each( 3.14 )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       element.should.eql 3.14
@@ -101,7 +101,7 @@ describe 'Sequential', ->
     current = 0
     source = (c) -> c()
     each(source)
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       element.should.be.a 'function'

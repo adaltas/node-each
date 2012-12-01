@@ -14,7 +14,7 @@ describe 'Error', ->
       errs[1].message.should.eql 'Testing error in 7'
     each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ] )
     .parallel( 4 )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       setTimeout ->
@@ -42,7 +42,7 @@ describe 'Error', ->
       errs[0].message.should.eql 'Testing error in 6'
     each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ] )
     .parallel( 4 )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       if element.id is 6 or element.id is 7
@@ -66,7 +66,7 @@ describe 'Error', ->
     current = 0
     each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
     .parallel( true )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       setTimeout ->
@@ -90,7 +90,7 @@ describe 'Error', ->
     current = 0
     each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
     .parallel( true )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       setTimeout ->
@@ -110,7 +110,7 @@ describe 'Error', ->
     current = 0
     each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
     .parallel( true )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       setTimeout ->
@@ -131,7 +131,7 @@ describe 'Error', ->
     current = 0
     each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
     .parallel( true )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       if element.id is 1 or element.id is 3
@@ -147,7 +147,7 @@ describe 'Error', ->
   it 'Sequential # sync # error callback', (next) ->
     current = 0
     each( [ {id: 1}, {id: 2}, {id: 3} ] )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       if element.id is 2
@@ -161,7 +161,7 @@ describe 'Error', ->
   it 'Sequential # async # error callback', (next) ->
     current = 0
     each( [ {id: 1}, {id: 2}, {id: 3} ] )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       if element.id is 2

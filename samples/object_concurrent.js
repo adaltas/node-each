@@ -3,7 +3,7 @@ var each = require('each');
 
 each( {id_1: 1, id_2: 2, id_3: 3} )
 .parallel( 2 )
-.on('item', function(next, key, value) {
+.on('item', function(key, value, next) {
   console.log('key: ', key);
   console.log('value: ', value);
   setTimeout(next, 500);

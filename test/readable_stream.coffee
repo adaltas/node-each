@@ -6,7 +6,7 @@ describe 'Readable Stream', ->
   it 'next before resume', (next) ->
     eacher = each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
     .parallel( 4 )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       if element.id is 2
         eacher.pause()
         setTimeout ->
@@ -19,7 +19,7 @@ describe 'Readable Stream', ->
   it 'next after resume', (next) ->
     eacher = each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
     .parallel( 4 )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       if element.id is 2
         eacher.pause()
         setTimeout ->
@@ -34,7 +34,7 @@ describe 'Readable Stream', ->
   it 'multiple pause # next before resume', (next) ->
     eacher = each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
     .parallel( 4 )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       if element.id % 2 is 0
         eacher.pause()
         setTimeout ->
@@ -49,7 +49,7 @@ describe 'Readable Stream', ->
   it 'multiple pause # next after resume', (next) ->
     eacher = each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
     .parallel( 4 )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       if element.id % 2 is 0
         eacher.pause()
         setTimeout ->

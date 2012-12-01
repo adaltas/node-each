@@ -8,7 +8,7 @@ describe 'Sequential', ->
     each()
     .parallel(null)
     .times(10)
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       # Check provided values
       started.should.eql ended
       should.not.exist element
@@ -28,7 +28,7 @@ describe 'Sequential', ->
     each(data)
     .parallel(null)
     .times(10)
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       # Check provided values
       started.should.eql ended
       element.should.eql data[Math.floor started / 10]
@@ -49,7 +49,7 @@ describe 'Parallel', ->
     each()
     .parallel(true)
     .times(10)
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       started.should.eql 0
       ended.should.eql 0
       process.nextTick -> started++
@@ -66,7 +66,7 @@ describe 'Parallel', ->
     each(['a', 'b', 'c'])
     .parallel(true)
     .times(10)
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       started.should.eql 0
       ended.should.eql 0
       process.nextTick -> started++
@@ -92,7 +92,7 @@ describe 'Concurrent', ->
     each()
     .parallel(3)
     .times(10)
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       process.nextTick -> started++
       setTimeout ->
         ended++
@@ -113,7 +113,7 @@ describe 'Concurrent', ->
     each(['a', 'b', 'c'])
     .parallel(3)
     .times(10)
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       started++
       setTimeout ->
         running = started - ended

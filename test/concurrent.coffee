@@ -8,7 +8,7 @@ describe 'Concurrent', ->
     end_called = false
     each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
     .parallel( 4 )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       element.id.should.eql current, 
@@ -24,7 +24,7 @@ describe 'Concurrent', ->
     current = 0
     each( [ {id: 1} ] )
     .parallel( 4 )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       element.id.should.eql current
@@ -38,7 +38,7 @@ describe 'Concurrent', ->
     current = 0
     each( [] )
     .parallel( 4 )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       current++
       next()
     .on 'error', (err) ->
@@ -50,7 +50,7 @@ describe 'Concurrent', ->
     current = 0
     each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
     .parallel( 4 )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       element.id.should.eql current
@@ -64,7 +64,7 @@ describe 'Concurrent', ->
     current = 0
     each( id_1: 1, id_2: 2, id_3: 3, id_4: 4, id_5: 5, id_6: 6, id_7: 7, id_8: 8, id_9: 9 )
     .parallel( 4 )
-    .on 'item', (next, key, value) ->
+    .on 'item', (key, value, next) ->
       current++
       key.should.eql "id_#{current}"
       value.should.eql current
@@ -78,7 +78,7 @@ describe 'Concurrent', ->
     current = 0
     each( id_1: 1, id_2: 2, id_3: 3, id_4: 4, id_5: 5, id_6: 6, id_7: 7, id_8: 8, id_9: 9 )
     .parallel( 4 )
-    .on 'item', (next, key, value) ->
+    .on 'item', (key, value, next) ->
       current++
       key.should.eql "id_#{current}"
       value.should.eql current
@@ -92,7 +92,7 @@ describe 'Concurrent', ->
     current = 0
     each( (c) -> c() )
     .parallel( 4 )
-    .on 'item', (next, element, index) ->
+    .on 'item', (element, index, next) ->
       index.should.eql current
       current++
       element.should.be.a 'function'
