@@ -12,6 +12,8 @@
 
 [Full documentation for the Each is available here](http://www.adaltas.com/projects/node-each/).
 
+Note, for user of versions 0.2.x and below, arguments of the item callback have changed. See [the documentation](http://www.adaltas.com/projects/node-each/) for additionnal information.
+
 Node Each is a single elegant function to iterate asynchronously over elements 
 both in `sequential`, `parallel` and `concurrent` mode.
 

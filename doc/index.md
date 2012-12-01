@@ -18,6 +18,8 @@ github: https://github.com/wdavidw/node-each
 |_| \_|\___/ \__,_|\___| |______\__,_|\___|_| |_| New BSD License
 </pre>
 
+Note, for user of versions 0.2.x and below, arguments of the item callback have changed. See below for additionnal information.
+
 Node Each is a single elegant function to iterate asynchronously over elements 
 both in `sequential`, `parallel` and `concurrent` mode.
 
