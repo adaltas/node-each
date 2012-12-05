@@ -280,6 +280,26 @@ each( {id_1: 1, id_2: 2, id_3: 3} )
 });
 ```
 
+Traversing files
+----------------
+
+The "files" function is a globing utility which traverse the file 
+system based on pattern matching. Multiple globing patterns may be
+provided as an array or the function may be called multiple times.
+
+```javascript
+var each = require('each');
+each()
+.files('./**/*.js')
+.files('./**/*.coffee')
+.on('item', function(file, next) {
+  console.log('Found "' + file + '"');
+})
+.on('end', function(){
+  console.log('Done');
+});
+```
+
 Readable Stream
 ---------------
 

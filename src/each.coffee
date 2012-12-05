@@ -1,4 +1,6 @@
 
+glob = require 'glob'
+
 ###
 each(elements)
 .mode(parallel=false|true|integer)
@@ -14,6 +16,7 @@ module.exports = (elements) ->
     elements = [elements]
   else unless Array.isArray elements
     isObject = true
+  arglength = arguments.length
   keys = Object.keys elements if isObject
   errors = []
   parallel = 1
@@ -28,6 +31,7 @@ module.exports = (elements) ->
   eacher.started = 0
   eacher.done = 0
   times = 1
+  endable = true
   eacher.paused = 0
   eacher.readable = true
   eacher.pause = ->
@@ -47,6 +51,23 @@ module.exports = (elements) ->
   eacher.times = (t) ->
     times = t
     eacher
+  eacher.files = (pattern) ->
+    if Array.isArray pattern
+      for p in pattern then @files p
+      return @
+    endable = false
+    if arglength is 0
+      arglength = null
+      eacher.total = 0
+      elements = []
+    glob pattern, (err, files) ->
+      eacher.total += files.length
+      for file in files
+        elements.push file
+      process.nextTick ->
+        endable = true
+        run()
+    eacher
   eacher.on = (ev, callback) ->
     events[ev].push callback
     eacher
@@ -62,17 +83,14 @@ module.exports = (elements) ->
           else args = [new Error("Multiple errors (#{errors.length})"), errors]
         else
           args = [errors[0]]
-        # emit error only if
-        # - there is an error callback
-        # - there is no error callback and no both callback
         lerror = events.error.length
         lboth = events.both.length
         emitError = lerror or (not lerror and not lboth)
         for emit in events.error then emit args... if emitError
       else
         args = []
-        for emit in events.end then emit()
-      for emit in events.both then emit args...
+        if endable then for emit in events.end then emit() 
+      if endable then for emit in events.both then emit args... 
       return
     return if errors.length isnt 0
     while (if parallel is true then (eacher.total * times - eacher.started) > 0 else Math.min( (parallel - eacher.started + eacher.done), (eacher.total * times - eacher.started) ) )

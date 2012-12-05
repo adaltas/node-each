@@ -10,6 +10,9 @@
   "scripts": {
     "test": "make test"
   },
+  "dependencies": {
+    "glob": "latest"
+  },
   "devDependencies": {
     "coffee-script": "latest",
     "should": "latest",
