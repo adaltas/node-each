@@ -31,7 +31,7 @@ module.exports = (elements) ->
   eacher.started = 0
   eacher.done = 0
   times = 1
-  endable = true
+  endable = 1
   eacher.paused = 0
   eacher.readable = true
   eacher.pause = ->
@@ -55,7 +55,7 @@ module.exports = (elements) ->
     if Array.isArray pattern
       for p in pattern then @files p
       return @
-    endable = false
+    endable--
     if arglength is 0
       arglength = null
       eacher.total = 0
@@ -65,7 +65,7 @@ module.exports = (elements) ->
       for file in files
         elements.push file
       process.nextTick ->
-        endable = true
+        endable++
         run()
     eacher
   eacher.on = (ev, callback) ->
@@ -74,7 +74,7 @@ module.exports = (elements) ->
   run = () ->
     return if eacher.paused
     # This is the end
-    if eacher.done is eacher.total * times or (errors.length and eacher.started is eacher.done)
+    if endable is 1 and (eacher.done is eacher.total * times or (errors.length and eacher.started is eacher.done) )
       eacher.readable = false
       if errors.length
         if parallel isnt 1
@@ -89,8 +89,8 @@ module.exports = (elements) ->
         for emit in events.error then emit args... if emitError
       else
         args = []
-        if endable then for emit in events.end then emit() 
-      if endable then for emit in events.both then emit args... 
+        for emit in events.end then emit() 
+      for emit in events.both then emit args... 
       return
     return if errors.length isnt 0
     while (if parallel is true then (eacher.total * times - eacher.started) > 0 else Math.min( (parallel - eacher.started + eacher.done), (eacher.total * times - eacher.started) ) )
