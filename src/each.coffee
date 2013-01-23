@@ -74,23 +74,26 @@ module.exports = (elements) ->
   run = () ->
     return if eacher.paused
     # This is the end
+    error = null
     if endable is 1 and (eacher.done is eacher.total * times or (errors.length and eacher.started is eacher.done) )
       eacher.readable = false
       if errors.length
         if parallel isnt 1
           if errors.length is 1
-          then args = [errors[0], errors]
-          else args = [new Error("Multiple errors (#{errors.length})"), errors]
+          then error = errors[0]
+          else 
+            error = new Error("Multiple errors (#{errors.length})")
+            error.errors = errors
         else
-          args = [errors[0]]
+          error = errors[0]
         lerror = events.error.length
         lboth = events.both.length
         emitError = lerror or (not lerror and not lboth)
-        for emit in events.error then emit args... if emitError
+        for emit in events.error then emit error if emitError
       else
         args = []
-        for emit in events.end then emit() 
-      for emit in events.both then emit args... 
+        for emit in events.end then emit eacher.done 
+      for emit in events.both then emit error, eacher.done
       return
     return if errors.length isnt 0
     while (if parallel is true then (eacher.total * times - eacher.started) > 0 else Math.min( (parallel - eacher.started + eacher.done), (eacher.total * times - eacher.started) ) )

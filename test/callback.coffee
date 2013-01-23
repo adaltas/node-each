@@ -9,20 +9,20 @@ describe 'Callback', ->
       .on 'item', (next) ->
         arguments.length.should.eql 1
         next()
-      .on 'end', next
+      .on 'end', -> next()
     it 'should provide element and next argument', (next) ->
       each( [ 'a', 'b', 'c' ] )
       .on 'item', (element, next) ->
         ['a', 'b', 'c'].should.include element
         next()
-      .on 'end', next
+      .on 'end', -> next()
     it 'should provide element, index and next argument', (next) ->
       each( [ 'a', 'b', 'c' ] )
       .on 'item', (element, index, next) ->
         ['a', 'b', 'c'].should.include element
         index.should.be.a 'number'
         next()
-      .on 'end', next
+      .on 'end', -> next()
     it 'throw error with no argument', (next) ->
       each( ['a', 'b', 'c'] )
       .on 'item', () ->
@@ -36,20 +36,20 @@ describe 'Callback', ->
       .on 'item', (next) ->
         arguments.length.should.eql 1
         next()
-      .on 'end', next
+      .on 'end', -> next()
     it 'should provide value and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
       .on 'item', (value, next) ->
         value.should.be.a 'number'
         next()
-      .on 'end', next
+      .on 'end', -> next()
     it 'should provide key, value and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
       .on 'item', (key, value, next) ->
         ['a', 'b', 'c'].should.include key
         value.should.be.a 'number'
         next()
-      .on 'end', next
+      .on 'end', -> next()
     it 'should provide key, value, index and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
       .on 'item', (key, value, counter, next) ->
@@ -57,7 +57,7 @@ describe 'Callback', ->
         value.should.be.a 'number'
         counter.should.be.a 'number'
         next()
-      .on 'end', next
+      .on 'end', -> next()
     it 'throw error with no argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
       .on 'item', () ->

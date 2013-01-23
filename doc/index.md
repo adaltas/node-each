@@ -90,16 +90,26 @@ The `each` function signature is: `each(subject)`.
 
 The return object is an instance of `EventEmitter`.
 
-The following properties and functions are available:
+The following properties are available:
+-   `paused`   
+    Indicate the state of the current event emitter.
+-   `readable`   
+    Indicate if the stream will emit more event.
+-   `started`  
+    Number of callbacks which have been called.
+-   `done`  
+    Number of callbacks which have finished.
+
+The following functions are available:
 
 -   `parallel`   
     The second argument is optional and indicate wether or not you want the 
     iteration to run in `sequential`, `parallel` or `concurrent` mode. See below
     for more details about the different modes.
--   `paused`   
-    Indicate the state of the current event emitter
--   `readable`   
-    Indicate if the stream will emit more event
+-   `times`
+    Repeat operation multiple times.
+-   `files`
+    Emit file paths based on a directory or globbing expression.
 
 The following events are emitted:
 
@@ -113,12 +123,10 @@ The following events are emitted:
     an error object as its first argument and eventually a second argument. See 
     the `dealing with errors` section for more information.   
 -   `end`   
-    Called only if all the callback have been handled successfully. No argument is 
-    provided in the callback.   
+    Called only if all the callback have been handled successfully. The total number of traversed item is provided in the callback as the first argument.   
 -   `both`   
     Called only once all the items have been handled. It is a conveniency event
-    combining the `error` and `end` event in one call. Return the same arguments 
-    than the `error` or `end` events depending on the operation outturn.
+    combining the `error` and `end` event in one call. Return the error object if any as a first argument and the number of traversed items as the second argument. In case of an error, this number correspond to the number of item callbacks which called next. 
 
 Parallelization modes
 ---------------------
@@ -183,10 +191,9 @@ iteration will be stoped. Note that in case of parallel and concurrent mode,
 the current callbacks are not canceled but no new element will be send to the 
 `item` event.
 
-The first element send to the `error` event is an error instance. In 
-`sequential` mode, it is the event sent in the previous item `callback`. In 
-`parallel` and `concurrent` modes, the second argument is an array will all 
-the error sent since multiple errors may be thrown at the same time.
+The first argument passed to the `error` event callback is an error instance. In 
+`sequential` mode, it is always the error that was thrown by the failed item callback. In 
+`parallel` and `concurrent` modes, there may be more than one event thrown asynchrously. In such case, the error has a generic message such as "Multiple error #{number of errors}" and the property ".errors" give access to each individual error.
 
 Traversing an array
 -------------------
