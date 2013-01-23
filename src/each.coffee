@@ -80,12 +80,14 @@ module.exports = (elements) ->
       if errors.length
         if parallel isnt 1
           if errors.length is 1
-          then error = errors[0]
+            error = errors[0]
+            error.errors = []
           else 
             error = new Error("Multiple errors (#{errors.length})")
             error.errors = errors
         else
           error = errors[0]
+          error.errors = []
         lerror = events.error.length
         lboth = events.both.length
         emitError = lerror or (not lerror and not lboth)

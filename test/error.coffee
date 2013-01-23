@@ -38,7 +38,7 @@ describe 'Error', ->
     error_assert = (err) ->
       current.should.eql 6
       err.message.should.eql 'Testing error in 6'
-      should.not.exists err.errors
+      err.errors.length.should.eql 0
     each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ] )
     .parallel( 4 )
     .on 'item', (element, index, next) ->

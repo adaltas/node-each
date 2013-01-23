@@ -153,7 +153,7 @@ see the code examples below for usage.
 Inside array iteration, callback signature is `function([value], [index], next)`
 
 ```javascript
-each({})
+each([])
 // 1 argument
 .on('item', function(next){})
 // 2 arguments
@@ -169,7 +169,7 @@ each({})
 Inside object iteration, callback signature is `function([key], [value], [counter], next)`
 
 ```javascript
-each({})
+each([])
 // 1 argument
 .on('item', function(next){})
 // 2 arguments
@@ -194,6 +194,17 @@ the current callbacks are not canceled but no new element will be send to the
 The first argument passed to the `error` event callback is an error instance. In 
 `sequential` mode, it is always the error that was thrown by the failed item callback. In 
 `parallel` and `concurrent` modes, there may be more than one event thrown asynchrously. In such case, the error has a generic message such as "Multiple error #{number of errors}" and the property ".errors" give access to each individual error.
+
+It is possible to know the number of successful item callbacks in the `both` event by substracting the number of run callbacks provided as the second argument to the number of errors provided as the first argument.
+
+```javascript
+each([])
+.on('item', function(next){ next() })
+.on('both', function(err, count){
+  succeed = count - err.errors.lenth
+  console.log('Successful callbacks' + succeed);
+})
+```
 
 Traversing an array
 -------------------
