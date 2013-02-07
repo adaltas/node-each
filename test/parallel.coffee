@@ -43,32 +43,22 @@ describe 'Parallel', ->
       current.should.eql 3
       next()
   it 'Parallel # undefined', (next) ->
-    current = 0
     each( undefined )
     .parallel( true )
     .on 'item', (element, index, next) ->
-      index.should.eql current
-      current++
-      should.not.exist element
-      setTimeout next, 100
+      should.not.exist true
     .on 'error', (err) ->
       should.not.exist err
     .on 'end', ->
-      current.should.eql 1
       next()
   it 'Parallel # null', (next) ->
-    current = 0
     each( null )
     .parallel( true )
     .on 'item', (element, index, next) ->
-      index.should.eql current
-      current++
-      should.not.exist element
-      setTimeout next, 100
+      should.not.exist true
     .on 'error', (err) ->
       should.not.exist err
     .on 'end', ->
-      current.should.eql 1
       next()
   it 'Parallel # string', (next) ->
     current = 0

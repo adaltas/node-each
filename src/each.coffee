@@ -12,7 +12,9 @@ Chained and parallel async iterator in one elegant function
 ###
 module.exports = (elements) ->
   type = typeof elements
-  if elements is null or type is 'undefined' or type is 'number' or type is 'string' or type is 'function' or type is 'boolean'
+  if elements is null or type is 'undefined'
+    elements = []
+  else if type is 'number' or type is 'string' or type is 'function' or type is 'boolean'
     elements = [elements]
   else unless Array.isArray elements
     isObject = true
@@ -34,6 +36,9 @@ module.exports = (elements) ->
   endable = 1
   eacher.paused = 0
   eacher.readable = true
+  eacher.write = (item) ->
+    elements.push item
+    eacher.total++
   eacher.pause = ->
     eacher.paused++
   eacher.resume = ->
@@ -50,16 +55,17 @@ module.exports = (elements) ->
     eacher
   eacher.times = (t) ->
     times = t
+    eacher.write null if elements.length is 0
     eacher
   eacher.files = (pattern) ->
     if Array.isArray pattern
       for p in pattern then @files p
       return @
     endable--
-    if arglength is 0
-      arglength = null
-      eacher.total = 0
-      elements = []
+    # if arglength is 0
+    #   arglength = null
+    #   eacher.total = 0
+    #   elements = []
     glob pattern, (err, files) ->
       eacher.total += files.length
       for file in files
