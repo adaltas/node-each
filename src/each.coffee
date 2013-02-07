@@ -37,8 +37,15 @@ module.exports = (elements) ->
   eacher.paused = 0
   eacher.readable = true
   eacher.write = (item) ->
-    elements.push item
+    l = arguments.length
+    if l is 1
+      elements.push arguments[0]
+    else if l is 2
+      keys = [] if not keys
+      keys.push arguments[0]
+      elements[arguments[0]] = arguments[1]
     eacher.total++
+    eacher
   eacher.pause = ->
     eacher.paused++
   eacher.resume = ->

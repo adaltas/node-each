@@ -85,8 +85,9 @@ API
 The `each` function signature is: `each(subject)`. 
 
 -   `subject`   
-    The subject to iterate. It can be an array, an object or 
-    any other types in which case the behavior is similar to the one of an array.
+    The subject to iterate. It is usually an array or an object. Inserting a number
+    or a string will behave like an array of one element and inserting null or undefined
+    wont iterate over any element.
 
 The return object is an instance of `EventEmitter`.
 
@@ -102,6 +103,8 @@ The following properties are available:
 
 The following functions are available:
 
+-   `write`   
+    Add array elements or key/value pairs to the iteration.
 -   `parallel`   
     The second argument is optional and indicate wether or not you want the 
     iteration to run in `sequential`, `parallel` or `concurrent` mode. See below
