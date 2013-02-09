@@ -170,4 +170,23 @@ describe 'Error', ->
       next()
     .on 'end', (err) ->
       false.should.be.ok 
+  it 'catch undefined', (next) ->
+    each( [ 1, 2, 3 ] )
+    .on 'item', (element, index, next) ->
+      Toto.should.throw.an.error
+    .on 'error', (err) ->
+      err.message.should.eql 'Toto is not defined'
+      next()
+    .on 'end', (err) ->
+      false.should.be.ok 
+  it 'catch TypeError in concurrent mode', (next) ->
+    each( [ 1, 2, 3 ] )
+    .parallel( 4 )
+    .on 'item', (element, index, next) ->
+      undefined.should.throw.an.error
+    .on 'error', (err) ->
+      err.message.should.eql 'Cannot read property \'should\' of undefined'
+      next()
+    .on 'end', (err) ->
+      false.should.be.ok
   

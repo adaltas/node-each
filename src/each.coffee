@@ -101,14 +101,13 @@ module.exports = (elements) ->
         else
           error = errors[0]
           error.errors = []
-        lerror = events.error.length
-        lboth = events.both.length
-        emitError = lerror or (not lerror and not lboth)
-        for emit in events.error then emit error if emitError
+        for emit in events.error then emit error if events.error.length
       else
         args = []
         for emit in events.end then emit eacher.done 
       for emit in events.both then emit error, eacher.done
+      # Not testable but re-throw error if not error or both listeners
+      throw error if error and not events.error.length and not events.both.length
       return
     return if errors.length isnt 0
     while (if parallel is true then (eacher.total * times - eacher.started) > 0 else Math.min( (parallel - eacher.started + eacher.done), (eacher.total * times - eacher.started) ) )

@@ -11,7 +11,7 @@ describe 'Concurrent', ->
     .on 'item', (element, index, next) ->
       index.should.eql current
       current++
-      element.id.should.eql current, 
+      element.id.should.eql current
       setTimeout next, 100
     .on 'end', ->
       current.should.eql 9
