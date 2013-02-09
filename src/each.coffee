@@ -3,7 +3,13 @@ glob = require 'glob'
 
 ###
 each(elements)
-.mode(parallel=false|true|integer)
+.parallel(false|true|integer)
+.sync(false)
+.times(1)
+.files('./*.coffee')
+.write(element)
+.pause()
+.resume()
 .on('item', callback)
 .on('error', callback)
 .on('end', callback)
@@ -32,6 +38,7 @@ module.exports = (elements) ->
   eacher.total = if keys then keys.length else elements.length
   eacher.started = 0
   eacher.done = 0
+  sync = false
   times = 1
   endable = 1
   eacher.paused = 0
@@ -59,6 +66,9 @@ module.exports = (elements) ->
     else if mode then parallel = mode
     # Sequential (in case parallel is called multiple times)
     else parallel = 1
+    eacher
+  eacher.sync = (s) ->
+    sync = s
     eacher
   eacher.times = (t) ->
     times = t
@@ -118,24 +128,28 @@ module.exports = (elements) ->
       eacher.started++
       try
         for emit in events.item
-          switch emit.length
+          l = emit.length
+          l++ if sync
+          switch l
             when 1
-              args = [next]
+              args = []
             when 2
               if keys
-              then args = [elements[keys[index]], next]
-              else args = [elements[index], next]
+              then args = [elements[keys[index]]]
+              else args = [elements[index]]
             when 3
               if keys
-              then args = [keys[index], elements[keys[index]], next]
-              else args = [elements[index], index, next]
+              then args = [keys[index], elements[keys[index]]]
+              else args = [elements[index], index]
             when 4
               if keys
-              then args = [keys[index], elements[keys[index]], index, next]
+              then args = [keys[index], elements[keys[index]], index]
               else return next new Error 'Invalid arguments in item callback'
             else
               return next new Error 'Invalid arguments in item callback'
-          emit args...
+          args.push next unless sync
+          err = emit args...
+          next err if sync
       catch e
         # prevent next to be called if an error occurend inside the
         # error, end or both callbacks

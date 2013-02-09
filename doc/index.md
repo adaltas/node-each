@@ -111,6 +111,8 @@ The following functions are available:
     for more details about the different modes.
 -   `times`
     Repeat operation multiple times.
+-   `sync`
+    Run callbacks in synchronous mode, no next callback are provided, may throw or return an error.
 -   `files`
     Emit file paths based on a directory or globbing expression.
 
