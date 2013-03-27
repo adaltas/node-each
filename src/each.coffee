@@ -43,6 +43,7 @@ module.exports = (elements) ->
   endable = 1
   eacher.paused = 0
   eacher.readable = true
+  end = false
   eacher.write = (item) ->
     l = arguments.length
     if l is 1
@@ -67,6 +68,13 @@ module.exports = (elements) ->
     # Sequential (in case parallel is called multiple times)
     else parallel = 1
     eacher
+  eacher.on = (ev, callback) ->
+    events[ev].push callback
+    eacher
+  eacher.end = ->
+    end = true
+    next()
+    eacher
   eacher.sync = (s) ->
     sync = s
     eacher
@@ -79,10 +87,6 @@ module.exports = (elements) ->
       for p in pattern then @files p
       return @
     endable--
-    # if arglength is 0
-    #   arglength = null
-    #   eacher.total = 0
-    #   elements = []
     glob pattern, (err, files) ->
       eacher.total += files.length
       for file in files
@@ -91,14 +95,11 @@ module.exports = (elements) ->
         endable++
         run()
     eacher
-  eacher.on = (ev, callback) ->
-    events[ev].push callback
-    eacher
   run = () ->
     return if eacher.paused
     # This is the end
     error = null
-    if endable is 1 and (eacher.done is eacher.total * times or (errors.length and eacher.started is eacher.done) )
+    if endable is 1 and (end or eacher.done is eacher.total * times or (errors.length and eacher.started is eacher.done) )
       eacher.readable = false
       if errors.length
         if parallel isnt 1
@@ -123,6 +124,7 @@ module.exports = (elements) ->
     while (if parallel is true then (eacher.total * times - eacher.started) > 0 else Math.min( (parallel - eacher.started + eacher.done), (eacher.total * times - eacher.started) ) )
       # Stop on synchronously sent error
       break if errors.length isnt 0
+      break if end
       # Time to call our iterator
       index = Math.floor(eacher.started / times)
       eacher.started++
