@@ -150,10 +150,10 @@ module.exports = (elements) ->
           args.push next unless sync
           err = emit args...
           next err if sync
-      catch e
+      catch err
         # prevent next to be called if an error occurend inside the
         # error, end or both callbacks
-        next e if eacher.readable
+        if eacher.readable then next err else throw err
     null
   next = (err) ->
     errors.push err if err? and err instanceof Error

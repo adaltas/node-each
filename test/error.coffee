@@ -32,7 +32,7 @@ describe 'Error', ->
       error_called.should.be.ok 
       error_assert err
       next()
-  it 'Concurrent # throw error', (next) ->
+  it 'Concurrent handle thrown error', (next) ->
     current = 0
     error_called = false
     error_assert = (err) ->
@@ -189,4 +189,26 @@ describe 'Error', ->
       next()
     .on 'end', (err) ->
       false.should.be.ok
+  it 'rethrow if error inside end', (next) ->
+    lsts = process.listeners 'uncaughtException'
+    process.removeAllListeners 'uncaughtException'
+    process.on 'uncaughtException', (err) ->
+      err.message.should.eql 'nonexistentFunc is not defined'
+      process.removeAllListeners 'uncaughtException'
+      for lst in lsts
+        process.on 'uncaughtException', lst
+      next()
+    count = 0
+    eacher = each()
+    .parallel(null)
+    .times(10)
+    .on 'item', (element, index, next) ->
+      count++
+      return next() if index < 5
+      return eacher.end() if index is 5
+      false.should.be.ok
+    .on 'error', (err) ->
+      next err
+    .on 'end', ->
+      nonexistentFunc()
   
