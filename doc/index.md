@@ -2,7 +2,6 @@
 language: en
 layout: page
 title: "Node EACH"
-date: 2012-11-14T21:33:20.540Z
 comments: false
 sharing: false
 footer: false
@@ -92,6 +91,7 @@ The `each` function signature is: `each(subject)`.
 The return object is an instance of `EventEmitter`.
 
 The following properties are available:
+
 -   `paused`   
     Indicate the state of the current event emitter.
 -   `readable`   
@@ -105,13 +105,15 @@ The following functions are available:
 
 -   `write`   
     Add array elements or key/value pairs to the iteration.
+-   `end`   
+    Stop the iteration, garanty that no item will be emitted after it is called.
 -   `parallel`   
     The second argument is optional and indicate wether or not you want the 
     iteration to run in `sequential`, `parallel` or `concurrent` mode. See below
     for more details about the different modes.
--   `times`
+-   `times`   
     Repeat operation multiple times.
--   `sync`
+-   `sync`   
     Run callbacks in synchronous mode, no next callback are provided, may throw or return an error.
 -   `files`
     Emit file paths based on a directory or globbing expression.
@@ -140,10 +142,10 @@ Parallelization modes
     Parallel is `false` or set to `1`, default if no parallel mode is defined.
     Callbacks are chained meaning each callback is called once the previous 
     callback is completed (after calling the `next` function argument).
--   `parallel`
+-   `parallel`   
     Parallel is `true`.
     All the callbacks are called at the same time and run in parallel.
--   `concurrent`
+-   `concurrent`   
     Parallel is an integer.
     Only the defined number of callbacks is run in parallel.
 
