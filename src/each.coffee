@@ -44,13 +44,23 @@ module.exports = (elements) ->
   eacher.paused = 0
   eacher.readable = true
   end = false
-  eacher.write = (item) ->
+  eacher.write = eacher.push = (item) ->
     l = arguments.length
     if l is 1
       elements.push arguments[0]
     else if l is 2
       keys = [] if not keys
       keys.push arguments[0]
+      elements[arguments[0]] = arguments[1]
+    eacher.total++
+    eacher
+  eacher.unshift = (item) ->
+    l = arguments.length
+    if l is 1
+      elements.unshift arguments[0]
+    else if l is 2
+      keys = [] if not keys
+      keys.unshift arguments[0]
       elements[arguments[0]] = arguments[1]
     eacher.total++
     eacher

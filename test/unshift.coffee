@@ -2,14 +2,14 @@
 should = require 'should'
 each = if process.env.EACH_COV then require '../lib-cov/each' else require '../lib/each'
 
-describe 'Write', ->
+describe 'Unshift', ->
 
   it 'accept array elements', (next) ->
     each()
-    .write('hello')
-    .write('each')
+    .unshift('hello')
+    .unshift('each')
     .on 'item', (item, index, next) ->
-      item.should.eql 'hello' if index is 0
+      item.should.eql 'each' if index is 0
       next()
     .on 'end', (count) ->
       count.should.eql 2
@@ -17,10 +17,10 @@ describe 'Write', ->
 
   it 'accept key value elements', (next) ->
     each()
-    .write('hello', 'each')
-    .write('youre', 'welcome')
+    .unshift('hello', 'each')
+    .unshift('youre', 'welcome')
     .on 'item', (key, value, next) ->
-      value.should.eql 'each' if key is 'hello'
+      value.should.eql 'welcome' if key is 'youre'
       next()
     .on 'end', (count) ->
       count.should.eql 2
