@@ -100,6 +100,8 @@ The following properties are available:
     Number of callbacks which have been called.
 -   `done`  
     Number of callbacks which have finished.
+-   `total`   
+    Total of registered elements.
 
 The following functions are available:
 
