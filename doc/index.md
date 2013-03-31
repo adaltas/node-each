@@ -103,8 +103,10 @@ The following properties are available:
 
 The following functions are available:
 
--   `write`   
-    Add array elements or key/value pairs to the iteration.
+-   `shift`, `write`   
+    Add array elements or key/value pairs at the end of iteration.
+-   `unshift`   
+    Add array elements or key/value pairs at the begining of the iteration, just after the last executed element.
 -   `end`   
     Stop the iteration, garanty that no item will be emitted after it is called.
 -   `parallel`   
