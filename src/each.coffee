@@ -56,11 +56,15 @@ module.exports = (elements) ->
     eacher
   eacher.unshift = (item) ->
     l = arguments.length
+    index = Math.floor(eacher.started / times)
+    # console.log index
     if l is 1
-      elements.unshift arguments[0]
+      # elements.unshift arguments[0]
+      elements.splice index, 0, arguments[0]
     else if l is 2
       keys = [] if not keys
-      keys.unshift arguments[0]
+      # keys.unshift arguments[0]
+      keys.splice index, 0, arguments[0]
       elements[arguments[0]] = arguments[1]
     eacher.total++
     eacher

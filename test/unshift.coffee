@@ -25,3 +25,19 @@ describe 'Unshift', ->
     .on 'end', (count) ->
       count.should.eql 2
       next()
+
+  it 'should place the next element', (next) ->
+    last = null
+    e = each(['a','b','c'])
+    .on 'item', (value, next) ->
+      if value is 'a'
+        e.unshift 'aa'
+      if last is 'a'
+        value.should.eql 'aa'
+      if last is 'aa'
+        value.should.eql 'b'
+      last = value
+      next()
+    .on 'end', (count) ->
+      count.should.eql 4
+      next()
