@@ -1,4 +1,5 @@
 
+path = require 'path'
 glob = require 'glob'
 
 ###
@@ -6,7 +7,7 @@ each(elements)
 .parallel(false|true|integer)
 .sync(false)
 .times(1)
-.files('./*.coffee')
+.files(cwd, ['./*.coffee'])
 .write(element)
 .pause()
 .resume()
@@ -96,11 +97,15 @@ module.exports = (elements) ->
     times = t
     eacher.write null if elements.length is 0
     eacher
-  eacher.files = (pattern) ->
+  eacher.files = (base, pattern) ->
+    if arguments.length is 1
+      pattern = base
+      base = null
     if Array.isArray pattern
       for p in pattern then @files p
       return @
     endable--
+    pattern = path.resolve base, pattern if base
     glob pattern, (err, files) ->
       eacher.total += files.length
       for file in files
