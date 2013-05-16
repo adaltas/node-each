@@ -41,6 +41,7 @@ module.exports = (elements) ->
   eacher.done = 0
   sync = false
   times = 1
+  repeat = false
   endable = 1
   eacher.paused = 0
   eacher.readable = true
@@ -57,7 +58,10 @@ module.exports = (elements) ->
     eacher
   eacher.unshift = (item) ->
     l = arguments.length
-    index = Math.floor(eacher.started / times)
+    if repeat
+      index = eacher.started % elements.length
+    else
+      index = Math.floor(eacher.started / times)
     # console.log index
     if l is 1
       # elements.unshift arguments[0]
@@ -92,6 +96,11 @@ module.exports = (elements) ->
     eacher
   eacher.sync = (s) ->
     sync = s
+    eacher
+  eacher.repeat = (t) ->
+    repeat = true
+    times = t
+    eacher.write null if elements.length is 0
     eacher
   eacher.times = (t) ->
     times = t
@@ -145,7 +154,10 @@ module.exports = (elements) ->
       break if errors.length isnt 0
       break if end
       # Time to call our iterator
-      index = Math.floor(eacher.started / times)
+      if repeat
+        index = eacher.started % elements.length
+      else
+        index = Math.floor(eacher.started / times)
       eacher.started++
       try
         for emit in events.item

@@ -116,7 +116,9 @@ The following functions are available:
     iteration to run in `sequential`, `parallel` or `concurrent` mode. See below
     for more details about the different modes.
 -   `times()`   
-    Repeat operation multiple times.
+    Repeat operation multiple times before passing to the next element, see `repeat`
+-   `repeat()`   
+    Repeat operation multiple times once all elements have been called, see `times`.
 -   `sync()`   
     Run callbacks in synchronous mode, no next callback are provided, may throw or return an error.
 -   `files([base], glob)`
@@ -358,11 +360,11 @@ eacher.pipe(
 );
 ```
 
-Repetition with `times`
------------------------
+Repetition with `times` and `repeat`
+------------------------------------
 
-With the addition of the `times` function, you may now traverse an array 
-or call a function multiple times.
+With the addition of the `times` and `repeat` functions, you may now traverse an array 
+or call a function multiple times. Note, you can not use those two functions at the same time.
 
 We first implemented this functionality while doing performance 
 assessment and needing to repeat a same set of metrics multiple times. The 
@@ -370,16 +372,19 @@ following sample will call 3 times the function `doSomeMetrics` with the same
 arguments.
 
 ```javascript
-each([64, 128, 256, 512])
+each(['a', 'b', 'c', 'd'])
 .times(3)
-.on('item', function(testsize, next){
-  doSomeMetrics(testsize, next);
+.on('item', function(id, next){
+  doSomeMetrics(id, next);
 }).on('end', function(){
   console.log 'done'
 });
 ```
 
-It is also possible to use `times` without providing any data. Here's how:
+The generated sequence is 'aaabbbcccddd'. In the same way, you could replace `times` by 
+`repeat` and in such case, the generated sequence would have been `abcdabcdabcd`.
+
+It is also possible to use `times` and `repeat` without providing any data. Here's how:
 
 ```javascript
 count = 0
