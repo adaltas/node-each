@@ -105,21 +105,21 @@ The following properties are available:
 
 The following functions are available:
 
--   `shift`, `write`   
+-   `shift(items)`, `write(items)`   
     Add array elements or key/value pairs at the end of iteration.
--   `unshift`   
+-   `unshift(items)`   
     Add array elements or key/value pairs at the begining of the iteration, just after the last executed element.
--   `end`   
+-   `end()`   
     Stop the iteration, garanty that no item will be emitted after it is called.
--   `parallel`   
-    The second argument is optional and indicate wether or not you want the 
+-   `parallel(mode)`   
+    The first argument is optional and indicate wether or not you want the 
     iteration to run in `sequential`, `parallel` or `concurrent` mode. See below
     for more details about the different modes.
--   `times`   
+-   `times()`   
     Repeat operation multiple times.
--   `sync`   
+-   `sync()`   
     Run callbacks in synchronous mode, no next callback are provided, may throw or return an error.
--   `files`
+-   `files([base], glob)`
     Emit file paths based on a directory or globbing expression.
 
 The following events are emitted:
