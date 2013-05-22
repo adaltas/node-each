@@ -17,10 +17,16 @@ github: https://github.com/wdavidw/node-each
 |_| \_|\___/ \__,_|\___| |______\__,_|\___|_| |_| New BSD License
 </pre>
 
-Note, for user of versions 0.2.x and below, arguments of the item callback have changed. See below for additionnal information.
-
 Node Each is a single elegant function to iterate asynchronously over elements 
 both in `sequential`, `parallel` and `concurrent` mode.
+
+*   Iterate over arrays and objects
+*   Control the number of executed callbacks in parallel
+*   asynchronous and synchronous supported callbacks
+*   Run array elements and object key/pairs multiple times
+*   Familiar `EventEmitter` and `Stream` Node.js api
+*   Filesystem traversal with globing support
+*   Multiple call detection in callback
 
 Quick example
 -------------
@@ -62,6 +68,8 @@ each( [{id: 1}, {id: 2}, {id: 3}] )
 
 Installing
 ----------
+
+Note, for users of versions 0.2.x and below, arguments of the item callback have changed. See below for additionnal information.
 
 Via git (or downloaded tarball):
 
@@ -396,6 +404,11 @@ each()
   console.log 'done'
 });
 ```
+
+Multiple call detection in callback
+-----------------------------------
+
+An error will be throw with the message "Multiple call detected" if the `next` argument in the `item` callback is called multiple times. However, if `end` event has already been thrown, the only way to catch the error is by registering to the "uncaughtException" event of `process`.
 
 Development
 -----------

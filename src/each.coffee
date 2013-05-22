@@ -129,6 +129,7 @@ module.exports = (elements) ->
     # This is the end
     error = null
     if endable is 1 and (end or eacher.done is eacher.total * times or (errors.length and eacher.started is eacher.done) )
+      # Give a chance for end to be called multiple times
       eacher.readable = false
       if errors.length
         if parallel isnt 1
@@ -181,7 +182,16 @@ module.exports = (elements) ->
               else return next new Error 'Invalid arguments in item callback'
             else
               return next new Error 'Invalid arguments in item callback'
-          args.push next unless sync
+          unless sync
+            args.push ( ->
+              count = 0
+              (err) ->
+                return next err if err
+                unless ++count is 1
+                  err = new Error 'Multiple call detected'
+                  return if eacher.readable then next err else throw err 
+                next()
+            )()
           err = emit args...
           next err if sync
       catch err

@@ -65,3 +65,58 @@ describe 'Callback', ->
       .on 'error', (err) ->
         err.message.should.eql 'Invalid arguments in item callback'
         next()
+  describe 'next', ->
+    # it.only 'called multiple times in sequential mode', (next) ->
+    #   each( [ 'a', 'b', 'c' ] )
+    #   .parallel(1)
+    #   .on 'item', (next) ->
+    #     next()
+    #     process.nextTick next
+    #   .on 'error', (err) ->
+    #     console.log 'error'
+    #     next()
+    #   .on 'end', -> 
+    #     console.log 'end'
+    it 'in sequential mode, end already thrown', (next) ->
+      # Nothing we can do here, end has been thrown and we can not wait for it
+      # Catch the uncatchable
+      lsts = process.listeners 'uncaughtException'
+      process.removeAllListeners 'uncaughtException'
+      process.on 'uncaughtException', (err) ->
+        # Test
+        ended.should.be.ok
+        err.message.should.eql 'Multiple call detected'
+        # Cleanup and finish
+        process.removeAllListeners 'uncaughtException'
+        for lst in lsts
+          process.on 'uncaughtException', lst
+        next()
+      # Run the test
+      ended = false
+      each( [ 'a', 'b', 'c' ] )
+      .parallel(1)
+      .on 'item', (item, next) ->
+        next()
+        # We only want to generate one error
+        return unless item is 'a'
+        process.nextTick next
+      .on 'error', (err) ->
+        false.should.be.ok
+      .on 'end', ->
+        ended = true
+    it 'in sequential mode, end not thrown', (next) ->
+      ended = false
+      each( [ 'a', 'b', 'c' ] )
+      .parallel(1)
+      .on 'item', (item, next) ->
+        process.nextTick ->
+          next()
+          # We only want to generate one error
+          return unless item is 'a'
+          process.nextTick next
+      .on 'error', (err) ->
+        ended.should.not.be.ok
+        err.message.should.eql 'Multiple call detected'
+        next()
+      .on 'end', ->
+        ended = true
