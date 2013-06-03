@@ -120,3 +120,13 @@ describe 'Callback', ->
         next()
       .on 'end', ->
         ended = true
+    it 'treat all object as error', (next) ->
+      each('a')
+      .parallel(1)
+      .on 'item', (item, next) ->
+        next message: 'not_an error'
+      .on 'error', (err) ->
+        err.message.should.eql 'not_an error'
+        next()
+      .on 'end', (err) ->
+        false.should.be.ok

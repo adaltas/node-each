@@ -128,7 +128,7 @@ The following functions are available:
 -   `repeat()`   
     Repeat operation multiple times once all elements have been called, see `times`.
 -   `sync()`   
-    Run callbacks in synchronous mode, no next callback are provided, may throw or return an error.
+    Run callbacks in synchronous mode, no next callback are provided, may throw an error.
 -   `files([base], glob)`
     Emit file paths based on a directory or globbing expression.
 
@@ -147,7 +147,7 @@ The following events are emitted:
     Called only if all the callback have been handled successfully. The total number of traversed item is provided in the callback as the first argument.   
 -   `both`   
     Called only once all the items have been handled. It is a conveniency event
-    combining the `error` and `end` event in one call. Return the error object if any as a first argument and the number of traversed items as the second argument. In case of an error, this number correspond to the number of item callbacks which called next. 
+    combining the `error` and `end` event in one call. Called with the error object or null as a first argument and the number of traversed items as the second argument. In case of an error, this number correspond to the number of item callbacks which called next. 
 
 Parallelization modes
 ---------------------

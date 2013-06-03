@@ -193,14 +193,14 @@ module.exports = (elements) ->
                 next()
             )()
           err = emit args...
-          next err if sync
+          next() if sync
       catch err
         # prevent next to be called if an error occurend inside the
         # error, end or both callbacks
         if eacher.readable then next err else throw err
     null
   next = (err) ->
-    errors.push err if err? and err instanceof Error
+    errors.push err if err? # and err instanceof Error
     eacher.done++
     run()
   process.nextTick run

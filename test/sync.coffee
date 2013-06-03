@@ -12,6 +12,8 @@ describe 'sync', ->
       index.should.eql current
       element.should.eql current
       current++
+    .on 'error', (err) ->
+      console.log err
     .on 'end', ->
       current.should.eql 10
       next()
@@ -33,5 +35,6 @@ describe 'sync', ->
     .on 'item', (element, index) ->
       return new Error 'Argh'
     .on 'error', (err) ->
-      err.message.should.eql 'Argh'
+      false.should.be.ok
+    .on 'end', ->
       next()
