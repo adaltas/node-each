@@ -144,7 +144,7 @@ The following events are emitted:
     an error object as its first argument and eventually a second argument. See 
     the `dealing with errors` section for more information.   
 -   `end`   
-    Called only if all the callback have been handled successfully. The total number of traversed item is provided in the callback as the first argument.   
+    Called only if all the callback have been handled successfully. No argument is provided in the callback.
 -   `both`   
     Called only once all the items have been handled. It is a conveniency event
     combining the `error` and `end` event in one call. Return the error object if any as a first argument and the number of traversed items as the second argument. In case of an error, this number correspond to the number of item callbacks which called next. 
@@ -431,4 +431,3 @@ mocha and its dependencies in your project "node_modules" directory.
 make test
 ```
 
-    

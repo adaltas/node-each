@@ -11,7 +11,8 @@ describe 'Unshift', ->
     .on 'item', (item, index, next) ->
       item.should.eql 'each' if index is 0
       next()
-    .on 'end', (count) ->
+    .on 'both', (err, count) ->
+      should.not.exist err
       count.should.eql 2
       next()
 
@@ -22,7 +23,8 @@ describe 'Unshift', ->
     .on 'item', (key, value, next) ->
       value.should.eql 'welcome' if key is 'youre'
       next()
-    .on 'end', (count) ->
+    .on 'both', (err, count) ->
+      should.not.exist err
       count.should.eql 2
       next()
 
@@ -38,6 +40,7 @@ describe 'Unshift', ->
         value.should.eql 'b'
       last = value
       next()
-    .on 'end', (count) ->
+    .on 'both', (err, count) ->
+      should.not.exist err
       count.should.eql 4
       next()

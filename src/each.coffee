@@ -145,7 +145,7 @@ module.exports = (elements) ->
         for emit in events.error then emit error if events.error.length
       else
         args = []
-        for emit in events.end then emit eacher.done 
+        for emit in events.end then emit()
       for emit in events.both then emit error, eacher.done
       # Not testable but re-throw error if not error or both listeners
       throw error if error and not events.error.length and not events.both.length

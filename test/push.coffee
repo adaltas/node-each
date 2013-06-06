@@ -12,7 +12,8 @@ describe 'Write', ->
     .on 'item', (item, index, next) ->
       item.should.eql 'hello' if index is 0
       next()
-    .on 'end', (count) ->
+    .on 'both', (err, count) ->
+      should.not.exist err
       count.should.eql 2
       next()
 
@@ -23,6 +24,7 @@ describe 'Write', ->
     .on 'item', (key, value, next) ->
       value.should.eql 'each' if key is 'hello'
       next()
-    .on 'end', (count) ->
+    .on 'both', (err, count) ->
+      should.not.exist err
       count.should.eql 2
       next()
