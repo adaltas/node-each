@@ -89,7 +89,7 @@ npm install each
 API
 ---
 
-The `each` function signature is: `each(subject)`. 
+`each` function signature is: `each(subject)`. 
 
 -   `subject`   
     The subject to iterate. It is usually an array or an object. Inserting a number
@@ -113,11 +113,11 @@ The following properties are available:
 
 The following functions are available:
 
--   `shift(items)`, `write(items)`   
+-   `push(items)`, `write(items)`   
     Add array elements or key/value pairs at the end of iteration.
 -   `unshift(items)`   
     Add array elements or key/value pairs at the begining of the iteration, just after the last executed element.
--   `end()`   
+-   `close()`   
     Stop the iteration, garanty that no item will be emitted after it is called.
 -   `parallel(mode)`   
     The first argument is optional and indicate wether or not you want the 

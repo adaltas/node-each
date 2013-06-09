@@ -52,7 +52,7 @@ describe 'Error', ->
       error_assert err
       error_called = true
     .on 'end', (err) ->
-      assert.ok false
+      false.should.not.be.ok
     .on 'both', (err) ->
       error_called.should.be.ok 
       error_assert err

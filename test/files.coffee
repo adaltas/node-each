@@ -12,7 +12,7 @@ describe 'files', ->
       files.push file
       process.nextTick next
     .on 'end', ->
-      files.length.should.eql 2
+      files.length.should.eql 3
       next()
   it 'should traverse multiple globing expressions', (next) ->
     files = []
@@ -26,7 +26,7 @@ describe 'files', ->
       files.push file
       process.nextTick next
     .on 'end', ->
-      files.length.should.eql 3
+      files.length.should.eql 4
       next()
   it 'should call end if no match', (next) ->
     files = []
