@@ -1,6 +1,6 @@
 {
   "name": "each",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "description": "Chained and parallel async iterator in one elegant function",
   "homepage": "http://www.adaltas.com/projects/node-each/",
   "author": "David Worms <david@adaltas.com>",
