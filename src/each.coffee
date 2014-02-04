@@ -71,13 +71,13 @@ Each.prototype._run = () ->
       if @_parallel isnt 1
         if @_errors.length is 1
           error = @_errors[0]
-          error.errors = []
+          # error.errors = []
         else 
           error = new Error("Multiple errors (#{@_errors.length})")
           error.errors = @_errors
       else
         error = @_errors[0]
-        error.errors = []
+        # error.errors = []
       @emit 'error', error if @listeners('error').length or not @listeners('both').length
     else
       args = []
