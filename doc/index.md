@@ -140,9 +140,8 @@ The following events are emitted:
     below.
 -   `error`   
     Called only if an error occured. The iteration will be stoped on error meaning
-    no `item` event will be called other than the ones already provisionned. Recieves
-    an error object as its first argument and eventually a second argument. See 
-    the `dealing with errors` section for more information.   
+    no `item` event will be called other than the ones already provisionned. The callback 
+    argument is an error object. See the section `dealing with errors` for more information.   
 -   `end`   
     Called only if all the callback have been handled successfully. No argument is provided in the callback.
 -   `both`   

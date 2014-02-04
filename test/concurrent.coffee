@@ -95,7 +95,7 @@ describe 'Concurrent', ->
     .on 'item', (element, index, next) ->
       index.should.eql current
       current++
-      element.should.be.a 'function'
+      element.should.be.a.Function
       element next
     .on 'error', (err) ->
       should.not.exist err

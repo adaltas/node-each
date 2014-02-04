@@ -1,13 +1,13 @@
 REPORTER = dot
 
 build:
-	@./node_modules/.bin/coffee -b -o lib src/*.coffee
+	@./node_modules/.bin/coffee -b -o lib src
 
 doc: build
 	@cp -rp doc/* $(EACH_DOC)
 
 test: build
-	@NODE_ENV=test ./node_modules/.bin/mocha --compilers coffee:coffee-script \
+	@NODE_ENV=test ./node_modules/.bin/mocha --compilers coffee:coffee-script/register \
 		--reporter $(REPORTER)
 
 coverage: build

@@ -20,7 +20,7 @@ describe 'Callback', ->
       each( [ 'a', 'b', 'c' ] )
       .on 'item', (element, index, next) ->
         ['a', 'b', 'c'].should.include element
-        index.should.be.a 'number'
+        index.should.be.a.Number
         next()
       .on 'end', -> next()
     it 'throw error with no argument', (next) ->
@@ -40,22 +40,22 @@ describe 'Callback', ->
     it 'should provide value and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
       .on 'item', (value, next) ->
-        value.should.be.a 'number'
+        value.should.be.a.Number
         next()
       .on 'end', -> next()
     it 'should provide key, value and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
       .on 'item', (key, value, next) ->
         ['a', 'b', 'c'].should.include key
-        value.should.be.a 'number'
+        value.should.be.a.Number
         next()
       .on 'end', -> next()
     it 'should provide key, value, index and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
       .on 'item', (key, value, counter, next) ->
         ['a', 'b', 'c'].should.include key
-        value.should.be.a 'number'
-        counter.should.be.a 'number'
+        value.should.be.a.Number
+        counter.should.be.a.Number
         next()
       .on 'end', -> next()
     it 'throw error with no argument', (next) ->
