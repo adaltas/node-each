@@ -139,7 +139,7 @@ The following events are emitted:
     subject type and the number of arguments defined in the callback. More information
     below.
 -   `error`   
-    Called only if an error occured. The iteration will be stoped on error meaning
+    Called only if an error occured. The iteration will be stopped on error meaning
     no `item` event will be called other than the ones already provisionned. The callback 
     argument is an error object. See the section `dealing with errors` for more information.   
 -   `end`   
@@ -207,7 +207,7 @@ Dealing with errors
 
 Error are declared by calling `next` argument in the `item` event with an error 
 object as its first argument. An event `error` will be triggered and the 
-iteration will be stoped. Note that in case of parallel and concurrent mode, 
+iteration will be stopped. Note that in case of parallel and concurrent mode, 
 the current callbacks are not canceled but no new element will be send to the 
 `item` event.
 
