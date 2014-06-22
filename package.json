@@ -19,7 +19,7 @@
     "mocha": "latest"
   },
   "engines": {
-    "node": ">= 0.4.0"
+    "node": ">= 0.9.0"
   },
   "keywords": ["control flow", "asynchronous", "array", "object", "each"],
   "repository": {
