@@ -13,13 +13,13 @@ describe 'Callback', ->
     it 'should provide element and next argument', (next) ->
       each( [ 'a', 'b', 'c' ] )
       .on 'item', (element, next) ->
-        ['a', 'b', 'c'].should.include element
+        ['a', 'b', 'c'].should.containEql element
         next()
       .on 'end', -> next()
     it 'should provide element, index and next argument', (next) ->
       each( [ 'a', 'b', 'c' ] )
       .on 'item', (element, index, next) ->
-        ['a', 'b', 'c'].should.include element
+        ['a', 'b', 'c'].should.containEql element
         index.should.be.a.Number
         next()
       .on 'end', -> next()
@@ -46,14 +46,14 @@ describe 'Callback', ->
     it 'should provide key, value and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
       .on 'item', (key, value, next) ->
-        ['a', 'b', 'c'].should.include key
+        ['a', 'b', 'c'].should.containEql key
         value.should.be.a.Number
         next()
       .on 'end', -> next()
     it 'should provide key, value, index and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
       .on 'item', (key, value, counter, next) ->
-        ['a', 'b', 'c'].should.include key
+        ['a', 'b', 'c'].should.containEql key
         value.should.be.a.Number
         counter.should.be.a.Number
         next()
