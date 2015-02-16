@@ -1,5 +1,5 @@
 
-var each = require('each');
+var each = require('..');
 
 each( [{id: 1}, {id: 2}, {id: 3}] )
 .on('item', function(element, index, next) {

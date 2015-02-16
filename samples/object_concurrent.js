@@ -1,5 +1,5 @@
 
-var each = require('each');
+var each = require('..');
 
 each( {id_1: 1, id_2: 2, id_3: 3} )
 .parallel( 2 )
