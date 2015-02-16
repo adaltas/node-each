@@ -40,14 +40,11 @@ Each = (@options, @_elements) ->
   @_keys = Object.keys @_elements if isObject
   @_errors = []
   @_parallel = 1
-  @_sync = false
-  @_times = 1
-  @_repeat = false
+  @options.sync = false
+  @options.times = 1
+  @options.repeat = false
   @_endable = 1
   @_close = false
-  # Transformable stream
-  # options.objectMode = true
-  # stream.Transform.call @, options
   events.EventEmitter.call @, @options
   # Public state
   @total = if @_keys then @_keys.length else @_elements.length
@@ -60,14 +57,13 @@ Each = (@options, @_elements) ->
   process.nextTick => @_run()
   @
 
-# util.inherits Each, stream.Transform
 util.inherits Each, events.EventEmitter
 
 Each.prototype._run = () ->
   return if @paused
   # This is the end
   error = null
-  if @_endable is 1 and (@_close or @done is @total * @_times or (@_errors.length and @started is @done) )
+  if @_endable is 1 and (@_close or @done is @total * @options.times or (@_errors.length and @started is @done) )
     # Give a chance for end to be called multiple times
     @readable = false
     if @_errors.length
@@ -90,21 +86,21 @@ Each.prototype._run = () ->
     # throw error if error and not @listeners('error').length and not @listeners('both').length
     return
   return if @_errors.length isnt 0
-  while (if @_parallel is true then (@total * @_times - @started) > 0 else Math.min( (@_parallel - @started + @done), (@total * @_times - @started) ) )
+  while (if @_parallel is true then (@total * @options.times - @started) > 0 else Math.min( (@_parallel - @started + @done), (@total * @options.times - @started) ) )
     # Stop on synchronously sent error
     break if @_errors.length isnt 0
     break if @_close
     # Time to call our iterator
-    if @_repeat
+    if @options.repeat
       index = @started % @_elements.length
     else
-      index = Math.floor(@started / @_times)
+      index = Math.floor(@started / @options.times)
     @started++
     try
       self = @
       for emit in @listeners 'item'
         l = emit.length
-        l++ if @_sync
+        l++ if @options.sync
         switch l
           when 1
             args = []
@@ -122,7 +118,7 @@ Each.prototype._run = () ->
             else return self._next new Error 'Invalid arguments in item callback'
           else
             return self._next new Error 'Invalid arguments in item callback'
-        unless @_sync
+        unless @options.sync
           args.push ( ->
             count = 0
             (err) ->
@@ -133,7 +129,7 @@ Each.prototype._run = () ->
               self._next()
           )()
         err = emit args...
-        self._next err if @_sync
+        self._next err if @options.sync
     catch err
       # prevent next to be called if an error occurend inside the
       # error, end or both callbacks
@@ -152,15 +148,15 @@ Each::close = ->
   @_next()
   @
 Each::sync = (s) ->
-  @_sync = s
+  @options.sync = s
   @
 Each::repeat = (t) ->
-  @_repeat = true
-  @_times = t
+  @options.repeat = true
+  @options.times = t
   @write null if @_elements.length is 0
   @
 Each::times = (t) ->
-  @_times = t
+  @options.times = t
   @write null if @_elements.length is 0
   @
 Each::files = (base, pattern) ->
@@ -193,10 +189,10 @@ Each::write = Each::push = (item) ->
   @
 Each::unshift = (item) ->
   l = arguments.length
-  if @_repeat
+  if @options.repeat
     index = @started % @_elements.length
   else
-    index = Math.floor(@started / @_times)
+    index = Math.floor(@started / @options.times)
   if l is 1
     # @_elements.unshift arguments[0]
     @_elements.splice index, 0, arguments[0]
