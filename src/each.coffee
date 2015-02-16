@@ -148,7 +148,7 @@ Each::close = ->
   @_next()
   @
 Each::sync = (s) ->
-  @options.sync = s
+  @options.sync = s? or true
   @
 Each::repeat = (t) ->
   @options.repeat = true
