@@ -66,17 +66,6 @@ describe 'Callback', ->
         err.message.should.eql 'Invalid arguments in item callback'
         next()
   describe 'next', ->
-    # it.only 'called multiple times in sequential mode', (next) ->
-    #   each( [ 'a', 'b', 'c' ] )
-    #   .parallel(1)
-    #   .on 'item', (next) ->
-    #     next()
-    #     process.nextTick next
-    #   .on 'error', (err) ->
-    #     console.log 'error'
-    #     next()
-    #   .on 'end', -> 
-    #     console.log 'end'
     it 'in sequential mode, end already thrown', (next) ->
       # Nothing we can do here, end has been thrown and we can not wait for it
       # Catch the uncatchable
