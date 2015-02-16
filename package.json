@@ -7,9 +7,6 @@
   "contributors": [ 
     { "name": "David Worms", "email": "david@adaltas.com" }
   ],
-  "scripts": {
-    "test": "make test"
-  },
   "dependencies": {
     "glob": "latest"
   },
@@ -25,5 +22,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/wdavidw/node-each.git"
+  },
+  "scripts": {
+    "coffee": "./node_modules/.bin/coffee -b -o lib src",
+    "pretest": "./node_modules/.bin/coffee -b -o lib src",
+    "test": "NODE_ENV=test ./node_modules/.bin/mocha --compilers coffee:coffee-script/register --reporter dot"
   }
 }
