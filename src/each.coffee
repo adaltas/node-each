@@ -39,7 +39,7 @@ Each = (@options, @_elements) ->
     isObject = true
   @_keys = Object.keys @_elements if isObject
   @_errors = []
-  @_parallel = 1
+  @options.concurrency = 1
   @options.sync = false
   @options.times = 1
   @options.repeat = false
@@ -67,7 +67,7 @@ Each.prototype._run = () ->
     # Give a chance for end to be called multiple times
     @readable = false
     if @_errors.length
-      if @_parallel isnt 1
+      if @options.concurrency isnt 1
         if @_errors.length is 1
           error = @_errors[0]
           # error.errors = []
@@ -86,7 +86,7 @@ Each.prototype._run = () ->
     # throw error if error and not @listeners('error').length and not @listeners('both').length
     return
   return if @_errors.length isnt 0
-  while (if @_parallel is true then (@total * @options.times - @started) > 0 else Math.min( (@_parallel - @started + @done), (@total * @options.times - @started) ) )
+  while (if @options.concurrency is true then (@total * @options.times - @started) > 0 else Math.min( (@options.concurrency - @started + @done), (@total * @options.times - @started) ) )
     # Stop on synchronously sent error
     break if @_errors.length isnt 0
     break if @_close
@@ -185,7 +185,6 @@ Each::write = Each::push = (item) ->
     @_keys.push arguments[0]
     @_elements[arguments[0]] = arguments[1]
   @total++
-  # @started - @done < @_parallel
   @
 Each::unshift = (item) ->
   l = arguments.length
@@ -210,11 +209,11 @@ Each::resume = ->
   @_run()
 Each::parallel = (mode) ->
   # Concurrent
-  if typeof mode is 'number' then @_parallel = mode
+  if typeof mode is 'number' then @options.concurrency = mode
   # Parallel
-  else if mode then @_parallel = mode
+  else if mode then @options.concurrency = mode
   # Sequential (in case parallel is called multiple times)
-  else @_parallel = 1
+  else @options.concurrency = 1
   @
 
 module.exports = (elements) ->
