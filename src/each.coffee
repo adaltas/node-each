@@ -140,6 +140,10 @@ Each.prototype._next = (err) ->
   @_errors.push err if err? and err instanceof Error
   @done++
   @_run()
+Each::run = (callback) ->
+  @on 'item', callback
+Each::then = (callback) ->
+  @on 'both', callback
 Each::end = ->
   console.log 'Function `end` deprecated, use `close` instead.'
   @close()

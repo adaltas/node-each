@@ -17,10 +17,22 @@ Note, for user of versions 0.2.x and below, arguments of the item callback have 
 Node Each is a single elegant function to iterate asynchronously over elements 
 both in `sequential`, `parallel` and `concurrent` mode.
 
-Quick example
--------------
+## Example using the promise API
 
-The following code traverse an array in `sequential` mode. See the documentation for more information such as running in parallel and concurrent mode.
+```javascript
+each( [{id: 1}, {id: 2}, {id: 3}] )
+.run( function(element, index, next){
+  console.log('element: ', element, '@', index);
+  setTimeout(next, 500);
+})
+.then( function(err){
+  console.log(err ? err.message : 'Done');
+});
+```
+
+## Example using the event API
+
+This is the same code as above using a different API.
 
 ```javascript
 var each = require('each');
@@ -37,8 +49,7 @@ each( [{id: 1}, {id: 2}, {id: 3}] )
 });
 ```
 
-Development
------------
+## Development
 
 Node Each comes with a few example, all present in the "samples" folder. Here's how you may run each of them :
 
