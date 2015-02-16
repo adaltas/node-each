@@ -7,12 +7,12 @@ describe 'files', ->
     files = []
     each()
     .parallel(true)
-    .files("#{__dirname}/../test/c*.coffee")
+    .files("#{__dirname}/../test/mode.*.coffee")
     .on 'item', (file, next) ->
       files.push file
       process.nextTick next
     .on 'end', ->
-      files.length.should.eql 3
+      files.length.should.eql 2
       next()
   it 'should traverse multiple globing expressions', (next) ->
     files = []
@@ -20,13 +20,13 @@ describe 'files', ->
     .parallel(true)
     .files([
       "#{__dirname}/../src/*.coffee"
-      "#{__dirname}/../test/c*.coffee"
+      "#{__dirname}/../test/mode.*.coffee"
     ])
     .on 'item', (file, next) ->
       files.push file
       process.nextTick next
     .on 'end', ->
-      files.length.should.eql 4
+      files.length.should.eql 3
       next()
   it 'should call end if no match', (next) ->
     files = []
@@ -43,12 +43,12 @@ describe 'files', ->
     files = []
     each()
     .parallel(true)
-    .files("#{__dirname}/files.coffee")
+    .files("#{__dirname}/api.files.coffee")
     .on 'item', (file, next) ->
       files.push file
       process.nextTick next
     .on 'end', ->
-      files.should.eql ["#{__dirname}/files.coffee"]
+      files.should.eql ["#{__dirname}/api.files.coffee"]
       next()
   it 'should emit if match a directory', (next) ->
     files = []
