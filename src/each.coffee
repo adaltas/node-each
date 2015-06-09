@@ -54,7 +54,7 @@ Each = (@options, @_elements) ->
   @paused = 0
   @readable = true
   self = @
-  process.nextTick => @_run()
+  setImmediate => @_run()
   @
 
 util.inherits Each, events.EventEmitter
