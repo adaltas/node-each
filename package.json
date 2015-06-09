@@ -4,6 +4,7 @@
   "description": "Chained and parallel async iterator in one elegant function",
   "homepage": "http://www.adaltas.com/projects/node-each/",
   "author": "David Worms <david@adaltas.com>",
+  "license": "BSD-3-Clause",
   "contributors": [ 
     { "name": "David Worms", "email": "david@adaltas.com" }
   ],
