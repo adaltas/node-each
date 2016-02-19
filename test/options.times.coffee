@@ -1,6 +1,6 @@
 
 should = require 'should'
-each = if process.env.EACH_COV then require '../lib-cov/each' else require '../lib/each'
+each = require '../src/each'
 
 describe 'Sequential', ->
   it 'should run nothing 10 times', (next) ->

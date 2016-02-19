@@ -1,6 +1,6 @@
 
 should = require 'should'
-each = if process.env.EACH_COV then require '../lib-cov/each' else require '../lib/each'
+each = require '../src/each'
 
 describe 'Sequential', ->
   describe 'mode', ->
@@ -151,4 +151,3 @@ describe 'Sequential', ->
         next()
       .on 'end', ->
         ended = true
-
