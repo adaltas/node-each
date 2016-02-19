@@ -176,7 +176,7 @@ Each::files = (base, pattern) ->
     for file in files
       @_elements.push file
     @total += files.length
-    process.nextTick =>
+    setImmediate =>
       @_endable++
       @_run()
   @
