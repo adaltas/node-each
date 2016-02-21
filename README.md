@@ -17,35 +17,16 @@ Note, for user of versions 0.2.x and below, arguments of the item callback have 
 Node Each is a single elegant function to iterate asynchronously over elements 
 both in `sequential`, `parallel` and `concurrent` mode.
 
-## Example using the promise API
+## Example
 
 ```javascript
 each( [{id: 1}, {id: 2}, {id: 3}] )
-.run( function(element, index, next){
+.call( function(element, index, next){
   console.log('element: ', element, '@', index);
   setTimeout(next, 500);
 })
 .then( function(err){
   console.log(err ? err.message : 'Done');
-});
-```
-
-## Example using the event API
-
-This is the same code as above using a different API.
-
-```javascript
-var each = require('each');
-each( [{id: 1}, {id: 2}, {id: 3}] )
-.on('item', function(element, index, next) {
-  console.log('element: ', element, '@', index);
-  setTimeout(next, 500);
-})
-.on('error', function(err) {
-  console.log(err.message);
-})
-.on('end', function() {
-  console.log('Done');
 });
 ```
 
@@ -68,4 +49,3 @@ mocha and its dependencies in your project "node_modules" directory.
 ```bash
 make test
 ```
-
