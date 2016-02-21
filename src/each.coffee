@@ -17,10 +17,9 @@ each(elements)
 .pause()
 .resume()
 .close()
-.on('item', callback)
-.on('error', callback)
-.on('end', callback)
-.on('both', callback)
+.call(callback)
+.error(callback)
+.then(callback)
 Chained and parallel async iterator in one elegant function
 ###
 Each = (@options, @_elements) ->
