@@ -3,16 +3,16 @@ var each = require('..');
 
 each( [{id: 1}, {id: 2}, {id: 3}] )
 .parallel( true )
-.on('item', function(element, index, next) {
+.call(function(element, index, next) {
   console.log('element: ', element, '@', index);
   setTimeout(next, 500);
 })
-.on('error', function(err, errors){
+.error(function(err){
   console.log(err.message);
-  errors.forEach(function(error){
+  err.errors.forEach(function(error){
     console.log('  '+error.message);
   });
 })
-.on('end', function(){
+.then(function(){
   console.log('Done');
 });

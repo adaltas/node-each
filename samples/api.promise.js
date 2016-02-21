@@ -2,7 +2,7 @@
 var each = require('..');
 
 each( [{id: 1}, {id: 2}, {id: 3}] )
-.run( function(element, index, next){
+.call( function(element, index, next){
   console.log('element: ', element, '@', index);
   setTimeout(next, 500);
 })
