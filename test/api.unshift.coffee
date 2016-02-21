@@ -8,10 +8,10 @@ describe 'Unshift', ->
     each()
     .unshift('hello')
     .unshift('each')
-    .on 'item', (item, index, next) ->
+    .call (item, index, next) ->
       item.should.eql 'each' if index is 0
       next()
-    .on 'both', (err, count) ->
+    .then (err, count) ->
       should.not.exist err
       count.should.eql 2
       next()
@@ -20,10 +20,10 @@ describe 'Unshift', ->
     each()
     .unshift('hello', 'each')
     .unshift('youre', 'welcome')
-    .on 'item', (key, value, next) ->
+    .call (key, value, next) ->
       value.should.eql 'welcome' if key is 'youre'
       next()
-    .on 'both', (err, count) ->
+    .then (err, count) ->
       should.not.exist err
       count.should.eql 2
       next()
@@ -31,7 +31,7 @@ describe 'Unshift', ->
   it 'should place the next element', (next) ->
     last = null
     e = each(['a','b','c'])
-    .on 'item', (value, next) ->
+    .call (value, next) ->
       if value is 'a'
         e.unshift 'aa'
       if last is 'a'
@@ -40,7 +40,7 @@ describe 'Unshift', ->
         value.should.eql 'b'
       last = value
       next()
-    .on 'both', (err, count) ->
+    .then (err, count) ->
       should.not.exist err
       count.should.eql 4
       next()

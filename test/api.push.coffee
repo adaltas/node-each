@@ -9,11 +9,11 @@ describe 'Write', ->
     each()
     .push('hello')
     .push('each')
-    .on 'item', (item, index, next) ->
+    .call (item, index, next) ->
       item.should.eql 'hello' if index is 0
       next()
-    .on 'both', (err, count) ->
-      should.not.exist err
+    .error next
+    .then (count) ->
       count.should.eql 2
       next()
 
@@ -21,10 +21,10 @@ describe 'Write', ->
     each()
     .push('hello', 'each')
     .push('youre', 'welcome')
-    .on 'item', (key, value, next) ->
+    .call (key, value, next) ->
       value.should.eql 'each' if key is 'hello'
       next()
-    .on 'both', (err, count) ->
-      should.not.exist err
+    .error next
+    .then (count) ->
       count.should.eql 2
       next()

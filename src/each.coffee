@@ -1,5 +1,4 @@
 
-events = require 'events'
 stream = require 'stream'
 path = require 'path'
 glob = require 'glob'
@@ -45,20 +44,41 @@ Each = (@options, @_elements) ->
   @options.repeat = false
   @_endable = 1
   @_close = false
-  events.EventEmitter.call @, @options
+  @_handler_index = 0
   # Public state
   @total = if @_keys then @_keys.length else @_elements.length
-  @setMaxListeners 100
+  @listeners = []
   @started = 0
   @done = 0
   @paused = 0
   @readable = true
   self = @
-  setImmediate => @_run()
+  setImmediate =>
+    @_run()
   @
 
-util.inherits Each, events.EventEmitter
-
+Each.prototype._get_next_handler = ->
+  occurences = 0
+  for listener in @listeners
+    continue unless listener[0] is 'call'
+    return listener[1] if occurences is @_handler_index
+    occurences++
+  throw Error 'No Found Handler'
+Each.prototype._call_next_then = (error, count) ->
+  occurences = 0
+  for listener, i in @listeners
+    if listener[0] is 'call'
+      occurences++
+      continue
+    if listener[0] is 'error' and error and occurences is @_handler_index
+      listener[1].call null, error
+      continue
+    if occurences is @_handler_index
+      if @listeners[i-1]?[0] is 'error'
+      then listener[1].call null, count if error
+      else listener[1].call null, error, count
+      return
+  throw Error 'No Found Handler'
 Each.prototype._run = () ->
   return if @paused
   # This is the end
@@ -70,20 +90,17 @@ Each.prototype._run = () ->
       if @options.concurrency isnt 1
         if @_errors.length is 1
           error = @_errors[0]
-          # error.errors = []
         else 
           error = new Error("Multiple errors (#{@_errors.length})")
           error.errors = @_errors
       else
         error = @_errors[0]
-        # error.errors = []
-      @emit 'error', error if @listeners('error').length or not @listeners('both').length
+      # @emit 'error', error if @listeners('error').length or not @listeners('both').length
     else
       args = []
-      @emit 'end'
-    @emit 'both', error, @done
-    # Not testable but re-throw error if not error or both listeners
-    # throw error if error and not @listeners('error').length and not @listeners('both').length
+      # @emit 'end'
+    @_handler_index++
+    @_call_next_then error, @done
     return
   return if @_errors.length isnt 0
   while (if @options.concurrency is true then (@total * @options.times - @started) > 0 else Math.min( (@options.concurrency - @started + @done), (@total * @options.times - @started) ) )
@@ -98,8 +115,9 @@ Each.prototype._run = () ->
     @started++
     try
       self = @
-      for emit in @listeners 'item'
-        l = emit.length
+      handlers = @_get_next_handler()
+      for handler in handlers
+        l = handler.length
         l++ if @options.sync
         switch l
           when 1
@@ -128,22 +146,33 @@ Each.prototype._run = () ->
                 return if self.readable then self._next err else throw err
               self._next()
           )()
-        err = emit args...
+        err = handler args...
         self._next err if @options.sync
     catch err
       # prevent next to be called if an error occurend inside the
       # error, end or both callbacks
       if self.readable then self._next err else throw err
   null
-
 Each.prototype._next = (err) ->
   @_errors.push err if err? and err instanceof Error
   @done++
   @_run()
 Each::run = (callback) ->
-  @on 'item', callback
+  console.log 'DEPRECATED: use `call` instead of `run`'
+  @call callback
+Each::call = (callback) ->
+  callback = [callback] unless Array.isArray callback
+  @listeners.push ['call', callback]
+  @
 Each::then = (callback) ->
-  @on 'both', callback
+  @listeners.push ['then', callback]
+  @
+Each::end = (callback) ->
+  @listeners.push ['end', callback]
+  @
+Each::error = (callback) ->
+  @listeners.push ['error', callback]
+  @
 Each::end = ->
   console.log 'Function `end` deprecated, use `close` instead.'
   @close()
