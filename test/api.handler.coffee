@@ -1,6 +1,6 @@
 
 should = require 'should'
-each = require '../src/each'
+each = require '../src'
 
 describe 'Callback', ->
   
