@@ -2,11 +2,10 @@
 should = require 'should'
 each = require '../src'
 
-describe 'Error', ->
+describe 'handler error', ->
   
-  it 'Concurrent # error and both callbacks', (next) ->
+  it 'concurrent # error and both callbacks', (next) ->
     current = 0
-    error_called = false
     each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ] )
     .parallel( 4 )
     .call (element, index, next) ->
@@ -24,16 +23,12 @@ describe 'Error', ->
       err.errors.length.should.eql 2
       err.errors[0].message.should.eql 'Testing error in 6'
       err.errors[1].message.should.eql 'Testing error in 7'
-      error_called = true
-    .then ->
-      error_called.should.be.true()
-      arguments.length.should.eql 1
-      arguments[0].should.be.a.Number()
       next()
+    .then ->
+      false.should.be.true()
       
-  it 'Concurrent handle thrown error', (next) ->
+  it 'concurrent handle thrown error', (next) ->
     current = 0
-    error_called = false
     each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ] )
     .parallel( 4 )
     .call (element, index, next) ->
@@ -47,14 +42,11 @@ describe 'Error', ->
       current.should.eql 6
       err.message.should.eql 'Testing error in 6'
       err.should.not.have.property 'errors'
-      error_called = true
+      next()
     .then ->
-      error_called.should.be.true()
-      arguments.length.should.eql 1
-      arguments[0].should.be.a.Number()
       next()
       
-  it 'Parallel # multiple errors # error callback', (next) ->
+  it 'parallel # multiple errors # error callback', (next) ->
     # when multiple errors are thrown, a new error object is created
     # with a message indicating the number of errors. The original 
     # errors are available as an array in the second argument of the
@@ -78,7 +70,7 @@ describe 'Error', ->
       err.errors[1].message.should.eql 'Testing error in 3'
       next()
       
-  it 'Parallel # single error # error callback', (next) ->
+  it 'parallel # single error # error callback', (next) ->
     # when on one error is thrown, the error is passed to
     # the `error` event as is as well as a single element array 
     # of the second argument.
@@ -98,7 +90,7 @@ describe 'Error', ->
       err.message.should.eql 'Testing error in 3'
       next()
       
-  it 'Parallel # async # both callback', (next) ->
+  it 'parallel # async # both callback', (next) ->
     current = 0
     each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
     .parallel( true )
@@ -118,7 +110,7 @@ describe 'Error', ->
       err.errors[1].message.should.eql 'Testing error in 3'
       next()
       
-  it 'Parallel # sync # both callback', (next) ->
+  it 'parallel # sync # both callback', (next) ->
     current = 0
     each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
     .parallel( true )
@@ -135,7 +127,7 @@ describe 'Error', ->
       err.message.should.eql 'Testing error in 1'
       next()
       
-  it 'Sequential # sync # error callback', (next) ->
+  it 'sequential # sync # error callback', (next) ->
     current = 0
     each( [ {id: 1}, {id: 2}, {id: 3} ] )
     .call (element, index, next) ->
@@ -148,7 +140,7 @@ describe 'Error', ->
       err.message.should.eql 'Testing error'
       next()
       
-  it 'Sequential # async # error callback', (next) ->
+  it 'sequential # async # error callback', (next) ->
     current = 0
     each( [ {id: 1}, {id: 2}, {id: 3} ] )
     .call (element, index, next) ->

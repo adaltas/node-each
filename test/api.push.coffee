@@ -2,7 +2,7 @@
 should = require 'should'
 each = require '../src'
 
-describe 'Write', ->
+describe 'push', ->
 
   it 'accept array elements', (next) ->
     each()

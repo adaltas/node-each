@@ -2,7 +2,7 @@
 should = require 'should'
 each = require '../src'
 
-describe 'Unshift', ->
+describe 'unshift', ->
 
   it 'accept array elements', (next) ->
     each()

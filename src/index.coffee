@@ -72,9 +72,9 @@ Each.prototype._call_next_then = (error, count) ->
     if listener[0] is 'error' and error and occurences is @_handler_index
       listener[1].call null, error
       continue
-    if occurences is @_handler_index
+    if listener[0] is 'then' and occurences is @_handler_index
       if @listeners[i-1]?[0] is 'error'
-      then listener[1].call null, count if error
+      then listener[1].call null, count unless error
       else listener[1].call null, error, count
       return
   throw Error 'No Found Handler'

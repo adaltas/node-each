@@ -2,25 +2,25 @@
 should = require 'should'
 each = require '../src'
 
-describe 'Callback', ->
+describe 'handler', ->
   
-  describe 'array', ->
+  describe 'arguments from array', ->
         
-    it 'should provide only next argument', (next) ->
+    it 'get next argument', (next) ->
       each( [ 'a', 'b', 'c' ] )
       .call (next) ->
         arguments.length.should.eql 1
         next()
       .then next
       
-    it 'should provide element and next argument', (next) ->
+    it 'get element and next argument', (next) ->
       each( [ 'a', 'b', 'c' ] )
       .call (element, next) ->
         ['a', 'b', 'c'].should.containEql element
         next()
       .then next
       
-    it 'should provide element, index and next argument', (next) ->
+    it 'get element, index and next argument', (next) ->
       each( [ 'a', 'b', 'c' ] )
       .call (element, index, next) ->
         ['a', 'b', 'c'].should.containEql element
@@ -36,23 +36,23 @@ describe 'Callback', ->
         err.message.should.eql 'Invalid arguments in item callback'
         next()
         
-  describe 'object', ->
+  describe 'arguments from object', ->
     
-    it 'should provide only next argument', (next) ->
+    it 'get next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
       .call (next) ->
         arguments.length.should.eql 1
         next()
       .then next
       
-    it 'should provide value and next argument', (next) ->
+    it 'get value and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
       .call (value, next) ->
         value.should.be.a.Number()
         next()
       .then next
       
-    it 'should provide key, value and next argument', (next) ->
+    it 'get key, value and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
       .call (key, value, next) ->
         ['a', 'b', 'c'].should.containEql key
@@ -60,7 +60,7 @@ describe 'Callback', ->
         next()
       .then next
       
-    it 'should provide key, value, index and next argument', (next) ->
+    it 'get key, value, index and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
       .call (key, value, counter, next) ->
         ['a', 'b', 'c'].should.containEql key
