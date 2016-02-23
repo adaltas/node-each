@@ -41,12 +41,12 @@ Each = (@options, @_elements) ->
   @options.sync = false
   @options.times = 1
   @options.repeat = false
-  @_endable = 1
   @_close = false
   @_handler_index = 0
   # Public state
   @total = if @_keys then @_keys.length else @_elements.length
   @listeners = []
+  @_endable = 1
   @started = 0
   @done = 0
   @paused = 0
@@ -55,8 +55,14 @@ Each = (@options, @_elements) ->
   setImmediate =>
     @_run()
   @
-
-Each.prototype._get_next_handler = ->
+Each.prototype._has_next_handler = ->
+  occurences = 0
+  for listener in @listeners
+    continue unless listener[0] is 'call'
+    return true if occurences is @_handler_index
+    occurences++
+  return false
+Each.prototype._get_current_handler = ->
   occurences = 0
   for listener in @listeners
     continue unless listener[0] is 'call'
@@ -80,28 +86,35 @@ Each.prototype._call_next_then = (error, count) ->
   throw Error 'No Found Handler'
 Each.prototype._run = () ->
   return if @paused
-  handlers = @_get_next_handler()
+  handlers = @_get_current_handler()
   # This is the end
   error = null
   if @_endable is 1 and (@_close or @done is @total * @options.times * handlers.length or (@_errors.length and @started is @done) )
-    # Give a chance for end to be called multiple times
-    @readable = false
-    if @_errors.length
-      if @options.concurrency isnt 1
-        if @_errors.length is 1
-          error = @_errors[0]
-        else 
-          error = new Error("Multiple errors (#{@_errors.length})")
-          error.errors = @_errors
-      else
-        error = @_errors[0]
-      # @emit 'error', error if @listeners('error').length or not @listeners('both').length
-    else
-      args = []
-      # @emit 'end'
     @_handler_index++
-    @_call_next_then error, @done
-    return
+    unless @_has_next_handler()
+      # Give a chance for end to be called multiple times
+      @readable = false
+      if @_errors.length
+        if @options.concurrency isnt 1
+          if @_errors.length is 1
+            error = @_errors[0]
+          else 
+            error = new Error("Multiple errors (#{@_errors.length})")
+            error.errors = @_errors
+        else
+          error = @_errors[0]
+        # @emit 'error', error if @listeners('error').length or not @listeners('both').length
+      else
+        args = []
+        # @emit 'end'
+      @_call_next_then error, @done
+      return
+    handlers = @_get_current_handler()
+    @_endable = 1
+    @started = 0
+    @done = 0
+    @paused = 0
+    @readable = true
   return if @_errors.length isnt 0
   while (if @options.concurrency is true then (@total * @options.times * handlers.length - @started) > 0 else Math.min( (@options.concurrency - @started + @done), (@total * @options.times * handlers.length - @started) ) )
     # Stop on synchronously sent error

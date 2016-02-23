@@ -105,3 +105,16 @@ describe 'handler', ->
         # ['1a', '2a', '3a', '1b', '2b', '3b']
         data.should.eql ['1a', '2a', '3a', '3b', '2b', '1b']
         next()
+        
+  describe 'chain', ->
+        
+    it 'called with delay', (next) ->
+      data = []
+      each( [ '1', '2', '3' ] )
+      .parallel true
+      .call (val, next) -> data.push(val+'a') and next()
+      .call (val, next) -> data.push(val+'b') and next()
+      .error next
+      .then ->
+        data.should.eql ['1a', '2a', '3a', '1b', '2b', '3b']
+        next()
