@@ -80,9 +80,10 @@ Each.prototype._call_next_then = (error, count) ->
   throw Error 'No Found Handler'
 Each.prototype._run = () ->
   return if @paused
+  handlers = @_get_next_handler()
   # This is the end
   error = null
-  if @_endable is 1 and (@_close or @done is @total * @options.times or (@_errors.length and @started is @done) )
+  if @_endable is 1 and (@_close or @done is @total * @options.times * handlers.length or (@_errors.length and @started is @done) )
     # Give a chance for end to be called multiple times
     @readable = false
     if @_errors.length
@@ -102,7 +103,7 @@ Each.prototype._run = () ->
     @_call_next_then error, @done
     return
   return if @_errors.length isnt 0
-  while (if @options.concurrency is true then (@total * @options.times - @started) > 0 else Math.min( (@options.concurrency - @started + @done), (@total * @options.times - @started) ) )
+  while (if @options.concurrency is true then (@total * @options.times * handlers.length - @started) > 0 else Math.min( (@options.concurrency - @started + @done), (@total * @options.times * handlers.length - @started) ) )
     # Stop on synchronously sent error
     break if @_errors.length isnt 0
     break if @_close
@@ -110,12 +111,11 @@ Each.prototype._run = () ->
     if @options.repeat
       index = @started % @_elements.length
     else
-      index = Math.floor(@started / @options.times)
-    @started++
+      index = Math.floor(@started / (@options.times * handlers.length))
+    @started += handlers.length
     try
       self = @
-      handlers = @_get_next_handler()
-      for handler in handlers
+      for handler, i in handlers
         l = handler.length
         l++ if @options.sync
         switch l
@@ -145,6 +145,8 @@ Each.prototype._run = () ->
                 return if self.readable then self._next err else throw err
               self._next()
           )()
+        # console.log handler.toString()
+        # setImmediate =>
         err = handler args...
         self._next err if @options.sync
     catch err

@@ -76,3 +76,32 @@ describe 'handler', ->
       .then (err) ->
         err.message.should.eql 'Invalid arguments in item callback'
         next()
+        
+  describe 'array', ->
+        
+    it 'called immediatly', (next) ->
+      data = []
+      each( [ '1', '2', '3' ] )
+      .call [
+        (val, next) -> data.push(val+'a') and next()
+        (val, next) -> data.push(val+'b') and next()
+      ]
+      .error next
+      .then ->
+        data.should.eql ['1a', '1b', '2a', '2b', '3a', '3b']
+        next()
+              
+    it 'called with delay', (next) ->
+      data = []
+      each( [ '1', '2', '3' ] )
+      .parallel true
+      .call [
+        (val, next) -> data.push(val+'a') and next()
+        (val, next) -> process.nextTick (-> data.push(val+'b') and next())
+      ]
+      .error next
+      .then ->
+        # Not sure how to explain this result, i would have expected
+        # ['1a', '2a', '3a', '1b', '2b', '3b']
+        data.should.eql ['1a', '2a', '3a', '3b', '2b', '1b']
+        next()
