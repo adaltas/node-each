@@ -75,10 +75,10 @@ Each.prototype._call_next_then = (error, count) ->
     if listener[0] is 'call'
       occurences++
       continue
-    if listener[0] is 'error' and error and occurences is @_handler_index
+    if listener[0] is 'error' and error and occurences >= @_handler_index
       listener[1].call null, error
       continue
-    if listener[0] is 'then' and occurences is @_handler_index
+    if listener[0] is 'then' and occurences >= @_handler_index
       if @listeners[i-1]?[0] is 'error'
       then listener[1].call null, count unless error
       else listener[1].call null, error, count
@@ -91,7 +91,7 @@ Each.prototype._run = () ->
   error = null
   if @_endable is 1 and (@_close or @done is @total * @options.times * handlers.length or (@_errors.length and @started is @done) )
     @_handler_index++
-    unless @_has_next_handler()
+    if @_errors.length or not @_has_next_handler()
       # Give a chance for end to be called multiple times
       @readable = false
       if @_errors.length
@@ -158,7 +158,6 @@ Each.prototype._run = () ->
                 return if self.readable then self._next err else throw err
               self._next()
           )()
-        # console.log handler.toString()
         # setImmediate =>
         err = handler args...
         self._next err if @options.sync

@@ -118,3 +118,51 @@ describe 'handler', ->
       .then ->
         data.should.eql ['1a', '2a', '3a', '1b', '2b', '3b']
         next()
+              
+    it 'catch error in first handler', (next) ->
+      data = []
+      each( [ '1', '2', '3' ] )
+      .parallel true
+      .call (val, next) -> throw Error 'Catchme'
+      .call (val, next) -> next()
+      .error (err) ->
+        err.message.should.eql 'Catchme'
+        next()
+      .then ->
+        false.should.be.true()
+              
+    it 'catch error in last handler', (next) ->
+      data = []
+      each( [ '1', '2', '3' ] )
+      .parallel true
+      .call (val, next) -> next()
+      .call (val, next) -> throw Error 'Catchme'
+      .error (err) ->
+        err.message.should.eql 'Catchme'
+        next()
+      .then ->
+        false.should.be.true()
+              
+    it 'get error in first handler', (next) ->
+      data = []
+      each( [ '1', '2', '3' ] )
+      .parallel true
+      .call (val, next) -> setImmediate next Error 'Catchme'
+      .call (val, next) -> next()
+      .error (err) ->
+        err.message.should.eql 'Catchme'
+        next()
+      .then ->
+        false.should.be.true()
+              
+    it 'get error in last handler', (next) ->
+      data = []
+      each( [ '1', '2', '3' ] )
+      .parallel true
+      .call (val, next) -> next()
+      .call (val, next) -> setImmediate next Error 'Catchme'
+      .error (err) ->
+        err.message.should.eql 'Catchme'
+        next()
+      .then ->
+        false.should.be.true()
