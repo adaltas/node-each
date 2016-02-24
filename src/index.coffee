@@ -77,13 +77,15 @@ Each.prototype._call_next_then = (error, count) ->
       continue
     if listener[0] is 'error' and error and occurences >= @_handler_index
       listener[1].call null, error
-      continue
+      if @listeners[i+1]?[0] is 'then'
+      then continue
+      else return
     if listener[0] is 'then' and occurences >= @_handler_index
       if @listeners[i-1]?[0] is 'error'
       then listener[1].call null, count unless error
       else listener[1].call null, error, count
       return
-  throw Error 'No Found Handler'
+  throw Error 'Invalid State: error or then not defined'
 Each.prototype._run = () ->
   return if @paused
   handlers = @_get_current_handler()
