@@ -1,13 +1,5 @@
 [![Build Status](https://secure.travis-ci.org/wdavidw/node-each.png)](http://travis-ci.org/wdavidw/node-each)
 
-<pre style="font-family:courier">
- _   _           _        ______           _     
-| \ | |         | |      |  ____|         | |    
-|  \| | ___   __| | ___  | |__   __ _  ___| |__  
-| . ` |/ _ \ / _` |/ _ \ |  __| / _` |/ __| '_ \ 
-| |\  | (_) | (_| |  __/ | |___| (_| | (__| | | |
-|_| \_|\___/ \__,_|\___| |______\__,_|\___|_| |_| New BSD License
-</pre>
 
 
 [Full documentation for the Each is available here](http://www.adaltas.com/projects/node-each/).
