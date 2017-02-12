@@ -20,7 +20,7 @@
   "engines": {
     "node": ">= 0.9.0"
   },
-  "homepage": "http://www.adaltas.com/projects/node-each/",
+  "homepage": "https://github.com/adaltas/node-each",
   "keywords": [
     "array",
     "asynchronous",
@@ -32,7 +32,7 @@
   "main": "./lib/index",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wdavidw/node-each.git"
+    "url": "https://github.com/adaltas/node-each.git"
   },
   "scripts": {
     "coffee": "./node_modules/.bin/coffee -b -o lib src",
