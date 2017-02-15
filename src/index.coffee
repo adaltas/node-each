@@ -27,6 +27,10 @@ Each = (@options, @_elements) ->
   if arguments.length is 1
     @_elements = @options
     @options = {}
+  @options.concurrency = 1
+  @options.sync = false
+  @options.times = 1
+  @options.repeat = false
   # Internal state
   type = typeof @_elements
   if @_elements is null or type is 'undefined'
@@ -37,51 +41,46 @@ Each = (@options, @_elements) ->
     isObject = true
   @_keys = Object.keys @_elements if isObject
   @_errors = []
-  @options.concurrency = 1
-  @options.sync = false
-  @options.times = 1
-  @options.repeat = false
   @_close = false
   @_handler_index = 0
+  @_endable = 1
+  @_listeners = []
   # Public state
   @total = if @_keys then @_keys.length else @_elements.length
-  @listeners = []
-  @_endable = 1
   @started = 0
   @done = 0
   @paused = 0
   @readable = true
-  self = @
   setImmediate =>
     @_run()
   @
 Each.prototype._has_next_handler = ->
   occurences = 0
-  for listener in @listeners
+  for listener in @_listeners
     continue unless listener[0] is 'call'
     return true if occurences is @_handler_index
     occurences++
   return false
 Each.prototype._get_current_handler = ->
   occurences = 0
-  for listener in @listeners
+  for listener in @_listeners
     continue unless listener[0] is 'call'
     return listener[1] if occurences is @_handler_index
     occurences++
   throw Error 'No Found Handler'
 Each.prototype._call_next_then = (error, count) ->
   occurences = 0
-  for listener, i in @listeners
+  for listener, i in @_listeners
     if listener[0] is 'call'
       occurences++
       continue
     if listener[0] is 'error' and error and occurences >= @_handler_index
       listener[1].call null, error
-      if @listeners[i+1]?[0] is 'then'
+      if @_listeners[i+1]?[0] is 'then'
       then continue
       else return
     if listener[0] is 'then' and occurences >= @_handler_index
-      if @listeners[i-1]?[0] is 'error'
+      if @_listeners[i-1]?[0] is 'error'
       then listener[1].call null, count unless error
       else listener[1].call null, error, count
       return
@@ -105,7 +104,7 @@ Each.prototype._run = () ->
             error.errors = @_errors
         else
           error = @_errors[0]
-        # @emit 'error', error if @listeners('error').length or not @listeners('both').length
+        # @emit 'error', error if @_listeners('error').length or not @_listeners('both').length
       else
         args = []
         # @emit 'end'
@@ -129,7 +128,6 @@ Each.prototype._run = () ->
       index = Math.floor(@started / (@options.times * handlers.length))
     @started += handlers.length
     try
-      self = @
       for handler, i in handlers
         l = handler.length
         l++ if @options.sync
@@ -147,26 +145,26 @@ Each.prototype._run = () ->
           when 4
             if @_keys
             then args = [@_keys[index], @_elements[@_keys[index]], index]
-            else return self._next new Error 'Invalid arguments in item callback'
+            else return @_next new Error 'Invalid arguments in item callback'
           else
-            return self._next new Error 'Invalid arguments in item callback'
+            return @_next new Error 'Invalid arguments in item callback'
         unless @options.sync
-          args.push ( ->
+          args.push ( =>
             count = 0
-            (err) ->
-              return self._next err if err
+            (err) =>
+              return @_next err if err
               unless ++count is 1
                 err = new Error 'Multiple call detected'
-                return if self.readable then self._next err else throw err
-              self._next()
+                return if @readable then @_next err else throw err
+              @_next()
           )()
         # setImmediate =>
         err = handler args...
-        self._next err if @options.sync
+        @_next err if @options.sync
     catch err
       # prevent next to be called if an error occurend inside the
       # error, end or both callbacks
-      if self.readable then self._next err else throw err
+      if @readable then @_next err else throw err
   null
 Each.prototype._next = (err) ->
   @_errors.push err if err? and err instanceof Error
@@ -177,16 +175,16 @@ Each::run = (callback) ->
   @call callback
 Each::call = (callback) ->
   callback = [callback] unless Array.isArray callback
-  @listeners.push ['call', callback]
+  @_listeners.push ['call', callback]
   @
 Each::then = (callback) ->
-  @listeners.push ['then', callback]
+  @_listeners.push ['then', callback]
   @
 Each::end = (callback) ->
-  @listeners.push ['end', callback]
+  @_listeners.push ['end', callback]
   @
 Each::error = (callback) ->
-  @listeners.push ['error', callback]
+  @_listeners.push ['error', callback]
   @
 Each::end = ->
   console.log 'Function `end` deprecated, use `close` instead.'
