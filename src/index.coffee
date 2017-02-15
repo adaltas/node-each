@@ -42,7 +42,6 @@ Each = (@options, @_elements) ->
   @_keys = Object.keys @_elements if isObject
   @_errors = []
   @_close = false
-  @_handler_index = 0
   @_endable = 1
   @_listeners = []
   # Public state
@@ -55,35 +54,21 @@ Each = (@options, @_elements) ->
     @_run()
   @
 Each.prototype._has_next_handler = ->
-  occurences = 0
-  for listener in @_listeners
-    continue unless listener[0] is 'call'
-    return true if occurences is @_handler_index
-    occurences++
-  return false
+  @_listeners[0]?[0] is 'call'
 Each.prototype._get_current_handler = ->
-  occurences = 0
-  for listener in @_listeners
-    continue unless listener[0] is 'call'
-    return listener[1] if occurences is @_handler_index
-    occurences++
-  throw Error 'No Found Handler'
+  throw Error 'No Found Handler' unless @_listeners[0]?[0] is 'call'
+  @_listeners[0][1]
 Each.prototype._call_next_then = (error, count) ->
-  occurences = 0
-  for listener, i in @_listeners
-    if listener[0] is 'call'
-      occurences++
-      continue
-    if listener[0] is 'error' and error and occurences >= @_handler_index
-      listener[1].call null, error
-      if @_listeners[i+1]?[0] is 'then'
-      then continue
-      else return
-    if listener[0] is 'then' and occurences >= @_handler_index
-      if @_listeners[i-1]?[0] is 'error'
-      then listener[1].call null, count unless error
-      else listener[1].call null, error, count
+  @_listeners.shift() while @_listeners[0]?[0] not in ['error', 'then'] if error
+  if @_listeners[0]?[0] is 'error'
+    @_listeners[0][1].call null, error if error
+    if @_listeners[1]?[0] is 'then'
+      @_listeners.shift()
+      @_listeners[0]?[1].call null, count unless error
       return
+    else return
+  if @_listeners[0]?[0] is 'then'
+    return @_listeners[0][1].call null, error, count
   throw Error 'Invalid State: error or then not defined'
 Each.prototype._run = () ->
   return if @paused
@@ -91,7 +76,7 @@ Each.prototype._run = () ->
   # This is the end
   error = null
   if @_endable is 1 and (@_close or @done is @total * @options.times * handlers.length or (@_errors.length and @started is @done) )
-    @_handler_index++
+    @_listeners.shift()
     if @_errors.length or not @_has_next_handler()
       # Give a chance for end to be called multiple times
       @readable = false
@@ -104,10 +89,8 @@ Each.prototype._run = () ->
             error.errors = @_errors
         else
           error = @_errors[0]
-        # @emit 'error', error if @_listeners('error').length or not @_listeners('both').length
       else
         args = []
-        # @emit 'end'
       @_call_next_then error, @done
       return
     handlers = @_get_current_handler()
@@ -158,7 +141,6 @@ Each.prototype._run = () ->
                 return if @readable then @_next err else throw err
               @_next()
           )()
-        # setImmediate =>
         err = handler args...
         @_next err if @options.sync
     catch err
