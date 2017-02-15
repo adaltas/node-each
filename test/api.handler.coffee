@@ -147,10 +147,11 @@ describe 'handler', ->
       data = []
       each( [ '1', '2', '3' ] )
       .parallel true
-      .call (val, next) -> setImmediate next Error 'Catchme'
+      .call (val, next) -> setImmediate -> next Error 'Catchme'
       .call (val, next) -> next()
       .error (err) ->
-        err.message.should.eql 'Catchme'
+        err.errors.length.should.eql 3
+        err.errors[0].message.should.eql 'Catchme'
         next()
       .then ->
         false.should.be.true()
@@ -160,9 +161,10 @@ describe 'handler', ->
       each( [ '1', '2', '3' ] )
       .parallel true
       .call (val, next) -> next()
-      .call (val, next) -> setImmediate next Error 'Catchme'
+      .call (val, next) -> setImmediate -> next Error 'Catchme'
       .error (err) ->
-        err.message.should.eql 'Catchme'
+        err.errors.length.should.eql 3
+        err.errors[0].message.should.eql 'Catchme'
         next()
       .then ->
         false.should.be.true()
