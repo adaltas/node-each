@@ -1,7 +1,6 @@
 
 stream = require 'stream'
 path = require 'path'
-glob = require 'glob'
 util = require 'util'
 
 ###
@@ -10,7 +9,6 @@ each(elements)
 .sync(false)
 .times(1)
 .repeat(1)
-.files(cwd, ['./*.coffee'])
 .push(element)
 .unshift(element)
 .write(element)
@@ -202,22 +200,7 @@ Each::times = (t) ->
   @write null if @_elements.length is 0
   @
 Each::files = (base, pattern) ->
-  if arguments.length is 1
-    pattern = base
-    base = null
-  if Array.isArray pattern
-    for p in pattern then @files p
-    return @
-  @_endable--
-  pattern = path.resolve base, pattern if base
-  glob pattern, (err, files) =>
-    for file in files
-      @_elements.push file
-    @total += files.length
-    setImmediate =>
-      @_endable++
-      @_run()
-  @
+  throw Error "Depracated API: each.files"
 Each::write = Each::push = (item) ->
   l = arguments.length
   if l is 1
