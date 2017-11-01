@@ -59,16 +59,23 @@ Each.prototype._get_current_handler = ->
   throw Error 'No Found Handler' unless @_listeners[0]?[0] is 'call'
   @_listeners[0][1]
 Each.prototype._call_next_then = (error, count) ->
-  @_listeners.shift() while @_listeners[0]?[0] not in ['error', 'then'] if error
+  @_listeners.shift() while @_listeners[0]?[0] not in ['error', 'then', 'promise'] if error
   if @_listeners[0]?[0] is 'error'
     @_listeners[0][1].call null, error if error
     if @_listeners[1]?[0] is 'then'
       @_listeners.shift()
       @_listeners[0]?[1].call null, count unless error
-      return
-    else return
+    else if @_listeners[1]?[0] is 'promise'
+      @_listeners[1][1].resolve.call null
+    return
   if @_listeners[0]?[0] is 'then'
-    return @_listeners[0][1].call null, error, count
+    @_listeners[0][1].call null, error, count
+    return
+  if @_listeners[0]?[0] is 'promise'
+    if error
+    then @_listeners[0][1].reject.call null, error
+    else @_listeners[0][1].resolve.call null
+    return
   throw Error 'Invalid State: error or then not defined'
 Each.prototype._run = () ->
   return if @paused
@@ -159,6 +166,13 @@ Each::call = (callback) ->
   callback = [callback] unless Array.isArray callback
   @_listeners.push ['call', callback]
   @
+Each::promise = ->
+  deferred = {}
+  promise = new Promise (resolve, reject)->
+    deferred.resolve = resolve
+    deferred.reject = reject
+  @_listeners.push ['promise', deferred]
+  promise
 Each::then = (callback) ->
   @_listeners.push ['then', callback]
   @
