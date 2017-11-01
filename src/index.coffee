@@ -173,6 +173,9 @@ Each::promise = ->
     deferred.reject = reject
   @_listeners.push ['promise', deferred]
   promise
+# Each::then = util.deprecate (callback) ->
+#   @next callback
+# , 'Function then is depracated in favor of next'
 Each::next = (callback) ->
   @_listeners.push ['next', callback]
   @
