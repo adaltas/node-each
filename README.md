@@ -9,7 +9,6 @@ Main functionnalities include:
 * Control the number of executed callbacks in parallel
 * asynchronous and synchronous supported callbacks
 * Run array elements and object key/pairs multiple times
-* Filesystem traversal with globing support
 * Multiple call detection in callback
 * Full test coverage
 
@@ -89,8 +88,6 @@ The following functions are available:
     Repeat operation multiple times once all elements have been called, see `times`.
 -   `sync()`   
     Run callbacks in synchronous mode, no next callback are provided, may throw an error.
--   `files([base], glob)`
-    Emit file paths based on a directory or globbing expression.
 
 The following events are emitted:
 
@@ -268,25 +265,6 @@ each( {id_1: 1, id_2: 2, id_3: 3} )
   errors.forEach(function(error){
     console.log('  '+error.message);
   });
-})
-.on('end', function(){
-  console.log('Done');
-});
-```
-
-## Traversing files
-
-The "files" function is a globing utility which traverse the file 
-system based on pattern matching. Multiple globing patterns may be
-provided as an array or the function may be called multiple times.
-
-```javascript
-var each = require('each');
-each()
-.files('./**/*.js')
-.files('./**/*.coffee')
-.on('item', function(file, next) {
-  console.log('Found "' + file + '"');
 })
 .on('end', function(){
   console.log('Done');
