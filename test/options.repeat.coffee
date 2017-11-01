@@ -68,6 +68,7 @@ describe 'repeat', ->
       .error next
       .then ->
         started.should.eql 10
+        ended.should.eql 10
         next()
         
     it 'should run an array 10 times', (next) ->
@@ -97,16 +98,16 @@ describe 'repeat', ->
       .parallel(3)
       .repeat(10)
       .call (element, index, next) ->
-        process.nextTick -> started++
+        started++
         setTimeout ->
           ended++
-          (started % 3).should.eql 0 unless started is 10
-          ended.should.be.above started - 3
+          (started - ended).should.be.below 3
           next()
         , 100
       .error next
       .then ->
         started.should.eql 10
+        ended.should.eql 10
         next()
         
     it 'should run an array 10 times', (next) ->
