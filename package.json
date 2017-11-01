@@ -37,6 +37,6 @@
   "scripts": {
     "coffee": "coffee -b -o lib src",
     "pretest": "coffee -b -o lib src",
-    "test": "NODE_ENV=test mocha --compilers coffee:coffee-script/register --reporter dot"
+    "test": "NODE_ENV=test mocha test/*.coffee"
   }
 }

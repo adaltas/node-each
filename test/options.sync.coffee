@@ -1,5 +1,4 @@
 
-should = require 'should'
 each = require '../src'
 
 describe 'sync', ->
