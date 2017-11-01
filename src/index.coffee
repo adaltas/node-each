@@ -68,6 +68,8 @@ Each.prototype._call_next_then = (error, count) ->
     return
   if @_listeners[0]?[0] is 'then'
     @_listeners[0][1].call null, error, count
+    if @_listeners[1]?[0] is 'promise'
+      @_listeners[1][1].resolve.call null
     return
   if @_listeners[0]?[0] is 'promise'
     if error
