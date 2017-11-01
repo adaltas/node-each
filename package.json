@@ -9,13 +9,11 @@
       "email": "david@adaltas.com"
     }
   ],
-  "dependencies": {
-    "glob": "~7.1.1"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "coffee-script": "1.12.3",
+    "coffeescript": "2.0.2",
     "mocha": "~2.4.5",
-    "should": "~11.2.0"
+    "should": "~13.1.3"
   },
   "engines": {
     "node": ">= 0.9.0"
