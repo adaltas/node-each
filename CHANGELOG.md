@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* readme: rewrite doc
 * next: rename then to next
 * promise: error and then can be called before
 * package: use CoffeeScript 2
