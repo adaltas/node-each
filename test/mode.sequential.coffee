@@ -16,7 +16,7 @@ describe 'sequential', ->
           id2_called.should.be.false()
           next()
         , 100 else next()
-      .then next
+      .next next
   
   describe 'input', ->
     
@@ -30,7 +30,7 @@ describe 'sequential', ->
         element.id.should.eql current
         setTimeout next, 100
       .error next
-      .then ->
+      .next ->
         current.should.eql 3
         next()
         
@@ -43,7 +43,7 @@ describe 'sequential', ->
         value.should.eql current
         setTimeout next, 100
       .error next
-      .then ->
+      .next ->
         current.should.eql 3
         next()
         
@@ -53,7 +53,7 @@ describe 'sequential', ->
       .call (element, index, next) ->
         should.not.exist true
       .error next
-      .then ->
+      .next ->
         current.should.eql 0
         next()
         
@@ -63,7 +63,7 @@ describe 'sequential', ->
       .call (element, index, next) ->
         should.not.exist true
       .error next
-      .then ->
+      .next ->
         current.should.eql 0
         next()
         
@@ -76,7 +76,7 @@ describe 'sequential', ->
         element.should.eql "id_1"
         setTimeout next, 100
       .error next
-      .then ->
+      .next ->
         current.should.eql 1
         next()
         
@@ -89,7 +89,7 @@ describe 'sequential', ->
         element.should.eql 3.14
         setTimeout next, 100
       .error next
-      .then ->
+      .next ->
         current.should.eql 1
         next()
         
@@ -103,7 +103,7 @@ describe 'sequential', ->
         element.should.be.a.Function
         element next
       .error next
-      .then ->
+      .next ->
         current.should.eql 1
         next()
         
@@ -132,7 +132,7 @@ describe 'sequential', ->
         # We only want to generate one error
         return unless item is 'a'
         process.nextTick next
-      .then (err) ->
+      .next (err) ->
         ended = true
         
     it 'with end not yet thrown', (next) ->
@@ -149,5 +149,5 @@ describe 'sequential', ->
         ended.should.be.false()
         err.message.should.eql 'Multiple call detected'
         next()
-      .then ->
+      .next ->
         ended = true

@@ -23,7 +23,7 @@ describe 'handler error', ->
       err.errors[0].message.should.eql 'Testing error in 6'
       err.errors[1].message.should.eql 'Testing error in 7'
       next()
-    .then ->
+    .next ->
       false.should.be.true()
       
   it 'concurrent handle thrown error', (next) ->
@@ -42,7 +42,7 @@ describe 'handler error', ->
       err.message.should.eql 'Testing error in 6'
       err.should.not.have.property 'errors'
       next()
-    .then ->
+    .next ->
       next()
       
   it 'parallel # multiple errors # error callback', (next) ->

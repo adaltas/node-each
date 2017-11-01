@@ -1,7 +1,7 @@
 {
   "name": "each",
   "description": "Chained and parallel async iterator in one elegant function",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "author": "David Worms <david@adaltas.com>",
   "contributors": [
     {
@@ -12,7 +12,7 @@
   "dependencies": {},
   "devDependencies": {
     "coffeescript": "2.0.2",
-    "mocha": "~2.4.5",
+    "mocha": "~4.0.1",
     "should": "~13.1.3"
   },
   "engines": {

@@ -1,7 +1,7 @@
 
 each = require '../src'
 
-describe 'then', ->
+describe 'next', ->
   
   it 'rethrow if error', (next) ->
     lsts = process.listeners 'uncaughtException'
@@ -16,7 +16,7 @@ describe 'then', ->
     .times(10)
     .call (element, index, next) ->
       next()
-    .then (err) ->
+    .next (err) ->
       throw Error 'User Error'
   
   

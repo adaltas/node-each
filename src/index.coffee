@@ -17,7 +17,7 @@ each(elements)
 .close()
 .call(callback)
 .error(callback)
-.then(callback)
+.next(callback)
 Chained and parallel async iterator in one elegant function
 ###
 Each = (@options, @_elements) ->
@@ -56,17 +56,17 @@ Each.prototype._has_next_handler = ->
 Each.prototype._get_current_handler = ->
   throw Error 'No Found Handler' unless @_listeners[0]?[0] is 'call'
   @_listeners[0][1]
-Each.prototype._call_next_then = (error, count) ->
-  @_listeners.shift() while @_listeners[0]?[0] not in ['error', 'then', 'promise'] if error
+Each.prototype._call_next = (error, count) ->
+  @_listeners.shift() while @_listeners[0]?[0] not in ['error', 'next', 'promise'] if error
   if @_listeners[0]?[0] is 'error'
     @_listeners[0][1].call null, error if error
-    if @_listeners[1]?[0] is 'then'
+    if @_listeners[1]?[0] is 'next'
       @_listeners.shift()
       @_listeners[0]?[1].call null, count unless error
     else if @_listeners[1]?[0] is 'promise'
       @_listeners[1][1].resolve.call null
     return
-  if @_listeners[0]?[0] is 'then'
+  if @_listeners[0]?[0] is 'next'
     @_listeners[0][1].call null, error, count
     if @_listeners[1]?[0] is 'promise'
       @_listeners[1][1].resolve.call null
@@ -76,7 +76,7 @@ Each.prototype._call_next_then = (error, count) ->
     then @_listeners[0][1].reject.call null, error
     else @_listeners[0][1].resolve.call null
     return
-  throw Error 'Invalid State: error or then not defined'
+  throw Error 'Invalid State: error or next not defined'
 Each.prototype._run = () ->
   return if @paused
   handlers = @_get_current_handler()
@@ -98,7 +98,7 @@ Each.prototype._run = () ->
           error = @_errors[0]
       else
         args = []
-      @_call_next_then error, @done
+      @_call_next error, @done
       return
     handlers = @_get_current_handler()
     @_endable = 1
@@ -173,8 +173,8 @@ Each::promise = ->
     deferred.reject = reject
   @_listeners.push ['promise', deferred]
   promise
-Each::then = (callback) ->
-  @_listeners.push ['then', callback]
+Each::next = (callback) ->
+  @_listeners.push ['next', callback]
   @
 Each::end = (callback) ->
   @_listeners.push ['end', callback]

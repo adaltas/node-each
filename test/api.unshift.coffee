@@ -10,7 +10,7 @@ describe 'unshift', ->
     .call (item, index, next) ->
       item.should.eql 'each' if index is 0
       next()
-    .then (err, count) ->
+    .next (err, count) ->
       should.not.exist err
       count.should.eql 2
       next()
@@ -22,7 +22,7 @@ describe 'unshift', ->
     .call (key, value, next) ->
       value.should.eql 'welcome' if key is 'youre'
       next()
-    .then (err, count) ->
+    .next (err, count) ->
       should.not.exist err
       count.should.eql 2
       next()
@@ -39,7 +39,7 @@ describe 'unshift', ->
         value.should.eql 'b'
       last = value
       next()
-    .then (err, count) ->
+    .next (err, count) ->
       should.not.exist err
       count.should.eql 4
       next()

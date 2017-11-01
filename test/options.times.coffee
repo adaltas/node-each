@@ -22,7 +22,7 @@ describe 'times', ->
           next()
         , 10
       .error next
-      .then ->
+      .next ->
         started.should.eql 10
         next()
         
@@ -44,7 +44,7 @@ describe 'times', ->
           next()
         , 10
       .error next
-      .then ->
+      .next ->
         started.should.eql 30
         next()
 
@@ -65,7 +65,7 @@ describe 'times', ->
           next()
         , 10
       .error next
-      .then ->
+      .next ->
         started.should.eql 10
         next()
         
@@ -84,7 +84,7 @@ describe 'times', ->
           next()
         , 10
       .error next
-      .then ->
+      .next ->
         started.should.eql 30
         next()
 
@@ -104,7 +104,7 @@ describe 'times', ->
           next()
         , 100
       .error next
-      .then ->
+      .next ->
         started.should.eql 10
         next()
         
@@ -125,6 +125,6 @@ describe 'times', ->
           next()
         , 100
       .error next
-      .then ->
+      .next ->
         ended.should.eql 30
         next()

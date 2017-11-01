@@ -10,14 +10,14 @@ describe 'handler', ->
       .call (next) ->
         arguments.length.should.eql 1
         next()
-      .then next
+      .next next
       
     it 'get element and next argument', (next) ->
       each( [ 'a', 'b', 'c' ] )
       .call (element, next) ->
         ['a', 'b', 'c'].should.containEql element
         next()
-      .then next
+      .next next
       
     it 'get element, index and next argument', (next) ->
       each( [ 'a', 'b', 'c' ] )
@@ -25,13 +25,13 @@ describe 'handler', ->
         ['a', 'b', 'c'].should.containEql element
         index.should.be.a.Number()
         next()
-      .then next
+      .next next
       
     it 'throw error with no argument', (next) ->
       each( ['a', 'b', 'c'] )
       .call () ->
         false.should.be.true()
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Invalid arguments in item callback'
         next()
         
@@ -42,14 +42,14 @@ describe 'handler', ->
       .call (next) ->
         arguments.length.should.eql 1
         next()
-      .then next
+      .next next
       
     it 'get value and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
       .call (value, next) ->
         value.should.be.a.Number()
         next()
-      .then next
+      .next next
       
     it 'get key, value and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
@@ -57,7 +57,7 @@ describe 'handler', ->
         ['a', 'b', 'c'].should.containEql key
         value.should.be.a.Number()
         next()
-      .then next
+      .next next
       
     it 'get key, value, index and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
@@ -66,13 +66,13 @@ describe 'handler', ->
         value.should.be.a.Number()
         counter.should.be.a.Number()
         next()
-      .then next
+      .next next
       
     it 'throw error with no argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
       .call () ->
         false.should.be.true()
-      .then (err) ->
+      .next (err) ->
         err.message.should.eql 'Invalid arguments in item callback'
         next()
         
@@ -86,7 +86,7 @@ describe 'handler', ->
         (val, next) -> data.push(val+'b') and next()
       ]
       .error next
-      .then ->
+      .next ->
         data.should.eql ['1a', '1b', '2a', '2b', '3a', '3b']
         next()
               
@@ -99,7 +99,7 @@ describe 'handler', ->
         (val, next) -> process.nextTick (-> data.push(val+'b') and next())
       ]
       .error next
-      .then ->
+      .next ->
         # Not sure how to explain this result, i would have expected
         # ['1a', '2a', '3a', '1b', '2b', '3b']
         data.should.eql ['1a', '2a', '3a', '3b', '2b', '1b']
@@ -114,7 +114,7 @@ describe 'handler', ->
       .call (val, next) -> data.push(val+'a') and next()
       .call (val, next) -> data.push(val+'b') and next()
       .error next
-      .then ->
+      .next ->
         data.should.eql ['1a', '2a', '3a', '1b', '2b', '3b']
         next()
               
@@ -127,7 +127,7 @@ describe 'handler', ->
       .error (err) ->
         err.message.should.eql 'Catchme'
         next()
-      .then ->
+      .next ->
         false.should.be.true()
               
     it 'catch error in last handler', (next) ->
@@ -139,7 +139,7 @@ describe 'handler', ->
       .error (err) ->
         err.message.should.eql 'Catchme'
         next()
-      .then ->
+      .next ->
         false.should.be.true()
               
     it 'get error in first handler', (next) ->
@@ -152,7 +152,7 @@ describe 'handler', ->
         err.errors.length.should.eql 3
         err.errors[0].message.should.eql 'Catchme'
         next()
-      .then ->
+      .next ->
         false.should.be.true()
               
     it 'get error in last handler', (next) ->
@@ -165,5 +165,5 @@ describe 'handler', ->
         err.errors.length.should.eql 3
         err.errors[0].message.should.eql 'Catchme'
         next()
-      .then ->
+      .next ->
         false.should.be.true()

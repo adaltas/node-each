@@ -12,7 +12,7 @@ describe 'Close', ->
       return next() if count < 5
       return eacher.close() if count is 5
       false.should.be.true()
-    .then (err) ->
+    .next (err) ->
       count.should.eql 5 unless err
       next err
       
@@ -25,7 +25,7 @@ describe 'Close', ->
       return next() if count < 5
       return eacher.close() if count is 5
       false.should.be.true()
-    .then (err) ->
+    .next (err) ->
       count.should.eql 5 unless err
       next err
       
@@ -39,6 +39,6 @@ describe 'Close', ->
       return next() if count < 5
       return eacher.close() if count is 5
       false.should.be.true()
-    .then (err) ->
+    .next (err) ->
       count.should.eql 5 unless err
       next err

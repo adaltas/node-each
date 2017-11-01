@@ -12,7 +12,7 @@ describe 'promise', ->
     .promise()
     .toString().should.eql '[object Promise]'
       
-  it 'catch error before promise', (next) ->
+  it 'accept catch error before promise', ->
     err = null
     each( [ 1, 2, 3 ] )
     .call (element, index, callback) ->
@@ -22,21 +22,32 @@ describe 'promise', ->
     .promise()
     .then ->
       err.message.should.eql 'CatchMe'
-      next()
     , ->
-      next Error 'Bad'
+      throw Error 'Bad'
         
-  it 'catch error before promise', (next) ->
+  it 'accept then before promise', ->
     called = false
     each( [ 1, 2, 3 ] )
     .call (element, index, callback) ->
       callback()
-    .then ->
+    .next ->
       called = true
     .promise()
     .then ->
       called.should.be.true()
-      next()
     , ->
-      next Error 'Bad'
+      throw Error 'Bad'
+        
+  it 'pass err to then before promise', ->
+    err = null
+    each( [ 1, 2, 3 ] )
+    .call (element, index, callback) ->
+      throw Error 'CatchMe'
+    .next (e) ->
+      err = e
+    .promise()
+    .then ->
+      err.message.should.eql 'CatchMe'
+    , ->
+      throw Error 'Bad'
       

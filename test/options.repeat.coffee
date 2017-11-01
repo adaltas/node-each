@@ -23,7 +23,7 @@ describe 'repeat', ->
           next()
         , 10
       .error next
-      .then ->
+      .next ->
         started.should.eql 10
         next()
         
@@ -45,7 +45,7 @@ describe 'repeat', ->
           next()
         , 10
       .error next
-      .then ->
+      .next ->
         started.should.eql 30
         next()
 
@@ -66,7 +66,7 @@ describe 'repeat', ->
           next()
         , 10
       .error next
-      .then ->
+      .next ->
         started.should.eql 10
         ended.should.eql 10
         next()
@@ -86,7 +86,7 @@ describe 'repeat', ->
           next()
         , 10
       .error next
-      .then ->
+      .next ->
         started.should.eql 30
         next()
 
@@ -105,7 +105,7 @@ describe 'repeat', ->
           next()
         , 100
       .error next
-      .then ->
+      .next ->
         started.should.eql 10
         ended.should.eql 10
         next()
@@ -127,6 +127,6 @@ describe 'repeat', ->
           next()
         , 100
       .error next
-      .then ->
+      .next ->
         ended.should.eql 30
         next()

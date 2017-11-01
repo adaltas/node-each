@@ -21,7 +21,7 @@ each( [{id: 1}, {id: 2}, {id: 3}] )
 .call( function(element, index){
   console.log('element: ', element, '@', index);
 })
-.then( function(err){
+.next( function(err){
   console.log(err ? err.message : 'Done');
 });
 ```
@@ -35,7 +35,7 @@ each( [{id: 1}, {id: 2}, {id: 3}] )
   console.log('element: ', element, '@', index);
   setTimeout(next, 500);
 })
-.then( function(err){
+.next( function(err){
   console.log(err ? err.message : 'Done');
 });
 ```
@@ -76,8 +76,14 @@ The following functions are available:
     Add array elements or key/value pairs at the end of iteration.
 -   `unshift(items)`   
     Add array elements or key/value pairs at the begining of the iteration, just after the last executed element.
+-   `error(function)`   
+    Called after the iterations if an error occured, the fist argument is an
+    error.
 -   `end()`   
     Stop the iteration, garanty that no item will be emitted after it is called.
+-   `next(function)`   
+    Called after the iterations, the first argument is an error if there was any
+    and if there was no `error` call preceding `next`.
 -   `parallel(mode)`   
     The first argument is optional and indicate wether or not you want the 
     iteration to run in `sequential`, `parallel` or `concurrent` mode. See below
@@ -168,7 +174,7 @@ the current callbacks are not canceled but no new element will be send to the
 
 The first argument passed to the `error` event callback is an error instance. In 
 `sequential` mode, it is always the error that was thrown by the failed item callback. In 
-`parallel` and `concurrent` modes, there may be more than one event thrown asynchrously. In such case, the error has a generic message such as `Multiple error $count` and the property `.errors` is an array giving access to each individual error.
+`parallel` and `concurrent` modes, there may be more than one event thrown asynchrously. In such case, the error has the generic message such as `Multiple errors $count` and the property `.errors` is an array giving access to each individual error.
 
 It is possible to know the number of successful item callbacks in the `both` event by substracting the number of run callbacks provided as the second argument to the number of errors provided as the first argument.
 

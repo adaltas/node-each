@@ -15,7 +15,7 @@ describe 'sync', ->
         element.should.eql current
         current++
       .error next
-      .then ->
+      .next ->
         current.should.eql 10
         next()
         
@@ -30,7 +30,7 @@ describe 'sync', ->
         typeof next is 'function'
         current++
       .error next
-      .then ->
+      .next ->
         current.should.eql 10
         next()
         
@@ -45,7 +45,7 @@ describe 'sync', ->
         index.should.eql current
         element.should.eql current
         current++
-      .then ->
+      .next ->
         current.should.eql 10
         next()
         

@@ -14,7 +14,7 @@ describe 'concurrent', ->
       element.id.should.eql current
       setTimeout next, 100
     .error next
-    .then ->
+    .next ->
       current.should.eql 9
       next()
       
@@ -28,7 +28,7 @@ describe 'concurrent', ->
       element.id.should.eql current
       setTimeout next, 100
     .error next
-    .then ->
+    .next ->
       current.should.eql 1
       setTimeout next, 100
       
@@ -40,7 +40,7 @@ describe 'concurrent', ->
       current++
       next()
     .error next
-    .then ->
+    .next ->
       current.should.eql 0
       next()
       
@@ -54,7 +54,7 @@ describe 'concurrent', ->
       element.id.should.eql current
       next()
     .error next
-    .then ->
+    .next ->
       current.should.eql 9
       next()
       
@@ -68,7 +68,7 @@ describe 'concurrent', ->
       value.should.eql current
       setTimeout next, 100
     .error next
-    .then ->
+    .next ->
       current.should.eql 9
       setTimeout next, 100
       
@@ -82,7 +82,7 @@ describe 'concurrent', ->
       value.should.eql current
       next()
     .error next
-    .then ->
+    .next ->
       current.should.eql 9
       next()
       
@@ -96,6 +96,6 @@ describe 'concurrent', ->
       element.should.be.a.Function
       element next
     .error next
-    .then ->
+    .next ->
       current.should.eql 1
       next()

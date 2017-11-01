@@ -13,7 +13,7 @@ describe 'Parallel', ->
       element.id.should.eql current
       setTimeout next, 100
     .error next
-    .then ->
+    .next ->
       current.should.eql 3
       next()
   it 'should handle very large array', (next) ->
@@ -22,7 +22,7 @@ describe 'Parallel', ->
     .parallel( true )
     .call (val, i, next) ->
       setTimeout next, 1
-    .then (err) ->
+    .next (err) ->
       next()
   it 'Parallel # object', (next) ->
     current = 0
@@ -34,7 +34,7 @@ describe 'Parallel', ->
       value.should.eql current
       setTimeout next, 100
     .error next
-    .then ->
+    .next ->
       current.should.eql 3
       next()
   it 'Parallel # undefined', (next) ->
@@ -42,13 +42,13 @@ describe 'Parallel', ->
     .parallel( true )
     .call (element, index, next) ->
       should.not.exist true
-    .then next
+    .next next
   it 'Parallel # null', (next) ->
     each( null )
     .parallel( true )
     .call (element, index, next) ->
       should.not.exist true
-    .then next
+    .next next
   it 'Parallel # string', (next) ->
     current = 0
     each( 'id_1' )
@@ -59,7 +59,7 @@ describe 'Parallel', ->
       element.should.eql "id_1"
       setTimeout next, 100
     .error next
-    .then ->
+    .next ->
       current.should.eql 1
       next()
   it 'Parallel # number', (next) ->
@@ -72,7 +72,7 @@ describe 'Parallel', ->
       element.should.eql 3.14
       setTimeout next, 100
     .error next
-    .then ->
+    .next ->
       current.should.eql 1
       next()
   it 'Parallel # boolean', (next) ->
@@ -86,7 +86,7 @@ describe 'Parallel', ->
       element.should.not.be.ok
       next()
     .error next
-    .then ->
+    .next ->
       current.should.eql 1
       # New tick
       current = 0
@@ -98,7 +98,7 @@ describe 'Parallel', ->
         element.should.be.ok
         setTimeout next, 100
       .error next
-      .then ->
+      .next ->
         current.should.eql 1
         next()
   it 'Parallel # function', (next) ->
@@ -112,7 +112,7 @@ describe 'Parallel', ->
       element.should.be.a.Function
       element next
     .error next
-    .then ->
+    .next ->
       current.should.eql 1
       next()
     

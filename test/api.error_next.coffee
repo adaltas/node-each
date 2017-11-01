@@ -1,7 +1,7 @@
 
 each = require '../src'
 
-describe 'error_then', ->
+describe 'error_next', ->
   
   describe 'async', ->
     
@@ -10,7 +10,7 @@ describe 'error_then', ->
       .call (next) ->
         arguments.length.should.eql 1
         next()
-      .then next
+      .next next
       
     it 'run arguments contains element and next', (next) ->
       elements = []
@@ -19,7 +19,7 @@ describe 'error_then', ->
         elements.push element
         next()
       .error next
-      .then ->
+      .next ->
         elements.should.eql [ 'a', 'b', 'c' ]
         next()
     
@@ -30,7 +30,7 @@ describe 'error_then', ->
       .sync()
       .call ->
         arguments.length.should.eql 0
-      .then next
+      .next next
       
     it 'run arguments contains element', (next) ->
       elements = []
@@ -39,6 +39,6 @@ describe 'error_then', ->
       .call (element) ->
         elements.push element
       .error next
-      .then ->
+      .next ->
         elements.should.eql [ 'a', 'b', 'c' ]
         next()

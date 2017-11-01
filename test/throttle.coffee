@@ -13,7 +13,7 @@ describe 'throttle', ->
           eacher.resume()
         , 100
       next()
-    .then (err, errors) ->
+    .next (err, errors) ->
       should.not.exist err
       next()
       
@@ -29,7 +29,7 @@ describe 'throttle', ->
         , 100
       else
         next()
-    .then (err, errors) ->
+    .next (err, errors) ->
       should.not.exist err
       next()
       
@@ -45,7 +45,7 @@ describe 'throttle', ->
         , 10 * element.id
       else
         next()
-    .then (err, errors) ->
+    .next (err, errors) ->
       should.not.exist err
       next()
       
@@ -59,6 +59,6 @@ describe 'throttle', ->
           eacher.resume()
         , 10 * element.id
       next()
-    .then (err, errors) ->
+    .next (err, errors) ->
       should.not.exist err
       next()
