@@ -96,10 +96,10 @@ describe 'times', ->
       .parallel(3)
       .times(10)
       .call (element, index, next) ->
-        process.nextTick -> started++
+        started++
         setTimeout ->
           ended++
-          (started % 3).should.eql 0 unless started is 10
+          started.should.be.above 2
           ended.should.be.above started - 3
           next()
         , 100
