@@ -1,11 +1,10 @@
 [![Build Status](https://secure.travis-ci.org/adaltas/node-each.png)](http://travis-ci.org/adaltas/node-each)
 
-** IMPORTANT: version 1.0.0 break API after renaming `then` into `next`**
-
 Node Each is a single elegant function to iterate asynchronously over elements 
-both in `sequential`, `parallel` and `concurrent` mode.
+both in `sequential`, `parallel` and `concurrent` mode. It is a both a
+powerful and mature library.
 
-Main functionnalities include:
+Main functionalities include:
 
 * Iterate over arrays and objects
 * Control the number of executed handler functions in parallel
@@ -13,6 +12,7 @@ Main functionnalities include:
 * Run array elements and object key/pairs multiple times
 * Multiple call detection in callback
 * Full test coverage
+* Zero dependencies
 
 ## Usage
 
