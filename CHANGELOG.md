@@ -1,7 +1,7 @@
 
 # Changelog
 
-## Trunk
+## Version 1.1.0
 
 package: npm release script
 options: pass options into the main function
