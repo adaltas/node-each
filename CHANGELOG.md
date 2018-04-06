@@ -1,7 +1,7 @@
 
 # Changelog
 
-## Trunk
+## Version 1.1.1
 
 package: fix latest release with js lost in transpilation
 
