@@ -4,6 +4,9 @@ path = require 'path'
 util = require 'util'
 
 ###
+Each is an async iterator encapsultated in one elegant function. The execution
+can be controlled over multiple functions accessible as a chained API.
+
 each(elements)
 .parallel(false|true|integer)
 .sync(false)
@@ -18,17 +21,17 @@ each(elements)
 .call(callback)
 .error(callback)
 .next(callback)
-Chained and parallel async iterator in one elegant function
 ###
-Each = (@options, @_elements) ->
+Each = (@_elements, @options={}) ->
+  # @options, 
   # Arguments
-  if arguments.length is 1
-    @_elements = @options
-    @options = {}
+  # if arguments.length is 1
+  #   @_elements = @options
+  #   @options = {}
   @options.concurrency = 1
+  @options.repeat = false
   @options.sync = false
   @options.times = 1
-  @options.repeat = false
   # Internal state
   type = typeof @_elements
   if @_elements is null or type is 'undefined'
@@ -173,9 +176,6 @@ Each::promise = ->
     deferred.reject = reject
   @_listeners.push ['promise', deferred]
   promise
-# Each::then = util.deprecate (callback) ->
-#   @next callback
-# , 'Function then is depracated in favor of next'
 Each::next = (callback) ->
   @_listeners.push ['next', callback]
   @
@@ -223,11 +223,9 @@ Each::unshift = (item) ->
   else
     index = Math.floor(@started / @options.times)
   if l is 1
-    # @_elements.unshift arguments[0]
     @_elements.splice index, 0, arguments[0]
   else if l is 2
     @_keys = [] if not @_keys
-    # @_keys.unshift arguments[0]
     @_keys.splice index, 0, arguments[0]
     @_elements[arguments[0]] = arguments[1]
   @total++

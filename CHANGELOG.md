@@ -3,6 +3,10 @@
 
 ## Trunk
 
+options: pass options into the main function
+
+## Version 1.0.0
+
 * readme: rewrite doc
 * next: rename then to next
 * promise: error and then can be called before

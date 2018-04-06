@@ -66,13 +66,17 @@ Note:
 
 ## API
 
-The `each` function signature is: `each(subject)`. 
+The `each` function signature is: `each(subject, [options])`.
 
-- `subject`   
-  The subject to iterate. It is usually an array or an object. 
+- `subject` (array|object, required)   
+  The subject to iterate. It is usually an array or an object.
   Inserting a number or a string will behave like an array of one
-  element and inserting null or undefined wont iterate over any
+  element and inserting null or undefined won't iterate over any
   element.
+- `options` (object, optional)   
+  Options may contain concurrency, repeat, sync, times. The option `concurrency`
+  may be "false" for sequential, "true" for parallel and a number for concurrent
+  mode. For other options, see below their associated function.
 
 The return object is an instance of `EventEmitter`.
 
@@ -106,8 +110,8 @@ The following functions are available:
 - `push(item)` or `push(key, value)`
   Add array elements or key/value pairs at the end of iteration.
 - `repeat()`   
-  Repeat operation multiple times once all elements have been called,
-  see `times`.
+  Repeat operation multiple times once all elements have been called, see
+  `times`.
 - `sync()`   
   Run callbacks in synchronous mode, no next callback are provided,
   may throw an error.
@@ -115,8 +119,8 @@ The following functions are available:
   Repeat operation multiple times before passing to the next element,
   see `repeat`.
 - `unshift(items)`   
-  Add array elements or key/value pairs at the begining of the 
-  iteration, just after the last executed element.
+  Add array elements or key/value pairs at the begining of the iteration,
+  just after the last executed element.
 - `write(items)`   
   Alias of `push`.
 
