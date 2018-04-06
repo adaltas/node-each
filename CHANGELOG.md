@@ -3,6 +3,7 @@
 
 ## Trunk
 
+package: npm release script
 options: pass options into the main function
 
 ## Version 1.0.0
