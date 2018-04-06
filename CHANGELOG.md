@@ -1,6 +1,10 @@
 
 # Changelog
 
+## Trunk
+
+package: fix latest release with js lost in transpilation
+
 ## Version 1.1.0
 
 package: npm release script
