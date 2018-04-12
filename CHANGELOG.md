@@ -1,7 +1,7 @@
 
 # Changelog
 
-## Trunk
+## Version 1.2.0
 
 handler: handle multiple errors
 package: latest dev dependencies
