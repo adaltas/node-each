@@ -3,6 +3,7 @@
 
 ## Trunk
 
+package: ignore lock files
 source: remove unused module dependencies
 
 ## Version 1.1.1
