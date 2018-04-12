@@ -147,7 +147,7 @@ describe 'handler', ->
       each( [ '1', '2', '3' ] )
       .parallel true
       .call (val, next) -> setImmediate -> next Error 'Catchme'
-      .call (val, next) -> next()
+      .call (val, next) -> next Error 'Dont call me'
       .error (err) ->
         err.errors.length.should.eql 3
         err.errors[0].message.should.eql 'Catchme'
@@ -161,6 +161,36 @@ describe 'handler', ->
       .parallel true
       .call (val, next) -> next()
       .call (val, next) -> setImmediate -> next Error 'Catchme'
+      .error (err) ->
+        err.errors.length.should.eql 3
+        err.errors[0].message.should.eql 'Catchme'
+        next()
+      .next ->
+        false.should.be.true()
+              
+    it 'get multiple call error in first handler', (next) ->
+      data = []
+      each( [ '1', '2', '3' ] )
+      .parallel true
+      .call (val, next) -> setImmediate ->
+        next Error 'Catchme'
+        setImmediate -> next Error 'Catchme'
+      .call (val, next) -> next Error 'Dont call me'
+      .error (err) ->
+        err.errors.length.should.eql 3
+        err.errors[0].message.should.eql 'Catchme'
+        next()
+      .next ->
+        false.should.be.true()
+              
+    it 'get multiple call error in last handler', (next) ->
+      data = []
+      each( [ '1', '2', '3' ] )
+      .parallel true
+      .call (val, next) -> next()
+      .call (val, next) -> setImmediate ->
+        next Error 'Catchme'
+        setImmediate -> next Error 'Catchme'
       .error (err) ->
         err.errors.length.should.eql 3
         err.errors[0].message.should.eql 'Catchme'

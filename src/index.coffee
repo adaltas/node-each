@@ -78,10 +78,10 @@ Each.prototype._call_next = (error, count) ->
   throw Error 'Invalid State: error or next not defined'
 Each.prototype._run = () ->
   return if @paused
-  handlers = @_get_current_handler()
+  handlers = @_get_current_handler() unless @_errors.length
   # This is the end
   error = null
-  if @_endable is 1 and (@_close or @done is @total * @options.times * handlers.length or (@_errors.length and @started is @done) )
+  if @_endable is 1 and (@_close or (handlers and @done is @total * @options.times * handlers.length) or (@_errors.length and @started is @done) )
     @_listeners.shift()
     if @_errors.length or not @_has_next_handler()
       # Give a chance for end to be called multiple times
