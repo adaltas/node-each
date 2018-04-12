@@ -3,6 +3,7 @@
 
 ## Trunk
 
+package: latest dev dependencies
 package: ignore lock files
 source: remove unused module dependencies
 

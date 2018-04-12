@@ -11,9 +11,9 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "coffeescript": "2.0.2",
-    "mocha": "~4.0.1",
-    "should": "~13.1.3"
+    "coffeescript": "2.2.4",
+    "mocha": "~5.0.5",
+    "should": "~13.2.1"
   },
   "engines": {
     "node": ">= 0.9.0"
