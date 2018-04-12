@@ -2,7 +2,6 @@
 each = require '../src'
 
 describe 'Close', ->
-    
   
   it 'should work in sequential', (next) ->
     count = 0

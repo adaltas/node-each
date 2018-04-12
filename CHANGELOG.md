@@ -1,9 +1,13 @@
 
 # Changelog
 
+## Trunk
+
+source: remove unused module dependencies
+
 ## Version 1.1.1
 
-package: fix latest release with js lost in transpilation
+src: fix latest release with js lost in transpilation
 
 ## Version 1.1.0
 

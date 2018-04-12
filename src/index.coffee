@@ -1,8 +1,4 @@
 
-stream = require 'stream'
-path = require 'path'
-util = require 'util'
-
 ###
 Each is an async iterator encapsultated in one elegant function. The execution
 can be controlled over multiple functions accessible as a chained API.
