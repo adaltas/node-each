@@ -107,6 +107,8 @@ The following functions are available:
   The first argument is optional and indicate wether or not you want
   the iteration to run in `sequential`, `parallel` or `concurrent`
   mode. See below for more details about the different modes.
+- `promise`   
+  Return a Javascript promise called on error or completion.
 - `push(item)` or `push(key, value)`
   Add array elements or key/value pairs at the end of iteration.
 - `repeat()`   

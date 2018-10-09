@@ -1,21 +1,25 @@
 
 # Changelog
 
+## Trunk
+
+* readme: document promise
+
 ## Version 1.2.0
 
-handler: handle multiple errors
-package: latest dev dependencies
-package: ignore lock files
-source: remove unused module dependencies
+* handler: handle multiple errors
+* package: latest dev dependencies
+* package: ignore lock files
+* source: remove unused module dependencies
 
 ## Version 1.1.1
 
-src: fix latest release with js lost in transpilation
+* src: fix latest release with js lost in transpilation
 
 ## Version 1.1.0
 
-package: npm release script
-options: pass options into the main function
+* package: npm release script
+* options: pass options into the main function
 
 ## Version 1.0.0
 
