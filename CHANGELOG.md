@@ -1,7 +1,7 @@
 
 # Changelog
 
-## Trunk
+## Version 1.2.1
 
 * readme: document promise
 
