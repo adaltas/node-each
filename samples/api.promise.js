@@ -6,6 +6,12 @@ each( [{id: 1}, {id: 2}, {id: 3}] )
   console.log('element: ', element, '@', index);
   setTimeout(next, 500);
 })
-.then( function(err){
+.next( function(err){
   console.log(err ? err.message : 'Done');
 });
+
+// Print:
+// element:  { id: 1 } @ 0
+// element:  { id: 2 } @ 1
+// element:  { id: 3 } @ 2
+// Done

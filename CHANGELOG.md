@@ -1,6 +1,10 @@
 
 # Changelog
 
+## Trunk
+
+* sample: update api.promise
+
 ## Version 1.2.1
 
 * readme: document promise
