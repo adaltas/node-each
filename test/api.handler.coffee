@@ -7,24 +7,24 @@ describe 'handler', ->
         
     it 'get next argument', (next) ->
       each( [ 'a', 'b', 'c' ] )
-      .call (next) ->
+      .call (callback) ->
         arguments.length.should.eql 1
-        next()
+        callback()
       .next next
       
     it 'get element and next argument', (next) ->
       each( [ 'a', 'b', 'c' ] )
-      .call (element, next) ->
+      .call (element, callback) ->
         ['a', 'b', 'c'].should.containEql element
-        next()
+        callback()
       .next next
       
     it 'get element, index and next argument', (next) ->
       each( [ 'a', 'b', 'c' ] )
-      .call (element, index, next) ->
+      .call (element, index, callback) ->
         ['a', 'b', 'c'].should.containEql element
         index.should.be.a.Number()
-        next()
+        callback()
       .next next
       
     it 'throw error with no argument', (next) ->
@@ -39,33 +39,33 @@ describe 'handler', ->
     
     it 'get next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
-      .call (next) ->
+      .call (callback) ->
         arguments.length.should.eql 1
-        next()
+        callback()
       .next next
       
     it 'get value and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
-      .call (value, next) ->
+      .call (value, callback) ->
         value.should.be.a.Number()
-        next()
+        callback()
       .next next
       
     it 'get key, value and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
-      .call (key, value, next) ->
+      .call (key, value, callback) ->
         ['a', 'b', 'c'].should.containEql key
         value.should.be.a.Number()
-        next()
+        callback()
       .next next
       
     it 'get key, value, index and next argument', (next) ->
       each( {a: 1, b: 2, c: 3} )
-      .call (key, value, counter, next) ->
+      .call (key, value, counter, callback) ->
         ['a', 'b', 'c'].should.containEql key
         value.should.be.a.Number()
         counter.should.be.a.Number()
-        next()
+        callback()
       .next next
       
     it 'throw error with no argument', (next) ->
@@ -82,8 +82,8 @@ describe 'handler', ->
       data = []
       each( [ '1', '2', '3' ] )
       .call [
-        (val, next) -> data.push(val+'a') and next()
-        (val, next) -> data.push(val+'b') and next()
+        (val, callback) -> data.push(val+'a') and callback()
+        (val, callback) -> data.push(val+'b') and callback()
       ]
       .error next
       .next ->
@@ -95,8 +95,8 @@ describe 'handler', ->
       each( [ '1', '2', '3' ] )
       .parallel true
       .call [
-        (val, next) -> data.push(val+'a') and next()
-        (val, next) -> process.nextTick (-> data.push(val+'b') and next())
+        (val, callback) -> data.push(val+'a') and callback()
+        (val, callback) -> process.nextTick (-> data.push(val+'b') and callback())
       ]
       .error next
       .next ->
@@ -111,8 +111,8 @@ describe 'handler', ->
       data = []
       each( [ '1', '2', '3' ] )
       .parallel true
-      .call (val, next) -> data.push(val+'a') and next()
-      .call (val, next) -> data.push(val+'b') and next()
+      .call (val, callback) -> data.push(val+'a') and callback()
+      .call (val, callback) -> data.push(val+'b') and callback()
       .error next
       .next ->
         data.should.eql ['1a', '2a', '3a', '1b', '2b', '3b']
@@ -122,8 +122,8 @@ describe 'handler', ->
       data = []
       each( [ '1', '2', '3' ] )
       .parallel true
-      .call (val, next) -> throw Error 'Catchme'
-      .call (val, next) -> next()
+      .call (val, callback) -> throw Error 'Catchme'
+      .call (val, callback) -> callback()
       .error (err) ->
         err.message.should.eql 'Catchme'
         next()
@@ -134,8 +134,8 @@ describe 'handler', ->
       data = []
       each( [ '1', '2', '3' ] )
       .parallel true
-      .call (val, next) -> next()
-      .call (val, next) -> throw Error 'Catchme'
+      .call (val, callback) -> callback()
+      .call (val, callback) -> throw Error 'Catchme'
       .error (err) ->
         err.message.should.eql 'Catchme'
         next()
@@ -146,8 +146,8 @@ describe 'handler', ->
       data = []
       each( [ '1', '2', '3' ] )
       .parallel true
-      .call (val, next) -> setImmediate -> next Error 'Catchme'
-      .call (val, next) -> next Error 'Dont call me'
+      .call (val, callback) -> setImmediate -> callback Error 'Catchme'
+      .call (val, callback) -> callback Error 'Dont call me'
       .error (err) ->
         err.errors.length.should.eql 3
         err.errors[0].message.should.eql 'Catchme'
@@ -159,8 +159,8 @@ describe 'handler', ->
       data = []
       each( [ '1', '2', '3' ] )
       .parallel true
-      .call (val, next) -> next()
-      .call (val, next) -> setImmediate -> next Error 'Catchme'
+      .call (val, callback) -> callback()
+      .call (val, callback) -> setImmediate -> callback Error 'Catchme'
       .error (err) ->
         err.errors.length.should.eql 3
         err.errors[0].message.should.eql 'Catchme'
@@ -172,10 +172,10 @@ describe 'handler', ->
       data = []
       each( [ '1', '2', '3' ] )
       .parallel true
-      .call (val, next) -> setImmediate ->
-        next Error 'Catchme'
-        setImmediate -> next Error 'Catchme'
-      .call (val, next) -> next Error 'Dont call me'
+      .call (val, callback) -> setImmediate ->
+        callback Error 'Catchme'
+        setImmediate -> callback Error 'Catchme'
+      .call (val, callback) -> callback Error 'Dont call me'
       .error (err) ->
         err.errors.length.should.eql 3
         err.errors[0].message.should.eql 'Catchme'
@@ -187,10 +187,10 @@ describe 'handler', ->
       data = []
       each( [ '1', '2', '3' ] )
       .parallel true
-      .call (val, next) -> next()
-      .call (val, next) -> setImmediate ->
-        next Error 'Catchme'
-        setImmediate -> next Error 'Catchme'
+      .call (val, callback) -> callback()
+      .call (val, callback) -> setImmediate ->
+        callback Error 'Catchme'
+        setImmediate -> callback Error 'Catchme'
       .error (err) ->
         err.errors.length.should.eql 3
         err.errors[0].message.should.eql 'Catchme'

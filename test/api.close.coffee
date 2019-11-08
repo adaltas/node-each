@@ -7,9 +7,9 @@ describe 'Close', ->
     count = 0
     eacher = each([0,1,2,3,4,5,6,7,8,9])
     .parallel(false)
-    .call (element, next) ->
+    .call (element, callback) ->
       count++
-      return next() if count < 5
+      return callback() if count < 5
       return eacher.close() if count is 5
       false.should.be.true()
     .next (err) ->
@@ -20,9 +20,9 @@ describe 'Close', ->
     count = 0
     eacher = each([0,1,2,3,4,5,6,7,8,9])
     .parallel(true)
-    .call (element, next) ->
+    .call (element, callback) ->
       count++
-      return next() if count < 5
+      return callback() if count < 5
       return eacher.close() if count is 5
       false.should.be.true()
     .next (err) ->
@@ -34,9 +34,9 @@ describe 'Close', ->
     eacher = each()
     .parallel(false)
     .times(10)
-    .call (element, next) ->
+    .call (element, callback) ->
       count++
-      return next() if count < 5
+      return callback() if count < 5
       return eacher.close() if count is 5
       false.should.be.true()
     .next (err) ->

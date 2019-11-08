@@ -1,7 +1,7 @@
 [![Build Status](https://secure.travis-ci.org/adaltas/node-each.png)](http://travis-ci.org/adaltas/node-each)
 
 Node Each is a single elegant function to iterate asynchronously over elements 
-both in `sequential`, `parallel` and `concurrent` mode. It is a both a
+both in `sequential`, `parallel` and `concurrent` mode. It is a
 powerful and mature library.
 
 Main functionalities include:
@@ -16,26 +16,27 @@ Main functionalities include:
 
 ## Usage
 
-### Synchronous and sequential Mode
+### Asynchronous and concurrent Mode
 
 ```javascript
 each( [{id: 1}, {id: 2}, {id: 3}] )
-.call( function(element, index){
+.parralel(2)
+.call( function(element, index, callback){
   console.log('element: ', element, '@', index);
+  setTimeout(callback, 500);
 })
 .next( function(err){
   console.log(err ? err.message : 'Done');
 });
 ```
 
-### Asynchronous and concurrent Mode
+### Synchronous and sequential Mode
 
 ```javascript
 each( [{id: 1}, {id: 2}, {id: 3}] )
-.parralel(2)
-.call( function(element, index, next){
+.sync()
+.call( function(element, index){
   console.log('element: ', element, '@', index);
-  setTimeout(next, 500);
 })
 .next( function(err){
   console.log(err ? err.message : 'Done');
@@ -155,37 +156,36 @@ The following properties are available:
 
 ## Callback arguments in call handlers
 
-The last argument, `next`, is a function to call at the end 
-of your callback. It may be called with an error instance to 
-trigger the `error` event. An example worth a tousand words, 
-see the code examples below for usage.
+The last argument, `callback`, is a function to call once your action has
+complete. It may be called with an error instance to  trigger the `error` event.
+An example worth a tousand words,  see the code examples below for usage.
 
-Inside array iteration, callback signature is `function([value], [index], next)`.
+Inside array iteration, callback signature is `function([value], [index], callback)`.
 
 ```javascript
 each([])
 // 1 argument
-.call(function(next){})
+.call(function(callback){})
 // 2 arguments
-.call(function(value, next){})
+.call(function(value, callback){})
 // 3 arguments
-.call(function(value, index, next){})
+.call(function(value, index, callback){})
 // done
 .then(function(){})
 ```
 
-Inside object iteration, callback signature is `function([key], [value], [counter], next)`.
+Inside object iteration, callback signature is `function([key], [value], [counter], callback)`.
 
 ```javascript
 each({})
 // 1 argument
-.call(function(next){})
+.call(function(callback){})
 // 2 arguments
-.call(function(value, next){})
+.call(function(value, callback){})
 // 3 arguments
-.call(function(key, value, next){})
+.call(function(key, value, callback){})
 // 4 arguments
-.call(function(key, value, counter, next){})
+.call(function(key, value, counter, callback){})
 // done
 .then(function(){})
 ```
@@ -288,8 +288,8 @@ In `sequential` mode:
 ```javascript
 var each = require('each');
 each( [{id: 1}, {id: 2}, {id: 3}] )
-.call( function(element, index, next){
-  setImmediate(next);
+.call( function(element, index, callback){
+  setImmediate(callback);
 })
 .next( function(err){
   console.log(err ? err.message : 'success');
@@ -302,9 +302,9 @@ In `parallel` mode:
 var each = require('each');
 each( [{id: 1}, {id: 2}, {id: 3}] )
 .parallel( true )
-.call(function(element, index, next) {
+.call(function(element, index, callback) {
   console.log('element: ', element, '@', index);
-  setTimeout(next, 500);
+  setTimeout(callback, 500);
 })
 .next(function(err){
   console.log(err ? err.message : 'success');
@@ -317,9 +317,9 @@ In `concurrent` mode (4 parallel executions):
 var each = require('each');
 each( [{id: 1}, {id: 2}, {id: 3}] )
 .parallel( 4 )
-.call(function(element, index, next) {
+.call(function(element, index, callback) {
   console.log('element: ', element, '@', index);
-  setTimeout(next, 500);
+  setTimeout(callback, 500);
 })
 .next(function(err){
   console.log(err ? err.message : 'success');
@@ -333,10 +333,10 @@ In `sequential` mode:
 ```javascript
 var each = require('each');
 each( {id_1: 1, id_2: 2, id_3: 3} )
-.call(function(key, value, next) {
+.call(function(key, value, callback) {
   console.log('key: ', key);
   console.log('value: ', value);
-  setTimeout(next, 500);
+  setTimeout(callback, 500);
 })
 .next(function(err) {
   console.log(err ? err.message : 'success');
@@ -349,10 +349,10 @@ In `concurrent` mode with 2 parallels executions
 var each = require('each');
 each( {id_1: 1, id_2: 2, id_3: 3} )
 .parallel( 2 )
-.call(function(key, value, next) {
+.call(function(key, value, callback) {
   console.log('key: ', key);
   console.log('value: ', value);
-  setTimeout(next, 500);
+  setTimeout(callback, 500);
 })
 .next(function(err){
   console.log(err ? err.message : 'success');
@@ -376,10 +376,10 @@ will call 3 times the function `doSomeMetrics` with the same arguments.
 ```javascript
 each(['a', 'b', 'c', 'd'])
 .times(3)
-.call(function(id, next){
+.call(function(id, callback){
   setImmediate(function(){
     process.stdout.write(id)
-    next()
+    callback()
   })
 })
 .next(function(){
@@ -396,7 +396,7 @@ It is also possible to use `times` and `repeat` without providing any data. Here
 count = 0
 each()
 .times(3)
-.call(function(next){
+.call(function(callback){
   console.log(count++);
 })
 .next(function(){
@@ -406,7 +406,7 @@ each()
 
 ## Multiple call detection in callback
 
-An error will be throw with the message "Multiple call detected" if the `next` argument in the `item` callback is called multiple times. However, if `end` event has already been thrown, the only way to catch the error is by registering to the "uncaughtException" event of `process`.
+An error will be throw with the message "Multiple call detected" if the `callback` argument in the `item` callback is called multiple times. However, if `end` event has already been thrown, the only way to catch the error is by registering to the "uncaughtException" event of `process`.
 
 ## Examples
 

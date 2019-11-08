@@ -14,7 +14,7 @@ describe 'error', ->
       next()
     eacher = each()
     .times(10)
-    .call (element, index, next) ->
-      next Error 'Trigger Error'
+    .call (element, index, callback) ->
+      callback Error 'Trigger Error'
     .error (err) ->
       throw Error 'User Error'

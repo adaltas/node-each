@@ -6,13 +6,13 @@ describe 'throttle', ->
   it 'next before resume', (next) ->
     eacher = each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
     .parallel( 4 )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       if element.id is 2
         eacher.pause()
         setTimeout ->
           eacher.resume()
         , 100
-      next()
+      callback()
     .next (err, errors) ->
       should.not.exist err
       next()
@@ -20,15 +20,15 @@ describe 'throttle', ->
   it 'next after resume', (next) ->
     eacher = each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
     .parallel( 4 )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       if element.id is 2
         eacher.pause()
         setTimeout ->
           eacher.resume()
-          next()
+          callback()
         , 100
       else
-        next()
+        callback()
     .next (err, errors) ->
       should.not.exist err
       next()
@@ -36,15 +36,15 @@ describe 'throttle', ->
   it 'multiple pause # next before resume', (next) ->
     eacher = each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
     .parallel( 4 )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       if element.id % 2 is 0
         eacher.pause()
         setTimeout ->
           eacher.resume()
-          next()
+          callback()
         , 10 * element.id
       else
-        next()
+        callback()
     .next (err, errors) ->
       should.not.exist err
       next()
@@ -52,13 +52,13 @@ describe 'throttle', ->
   it 'multiple pause # next after resume', (next) ->
     eacher = each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
     .parallel( 4 )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       if element.id % 2 is 0
         eacher.pause()
         setTimeout ->
           eacher.resume()
         , 10 * element.id
-      next()
+      callback()
     .next (err, errors) ->
       should.not.exist err
       next()

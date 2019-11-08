@@ -7,9 +7,9 @@ describe 'push', ->
     each()
     .push('hello')
     .push('each')
-    .call (item, index, next) ->
+    .call (item, index, callback) ->
       item.should.eql 'hello' if index is 0
-      next()
+      callback()
     .error next
     .next (count) ->
       count.should.eql 2
@@ -19,9 +19,9 @@ describe 'push', ->
     each()
     .push('hello', 'each')
     .push('youre', 'welcome')
-    .call (key, value, next) ->
+    .call (key, value, callback) ->
       value.should.eql 'each' if key is 'hello'
-      next()
+      callback()
     .error next
     .next (count) ->
       count.should.eql 2

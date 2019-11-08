@@ -7,14 +7,14 @@ describe 'handler error', ->
     current = 0
     each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ] )
     .parallel( 4 )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       index.should.eql current
       current++
       setTimeout ->
         if element.id is 6 or element.id is 7
-          next new Error "Testing error in #{element.id}"
+          callback new Error "Testing error in #{element.id}"
         else
-          next()
+          callback()
       , 100
     .error (err) ->
       current.should.eql 9
@@ -30,37 +30,35 @@ describe 'handler error', ->
     current = 0
     each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ] )
     .parallel( 4 )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       index.should.eql current
       current++
       if element.id is 6 or element.id is 7
         throw new Error "Testing error in #{element.id}"
       else 
-        next()
+        callback()
     .error (err) ->
       current.should.eql 6
       err.message.should.eql 'Testing error in 6'
       err.should.not.have.property 'errors'
       next()
-    .next ->
-      next()
       
   it 'parallel # multiple errors # error callback', (next) ->
     # when multiple errors are thrown, a new error object is created
-    # with a message indicating the number of errors. The original 
+    # with a message indicating the number of errors. The original
     # errors are available as an array in the second argument of the
     # `error` event.
     current = 0
     each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
     .parallel( true )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       index.should.eql current
       current++
       setTimeout ->
         if element.id is 1 or element.id is 3
-          next( new Error "Testing error in #{element.id}" )
+          callback( new Error "Testing error in #{element.id}" )
         else
-          next()
+          callback()
       , 100
     .error (err) ->
       err.message.should.eql 'Multiple errors (2)'
@@ -76,14 +74,14 @@ describe 'handler error', ->
     current = 0
     each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
     .parallel( true )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       index.should.eql current
       current++
       setTimeout ->
         if element.id is 3
-          next( new Error "Testing error in #{element.id}" )
+          callback( new Error "Testing error in #{element.id}" )
         else
-          next()
+          callback()
       , 100
     .error (err) ->
       err.message.should.eql 'Testing error in 3'
@@ -93,14 +91,14 @@ describe 'handler error', ->
     current = 0
     each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
     .parallel( true )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       index.should.eql current
       current++
       setTimeout ->
         if element.id is 1 or element.id is 3
-          next( new Error "Testing error in #{element.id}" )
+          callback( new Error "Testing error in #{element.id}" )
         else
-          next()
+          callback()
       , 100
     .error (err) ->
       err.message.should.eql 'Multiple errors (2)'
@@ -113,12 +111,12 @@ describe 'handler error', ->
     current = 0
     each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
     .parallel( true )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       index.should.eql current
       current++
       if element.id is 1 or element.id is 3
-        next( new Error "Testing error in #{element.id}" )
-      else setTimeout next, 100
+        callback( new Error "Testing error in #{element.id}" )
+      else setTimeout callback, 100
     .error (err) ->
       # In this specific case, since the item handler
       # send error sequentially, we are only receiving
@@ -129,12 +127,12 @@ describe 'handler error', ->
   it 'sequential # sync # error callback', (next) ->
     current = 0
     each( [ {id: 1}, {id: 2}, {id: 3} ] )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       index.should.eql current
       current++
       if element.id is 2
-        next( new Error 'Testing error' )
-      else next()
+        callback( new Error 'Testing error' )
+      else callback()
     .error (err) ->
       err.message.should.eql 'Testing error'
       next()
@@ -142,21 +140,21 @@ describe 'handler error', ->
   it 'sequential # async # error callback', (next) ->
     current = 0
     each( [ {id: 1}, {id: 2}, {id: 3} ] )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       index.should.eql current
       current++
       if element.id is 2
-        setTimeout -> 
-          next( new Error 'Testing error' )
+        setTimeout ->
+          callback( new Error 'Testing error' )
         , 100
-      else setTimeout next, 100
+      else setTimeout callback, 100
     .error (err) ->
       err.message.should.eql 'Testing error'
       next()
       
   it 'catch undefined', (next) ->
     each( [ 1, 2, 3 ] )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       Toto.should.throw.an.error
     .error (err) ->
       err.message.should.eql 'Toto is not defined'
@@ -165,7 +163,7 @@ describe 'handler error', ->
   it 'catch TypeError in concurrent mode', (next) ->
     each( [ 1, 2, 3 ] )
     .parallel( 4 )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       undefined.should.throw.an.error
     .error (err) ->
       err.message.should.eql 'Cannot read property \'should\' of undefined'

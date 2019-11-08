@@ -14,8 +14,8 @@ describe 'next', ->
       next()
     eacher = each()
     .times(10)
-    .call (element, index, next) ->
-      next()
+    .call (element, index, callback) ->
+      callback()
     .next (err) ->
       throw Error 'User Error'
   
@@ -23,17 +23,17 @@ describe 'next', ->
     
     it 'run arguments only contains next', (next) ->
       each( [ 'a', 'b', 'c' ] )
-      .call (next) ->
+      .call (callback) ->
         arguments.length.should.eql 1
-        next()
+        callback()
       .next next
       
     it 'run arguments contains element and next', (next) ->
       elements = []
       each( [ 'a', 'b', 'c' ] )
-      .call (element, next) ->
+      .call (element, callback) ->
         elements.push element
-        next()
+        callback()
       .error next
       .next ->
         elements.should.eql [ 'a', 'b', 'c' ]

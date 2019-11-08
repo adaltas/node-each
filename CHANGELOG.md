@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* src: use callback instead of next
 * readme: rewrite error doc
 * promise: improve detection
 * sample: update api.promise

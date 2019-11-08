@@ -7,11 +7,11 @@ describe 'Parallel', ->
     end_called = false
     each( [{id: 1}, {id: 2}, {id: 3}] )
     .parallel( true )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       index.should.eql current
       current++
       element.id.should.eql current
-      setTimeout next, 100
+      setTimeout callback, 100
     .error next
     .next ->
       current.should.eql 3
@@ -20,19 +20,19 @@ describe 'Parallel', ->
     values = for i in [0..Math.pow(2, 14)] then Math.random()
     eacher = each(values)
     .parallel( true )
-    .call (val, i, next) ->
-      setTimeout next, 1
+    .call (val, i, callback) ->
+      setTimeout callback, 1
     .next (err) ->
       next()
   it 'Parallel # object', (next) ->
     current = 0
     each( {id_1: 1, id_2: 2, id_3: 3} )
     .parallel( true )
-    .call (key, value, next) ->
+    .call (key, value, callback) ->
       current++
       key.should.eql "id_#{current}"
       value.should.eql current
-      setTimeout next, 100
+      setTimeout callback, 100
     .error next
     .next ->
       current.should.eql 3
@@ -40,24 +40,24 @@ describe 'Parallel', ->
   it 'Parallel # undefined', (next) ->
     each( undefined )
     .parallel( true )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       should.not.exist true
     .next next
   it 'Parallel # null', (next) ->
     each( null )
     .parallel( true )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       should.not.exist true
     .next next
   it 'Parallel # string', (next) ->
     current = 0
     each( 'id_1' )
     .parallel( true )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       index.should.eql current
       current++
       element.should.eql "id_1"
-      setTimeout next, 100
+      setTimeout callback, 100
     .error next
     .next ->
       current.should.eql 1
@@ -66,11 +66,11 @@ describe 'Parallel', ->
     current = 0
     each( 3.14 )
     .parallel( true )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       index.should.eql current
       current++
       element.should.eql 3.14
-      setTimeout next, 100
+      setTimeout callback, 100
     .error next
     .next ->
       current.should.eql 1
@@ -80,11 +80,11 @@ describe 'Parallel', ->
     current = 0
     each( false )
     .parallel( true )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       index.should.eql 0
       current++
       element.should.not.be.ok
-      next()
+      callback()
     .error next
     .next ->
       current.should.eql 1
@@ -92,11 +92,11 @@ describe 'Parallel', ->
       current = 0
       each( true )
       .parallel( true )
-      .call (element, index, next) ->
+      .call (element, index, callback) ->
         index.should.eql 0
         current++
         element.should.be.ok
-        setTimeout next, 100
+        setTimeout callback, 100
       .error next
       .next ->
         current.should.eql 1
@@ -106,11 +106,11 @@ describe 'Parallel', ->
     source = (c) -> c()
     each( source )
     .parallel( true )
-    .call (element, index, next) ->
+    .call (element, index, callback) ->
       index.should.eql current
       current++
       element.should.be.a.Function
-      element next
+      element callback
     .error next
     .next ->
       current.should.eql 1
