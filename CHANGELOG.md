@@ -1,7 +1,7 @@
 
 # Changelog
 
-## Trunk
+## Version 1.2.2
 
 * coffee: update lint rules
 * src: use callback instead of next
