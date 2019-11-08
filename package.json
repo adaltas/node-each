@@ -3,6 +3,19 @@
   "description": "Chained and parallel async iterator in one elegant function",
   "version": "1.2.1",
   "author": "David Worms <david@adaltas.com>",
+  "coffeelintConfig": {
+    "indentation": {
+      "level": "error",
+      "value": 2
+    },
+    "line_endings": {
+      "level": "error",
+      "value": "unix"
+    },
+    "max_line_length": {
+      "level": "ignore"
+    }
+  },
   "contributors": [
     {
       "name": "David Worms",

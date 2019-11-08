@@ -18,12 +18,9 @@ each(elements)
 .error(callback)
 .next(callback)
 ###
+
 Each = (@_elements, @options={}) ->
-  # @options, 
-  # Arguments
-  # if arguments.length is 1
-  #   @_elements = @options
-  #   @options = {}
+  # Default values
   @options.concurrency = 1
   @options.repeat = false
   @options.sync = false
@@ -90,7 +87,7 @@ Each.prototype._run = () ->
         if @options.concurrency isnt 1
           if @_errors.length is 1
             error = @_errors[0]
-          else 
+          else
             error = new Error("Multiple errors (#{@_errors.length})")
             error.errors = @_errors
         else

@@ -3,6 +3,7 @@
 
 ## Trunk
 
+* coffee: update lint rules
 * src: use callback instead of next
 * readme: rewrite error doc
 * promise: improve detection
