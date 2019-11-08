@@ -192,44 +192,92 @@ each({})
 
 ## Dealing with errors
 
-Error are declared by calling `next` argument in the `item` event with an error 
-object as its first argument. An event `error` will be triggered and the 
-iteration will be stoped. Note that in case of parallel and concurrent mode, 
-the current callbacks are not canceled but no new element will be processed.
-
-The first argument passed to the `error` event callback is an error instance. In
-`sequential` mode, it is always the error that was thrown by the failed item
-callback. In `parallel` and `concurrent` modes, there may be more than one event
-thrown asynchrously. In such case, the error has the generic message such as
-`Multiple errors $count` and the property `.errors` is an array giving access to
-each individual error.
+Error are provided by calling the `callback` function argument in the `item` event with an error 
+object as its first argument.
 
 ```javascript
-var each = require('each');
-each( [{id: 1}, {id: 2}, {id: 3}] )
-.parallel( true )
-.call(function(element, index, next) {
-  setTimeout(next, 500);
+each( ['a', 'b'] )
+.call(function(element, next) {
+  setImmediate( () => {
+    next(new Error("Catchme"))
+  })
 })
-.error(function(err, errors){
-  console.log(err.message);
-  errors.forEach(function(error){
-    console.log('  '+error.message);
-  });
-})
-.next(function(){
-  console.log('Done');
+.next(function(err){
+  assert.equal(err.message, "Catchme")
 });
 ```
 
-It is possible to know the number of successful item callbacks in the `both` event by substracting the number of run callbacks provided as the second argument to the number of errors provided as the first argument.
+It is also possible to throw an Error as long as the error is attach to the function:
 
 ```javascript
-each([])
-.call(function(next){ next() })
-.then(function(err, count) {
-  succeed = count - err.errors.lenth
-  console.log('Successful callbacks' + succeed);
+each( ['a', 'b'] )
+.call(function(element, next) {
+  throw new Error("Catchme")
+  // Not ok:
+  // setImmediate( () => {
+  //   throw new Error("Catchme")
+  // })
+})
+.next(function(err){
+  assert.equal(err.message, "Catchme")
+});
+```
+
+The error will be provided to the `next` function handler unless an `error` function handler is defined before.
+
+```javascript
+each( ['a', 'b'] )
+.call(function(element, next) {
+  setImmediate( () => {
+    next(new Error("Catchme"))
+  })
+})
+.error(function(err){
+  assert.equal(err.message, "Catchme")
+});
+.next(function(err){
+  assert.equal(err, undefined)
+});
+```
+
+In case of parallel and concurrent mode, the currently running callbacks are not
+canceled but no new element will be processed.
+
+The `error` argument is always an instance of error. However, it defers
+according to the execution mode. In `sequential` mode, it is always the error
+that was thrown inside the failed callback. In `parallel` and `concurrent`
+modes, there may be more than one event thrown asynchronously. In such case, the
+error has the generic message such as `Multiple errors $count` and the property
+`.errors` is an array giving access to each individual error.
+
+```javascript
+each( ['a', 'b'] )
+.parralel(true)
+.call(function(element, next) {
+  setImmediate( () => {
+    next(new Error(`Error ${element}`))
+  })
+})
+.error(function(err){
+  assert.equal(err.message, `Multiple errors 2`)
+  const messages = err.errors.map( e => e.message )
+  assert.equal(messages, ["Catchme a", "Catchme b"])
+});
+```
+
+Note, it is possible to know [the number of successful handler functions](https://github.com/adaltas/node-each/blob/master/samples/error_count_succeed.js) in the `next` event by subtracting the number of executed callbacks provided as the second argument to the number of errors.
+
+```javascript
+each([1, 2, 3])
+.parallel(true)
+.call(function(val, callback){
+  setImmediate( () => {
+    callback( val % 2 && new Error("Invalid") )
+  })
+})
+.next(function(err, count) {
+  const succeed = count - err.errors.length
+  assert.equal(succeed, 1)
 })
 ```
 
