@@ -3,6 +3,8 @@
 
 ## Trunk
 
+* readme: rewrite error doc
+* promise: improve detection
 * sample: update api.promise
 
 ## Version 1.2.1

@@ -10,7 +10,7 @@ describe 'promise', ->
       then setImmediate callback
       else next()
     .promise()
-    .toString().should.eql '[object Promise]'
+    .should.be.a.Promise()
       
   it 'accept catch error before promise', ->
     err = null
