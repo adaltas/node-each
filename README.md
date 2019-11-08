@@ -139,27 +139,6 @@ The following properties are available:
 - `total`   
   Total of registered elements.
 
-The following events are emitted:
-
-- `item`   
-  Called for each iterated element. Provided arguments depends on the subject
-  type and the number of arguments defined in the callback. More information
-  below.
-- `error`   
-  Called only if an error occured. The iteration will be stoped on error meaning
-  no `item` event will be called other than the ones already provisionned.
-  Recieves an error object as its first argument and eventually a second
-  argument. See the `dealing with errors` section for more information.   
-- `end`   
-  Called only if all the callback have been handled successfully. The total
-  number of traversed item is provided in the callback as the first argument.   
-- `both`   
-  Called only once all the items have been handled. It is a conveniency event
-  combining the `error` and `end` event in one call. Called with the error
-  object or null as a first argument and the number of traversed items as the
-  second argument. In case of an error, this number correspond to the number of
-  item callbacks which called next. 
-
 ## Parallelization modes
 
 - `sequential`   
