@@ -2,7 +2,7 @@
   "name": "each",
   "description": "Chained and parallel async iterator in one elegant function",
   "version": "1.2.2",
-  "author": "David Worms <david@adaltas.com>",
+  "author": "David Worms <david@adaltas.com> (https://www.adaltas.com)",
   "coffeelintConfig": {
     "indentation": {
       "level": "error",
