@@ -20,7 +20,7 @@ Main functionalities include:
 
 ```javascript
 each( [{id: 1}, {id: 2}, {id: 3}] )
-.parralel(2)
+.parallel(2)
 .call( function(element, index, callback){
   console.log('element: ', element, '@', index);
   setTimeout(callback, 500);
