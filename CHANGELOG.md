@@ -1,6 +1,10 @@
 
 # Changelog
 
+## Trunk
+
+* queue: new functionality
+
 ## Version 1.2.2
 
 * coffee: update lint rules

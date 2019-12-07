@@ -25,6 +25,7 @@ Each = (@_elements, @options={}) ->
   @options.repeat = false
   @options.sync = false
   @options.times = 1
+  @options.queue = false
   # Internal state
   type = typeof @_elements
   if @_elements is null or type is 'undefined'
@@ -38,6 +39,7 @@ Each = (@_elements, @options={}) ->
   @_close = false
   @_endable = 1
   @_listeners = []
+  @_queuing = @options.queue
   # Public state
   @total = if @_keys then @_keys.length else @_elements.length
   @started = 0
@@ -52,7 +54,7 @@ Each.prototype._has_next_handler = ->
 Each.prototype._get_current_handler = ->
   throw Error 'No Found Handler' unless @_listeners[0]?[0] is 'call'
   @_listeners[0][1]
-Each.prototype._call_next = (error, count) ->
+Each.prototype._handle_close = (error, count) ->
   @_listeners.shift() while @_listeners[0]?[0] not in ['error', 'next', 'promise'] if error
   if @_listeners[0]?[0] is 'error'
     @_listeners[0][1].call null, error if error
@@ -72,14 +74,16 @@ Each.prototype._call_next = (error, count) ->
     then @_listeners[0][1].reject.call null, error
     else @_listeners[0][1].resolve.call null
     return
-  throw Error 'Invalid State: error or next not defined'
+  throw Error 'Invalid State: error, next or promise not defined'
 Each.prototype._run = () ->
   return if @paused
   handlers = @_get_current_handler() unless @_errors.length
   # This is the end
   error = null
-  if @_endable is 1 and (@_close or (handlers and @done is @total * @options.times * handlers.length) or (@_errors.length and @started is @done) )
+  if not @_queuing and @_endable is 1 and (@_close or (handlers and @done is @total * @options.times * handlers.length) or (@_errors.length and @started is @done) )
+    # if not @_queuing
     @_listeners.shift()
+    # if @_errors.length or ( not @_queuing and not @_has_next_handler() )
     if @_errors.length or not @_has_next_handler()
       # Give a chance for end to be called multiple times
       @readable = false
@@ -94,7 +98,7 @@ Each.prototype._run = () ->
           error = @_errors[0]
       else
         args = []
-      @_call_next error, @done
+      @_handle_close error, @done
       return
     handlers = @_get_current_handler()
     @_endable = 1
@@ -162,6 +166,9 @@ Each::call = (callback) ->
   callback = [callback] unless Array.isArray callback
   @_listeners.push ['call', callback]
   @
+Each::queue = ->
+  @_queuing = true
+  @
 Each::promise = ->
   deferred = {}
   promise = new Promise (resolve, reject)->
@@ -182,6 +189,7 @@ Each::end = ->
   console.log 'Function `end` deprecated, use `close` instead.'
   @close()
 Each::close = ->
+  @_queuing = false
   @_close = true
   @_next()
   @
@@ -201,12 +209,17 @@ Each::files = (base, pattern) ->
   throw Error "Depracated API: each.files"
 Each::write = Each::push = (item) ->
   l = arguments.length
+  elements_l = if l is 1 then @_elements.length else @_keys?.length or 0
   if l is 1
     @_elements.push arguments[0]
   else if l is 2
     @_keys = [] if not @_keys
     @_keys.push arguments[0]
     @_elements[arguments[0]] = arguments[1]
+  # If in queuing mode, elements may be inserted after initialisation
+  # and we need a way to trigger their processing
+  if @_queuing then setImmediate =>
+    @_run()
   @total++
   @
 Each::unshift = (item) ->

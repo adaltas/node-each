@@ -84,30 +84,32 @@ The return object is an instance of `EventEmitter`.
 The following functions are available:
 
 - `call(function)`   
-  The function handler to call for each iterated element. Provided
-  arguments depends on the subject type and the number of arguments
-  defined in the callback. More information below.
+  The function handler to call for each iterated element. Provided arguments
+  depends on the subject type and the number of arguments defined in the
+  callback. More information below.
 - `close()`   
   Stop the iteration, garanty that no item will be emitted after it is called.
 - `end()`   
   Stop the iteration, garanty that no item will be emitted after it is
   called.
 - `error(function)`   
-  Called only if an error occured. The iteration will be stopped on
-  error meaning no `item` event will be called other than the ones
-  already provisionned. The callback function is called with one
-  argument, the error object. See the section `dealing with errors`
-  for more information.
+  Called only if an error occured. The iteration will be stopped on error
+  meaning no `item` event will be called other than the ones already
+  provisionned. The callback function is called with one argument, the error
+  object. See the section `dealing with errors` for more information.
+- `queue`   
+  Enter the queue mode and listen to new values to pushed and processed. Call
+  `close` to exit.   
 - `next(function)`   
-  Called only once all the items have been handled. In case there was
-  no error function previously set, the first argument is the error
-  object if any. The following argument is the number of traversed
-  items as the second argument. In case of an error, this number
-  correspond to the number of item callbacks which called next.
+  Called only once all the items have been handled. In case there was no error
+  function previously set, the first argument is the error object if any. The
+  following argument is the number of traversed items as the second argument. In
+  case of an error, this number correspond to the number of item callbacks which
+  called next.
 - `parallel(mode)`   
-  The first argument is optional and indicate wether or not you want
-  the iteration to run in `sequential`, `parallel` or `concurrent`
-  mode. See below for more details about the different modes.
+  The first argument is optional and indicate wether or not you want the
+  iteration to run in `sequential`, `parallel` or `concurrent` mode. See below
+  for more details about the different modes.
 - `promise`   
   Return a Javascript promise called on error or completion.
 - `push(item)` or `push(key, value)`
@@ -144,7 +146,7 @@ The following properties are available:
 
 - `sequential`   
   Parallel is `false` or set to `1`, default if no parallel mode is defined.
-  Callbacks are chained meaning each callback is called once the previous 
+  Callbacks are chained meaning each callback is called once the previous
   callback is completed (after calling the `next` function argument).
 - `parallel`   
   Parallel is `true`. In asynchronous mode, the handler function is called at
@@ -163,31 +165,31 @@ An example worth a tousand words,  see the code examples below for usage.
 Inside array iteration, callback signature is `function([value], [index], callback)`.
 
 ```javascript
-each([])
+each( [] )
 // 1 argument
-.call(function(callback){})
+.call( (callback) => {} )
 // 2 arguments
-.call(function(value, callback){})
+.call( (value, callback) => {} )
 // 3 arguments
-.call(function(value, index, callback){})
+.call( (value, index, callback) => {} )
 // done
-.then(function(){})
+.then( () => {} )
 ```
 
 Inside object iteration, callback signature is `function([key], [value], [counter], callback)`.
 
 ```javascript
-each({})
+each( {} )
 // 1 argument
-.call(function(callback){})
+.call( (callback) => {} )
 // 2 arguments
-.call(function(value, callback){})
+.call( (value, callback) => {} )
 // 3 arguments
-.call(function(key, value, callback){})
+.call( (key, value, callback) => {} )
 // 4 arguments
-.call(function(key, value, counter, callback){})
+.call( (key, value, counter, callback) => {} )
 // done
-.then(function(){})
+.then( () => {} )
 ```
 
 ## Dealing with errors
@@ -197,47 +199,47 @@ object as its first argument.
 
 ```javascript
 each( ['a', 'b'] )
-.call(function(element, next) {
-  setImmediate( () => {
+.call( (element, next) =>
+  setImmediate( () =>
     next(new Error("Catchme"))
-  })
-})
-.next(function(err){
+  )
+)
+.next( (err) =>
   assert.equal(err.message, "Catchme")
-});
+)
 ```
 
 It is also possible to throw an Error as long as the error is attach to the function:
 
 ```javascript
 each( ['a', 'b'] )
-.call(function(element, next) {
+.call( (element, next) =>
   throw new Error("Catchme")
   // Not ok:
   // setImmediate( () => {
   //   throw new Error("Catchme")
   // })
-})
-.next(function(err){
+)
+.next( (err) => {
   assert.equal(err.message, "Catchme")
-});
+})
 ```
 
 The error will be provided to the `next` function handler unless an `error` function handler is defined before.
 
 ```javascript
 each( ['a', 'b'] )
-.call(function(element, next) {
+.call( (element, next) => {
   setImmediate( () => {
     next(new Error("Catchme"))
   })
 })
-.error(function(err){
+.error( (err) => {
   assert.equal(err.message, "Catchme")
-});
-.next(function(err){
+})
+.next( (err) => {
   assert.equal(err, undefined)
-});
+})
 ```
 
 In case of parallel and concurrent mode, the currently running callbacks are not
@@ -253,16 +255,16 @@ error has the generic message such as `Multiple errors $count` and the property
 ```javascript
 each( ['a', 'b'] )
 .parralel(true)
-.call(function(element, next) {
+.call( (element, next) => {
   setImmediate( () => {
     next(new Error(`Error ${element}`))
   })
 })
-.error(function(err){
+.error( (err) => {
   assert.equal(err.message, `Multiple errors 2`)
   const messages = err.errors.map( e => e.message )
   assert.equal(messages, ["Catchme a", "Catchme b"])
-});
+})
 ```
 
 Note, it is possible to know [the number of successful handler functions](https://github.com/adaltas/node-each/blob/master/samples/error_count_succeed.js) in the `next` event by subtracting the number of executed callbacks provided as the second argument to the number of errors.
@@ -270,12 +272,12 @@ Note, it is possible to know [the number of successful handler functions](https:
 ```javascript
 each([1, 2, 3])
 .parallel(true)
-.call(function(val, callback){
+.call( (val, callback) => {
   setImmediate( () => {
     callback( val % 2 && new Error("Invalid") )
   })
 })
-.next(function(err, count) {
+.next( (err, count) => {
   const succeed = count - err.errors.length
   assert.equal(succeed, 1)
 })
@@ -286,44 +288,44 @@ each([1, 2, 3])
 In `sequential` mode:
 
 ```javascript
-var each = require('each');
+const each = require('each');
 each( [{id: 1}, {id: 2}, {id: 3}] )
-.call( function(element, index, callback){
-  setImmediate(callback);
+.call(  (element, index, callback) => {
+  setImmediate(callback)
 })
-.next( function(err){
-  console.log(err ? err.message : 'success');
-})
+.next( (err) =>
+  console.log(err ? err.message : 'success')
+)
 ```
 
 In `parallel` mode:
 
 ```javascript
-var each = require('each');
+const each = require('each')
 each( [{id: 1}, {id: 2}, {id: 3}] )
 .parallel( true )
-.call(function(element, index, callback) {
-  console.log('element: ', element, '@', index);
-  setTimeout(callback, 500);
+.call( (element, index, callback) => {
+  console.log('element: ', element, '@', index)
+  setTimeout(callback, 500)
 })
-.next(function(err){
-  console.log(err ? err.message : 'success');
-});
+.next( (err)
+  console.log(err ? err.message : 'success')
+)
 ```
 
 In `concurrent` mode (4 parallel executions):
 
 ```javascript
-var each = require('each');
+const each = require('each')
 each( [{id: 1}, {id: 2}, {id: 3}] )
 .parallel( 4 )
-.call(function(element, index, callback) {
-  console.log('element: ', element, '@', index);
-  setTimeout(callback, 500);
+.call( (element, index, callback) => {
+  console.log('element: ', element, '@', index)
+  setTimeout(callback, 500)
 })
-.next(function(err){
-  console.log(err ? err.message : 'success');
-});
+.next( (err) =>
+  console.log(err ? err.message : 'success')
+)
 ```
 
 ## Traversing an object
@@ -331,32 +333,32 @@ each( [{id: 1}, {id: 2}, {id: 3}] )
 In `sequential` mode:
 
 ```javascript
-var each = require('each');
+const each = require('each')
 each( {id_1: 1, id_2: 2, id_3: 3} )
-.call(function(key, value, callback) {
-  console.log('key: ', key);
-  console.log('value: ', value);
-  setTimeout(callback, 500);
+.call( (key, value, callback) => {
+  console.log('key: ', key)
+  console.log('value: ', value)
+  setTimeout(callback, 500)
 })
-.next(function(err) {
-  console.log(err ? err.message : 'success');
-});
+.next( (err) =>
+  console.log(err ? err.message : 'success')
+)
 ```
 
 In `concurrent` mode with 2 parallels executions
 
 ```javascript
-var each = require('each');
+const each = require('each')
 each( {id_1: 1, id_2: 2, id_3: 3} )
 .parallel( 2 )
-.call(function(key, value, callback) {
-  console.log('key: ', key);
-  console.log('value: ', value);
-  setTimeout(callback, 500);
+.call( (key, value, callback) => {
+  console.log('key: ', key)
+  console.log('value: ', value)
+  setTimeout(callback, 500)
 })
-.next(function(err){
-  console.log(err ? err.message : 'success');
-});
+.next( (err) =>
+  console.log(err ? err.message : 'success')
+)
 ```
 
 ## Manual Throttle
@@ -376,15 +378,15 @@ will call 3 times the function `doSomeMetrics` with the same arguments.
 ```javascript
 each(['a', 'b', 'c', 'd'])
 .times(3)
-.call(function(id, callback){
-  setImmediate(function(){
+.call( (id, callback) => {
+  setImmediate( () => {
     process.stdout.write(id)
     callback()
   })
 })
-.next(function(){
-  console.log('done');
-});
+.next( () =>
+  console.log('done')
+)
 ```
 
 The generated sequence is 'aaabbbcccddd'. In the same way, you could replace `times` by 
@@ -393,15 +395,29 @@ The generated sequence is 'aaabbbcccddd'. In the same way, you could replace `ti
 It is also possible to use `times` and `repeat` without providing any data. Here's how:
 
 ```javascript
-count = 0
+const count = 0
 each()
 .times(3)
-.call(function(callback){
-  console.log(count++);
+.call( callback =>
+  console.log(count++)
+)
+.next( () =>
+  console.log('total:' + count)
+)
+```
+
+## Queue
+
+The `each` package can be leverage to be used as a queue. In queue mode, elements may be added before and after its initialisation until the queue is close. Call the `queue` function to enter the queue mode and the `close` function to finish it.
+
+```javascript
+const each = require('each')
+const queue = each().parallel(10).queue()
+queue.push('hello')
+setTimeout(() => {
+  queue.push('world')
+  queue.close()
 })
-.next(function(){
-  console.log('total:' + count);
-});
 ```
 
 ## Multiple call detection in callback
