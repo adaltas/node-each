@@ -7,8 +7,8 @@ describe 'sync', ->
     
     it 'default to true', (next) ->
       current = 0
-      each( [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] )
-      .parallel( 4 )
+      each [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+      .parallel 4
       .sync()
       .call (element, index) ->
         index.should.eql current
@@ -23,9 +23,9 @@ describe 'sync', ->
     
     it 'run async', (next) ->
       current = 0
-      each( [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] )
-      .parallel( 4 )
-      .sync( false )
+      each [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+      .parallel 4
+      .sync false
       .call (element, callback) ->
         typeof callback is 'function'
         current++
@@ -38,9 +38,9 @@ describe 'sync', ->
     
     it 'run item event synchronously', (next) ->
       current = 0
-      each( [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] )
-      .parallel( 4 )
-      .sync( true )
+      each [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+      .parallel 4
+      .sync true
       .call (element, index) ->
         index.should.eql current
         element.should.eql current
@@ -51,9 +51,9 @@ describe 'sync', ->
         
     it 'emit thrown error', (next) ->
       current = 0
-      each( [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] )
-      .parallel( 4 )
-      .sync( true )
+      each [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+      .parallel 4
+      .sync true
       .call (element, index) ->
         throw new Error 'Argh'
       .error (err) ->
@@ -62,9 +62,9 @@ describe 'sync', ->
         
     it 'emit returned error', (next) ->
       current = 0
-      each( [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] )
-      .parallel( 4 )
-      .sync( true )
+      each [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+      .parallel 4
+      .sync true
       .call (element, index) ->
         return new Error 'Argh'
       .error (err) ->

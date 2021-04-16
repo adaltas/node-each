@@ -5,8 +5,8 @@ describe 'handler error', ->
   
   it 'concurrent # error and both callbacks', (next) ->
     current = 0
-    each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ] )
-    .parallel( 4 )
+    each [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ]
+    .parallel 4
     .call (element, index, callback) ->
       index.should.eql current
       current++
@@ -28,8 +28,8 @@ describe 'handler error', ->
       
   it 'concurrent handle thrown error', (next) ->
     current = 0
-    each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ] )
-    .parallel( 4 )
+    each [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11} ]
+    .parallel 4
     .call (element, index, callback) ->
       index.should.eql current
       current++
@@ -49,8 +49,8 @@ describe 'handler error', ->
     # errors are available as an array in the second argument of the
     # `error` event.
     current = 0
-    each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
-    .parallel( true )
+    each [{id: 1}, {id: 2}, {id: 3}, {id: 4}]
+    .parallel true
     .call (element, index, callback) ->
       index.should.eql current
       current++
@@ -72,7 +72,7 @@ describe 'handler error', ->
     # the `error` event as is as well as a single element array 
     # of the second argument.
     current = 0
-    each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
+    each [{id: 1}, {id: 2}, {id: 3}, {id: 4}]
     .parallel( true )
     .call (element, index, callback) ->
       index.should.eql current
@@ -89,7 +89,7 @@ describe 'handler error', ->
       
   it 'parallel # async # both callback', (next) ->
     current = 0
-    each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
+    each [{id: 1}, {id: 2}, {id: 3}, {id: 4}]
     .parallel( true )
     .call (element, index, callback) ->
       index.should.eql current
@@ -109,7 +109,7 @@ describe 'handler error', ->
       
   it 'parallel # sync # both callback', (next) ->
     current = 0
-    each( [{id: 1}, {id: 2}, {id: 3}, {id: 4}] )
+    each [{id: 1}, {id: 2}, {id: 3}, {id: 4}]
     .parallel( true )
     .call (element, index, callback) ->
       index.should.eql current
@@ -126,7 +126,7 @@ describe 'handler error', ->
       
   it 'sequential # sync # error callback', (next) ->
     current = 0
-    each( [ {id: 1}, {id: 2}, {id: 3} ] )
+    each [ {id: 1}, {id: 2}, {id: 3} ]
     .call (element, index, callback) ->
       index.should.eql current
       current++
@@ -139,7 +139,7 @@ describe 'handler error', ->
       
   it 'sequential # async # error callback', (next) ->
     current = 0
-    each( [ {id: 1}, {id: 2}, {id: 3} ] )
+    each [ {id: 1}, {id: 2}, {id: 3} ]
     .call (element, index, callback) ->
       index.should.eql current
       current++
@@ -153,7 +153,7 @@ describe 'handler error', ->
       next()
       
   it 'catch undefined', (next) ->
-    each( [ 1, 2, 3 ] )
+    each [ 1, 2, 3 ]
     .call (element, index, callback) ->
       Toto.should.throw.an.error
     .error (err) ->
@@ -161,8 +161,8 @@ describe 'handler error', ->
       next()
       
   it 'catch TypeError in concurrent mode', (next) ->
-    each( [ 1, 2, 3 ] )
-    .parallel( 4 )
+    each [ 1, 2, 3 ]
+    .parallel 4
     .call (element, index, callback) ->
       undefined.should.throw.an.error
     .error (err) ->

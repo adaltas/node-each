@@ -4,7 +4,7 @@ each = require '../src'
 describe 'promise', ->
   
   it 'return a promise', (next) ->
-    each( [ 1, 2, 3 ] )
+    each [ 1, 2, 3 ]
     .call (element, index, callback) ->
       if index < 2
       then setImmediate callback
@@ -14,7 +14,7 @@ describe 'promise', ->
       
   it 'accept catch error before promise', ->
     err = null
-    each( [ 1, 2, 3 ] )
+    each [ 1, 2, 3 ]
     .call (element, index, callback) ->
       throw Error 'CatchMe'
     .error (e) ->
@@ -27,7 +27,7 @@ describe 'promise', ->
         
   it 'accept then before promise', ->
     called = false
-    each( [ 1, 2, 3 ] )
+    each [ 1, 2, 3 ]
     .call (element, index, callback) ->
       callback()
     .next ->
@@ -40,7 +40,7 @@ describe 'promise', ->
         
   it 'pass err to then before promise', ->
     err = null
-    each( [ 1, 2, 3 ] )
+    each [ 1, 2, 3 ]
     .call (element, index, callback) ->
       throw Error 'CatchMe'
     .next (e) ->

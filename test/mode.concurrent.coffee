@@ -6,7 +6,7 @@ describe 'concurrent', ->
   it 'array # multiple elements # async callbacks', (next) ->
     current = 0
     end_called = false
-    each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
+    each [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ]
     .parallel( 4 )
     .call (element, index, callback) ->
       index.should.eql current
@@ -20,8 +20,8 @@ describe 'concurrent', ->
       
   it 'array # one element # async callbacks', (next) ->
     current = 0
-    each( [ {id: 1} ] )
-    .parallel( 4 )
+    each [ {id: 1} ]
+    .parallel 4
     .call (element, index, callback) ->
       index.should.eql current
       current++
@@ -34,8 +34,8 @@ describe 'concurrent', ->
       
   it 'array # empty', (next) ->
     current = 0
-    each( [] )
-    .parallel( 4 )
+    each []
+    .parallel 4
     .call (element, index, callback) ->
       current++
       callback()
@@ -46,8 +46,8 @@ describe 'concurrent', ->
       
   it 'array sync callback', (next) ->
     current = 0
-    each( [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ] )
-    .parallel( 4 )
+    each [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ]
+    .parallel 4
     .call (element, index, callback) ->
       index.should.eql current
       current++
@@ -60,8 +60,8 @@ describe 'concurrent', ->
       
   it 'object async callbacks', (next) ->
     current = 0
-    each( id_1: 1, id_2: 2, id_3: 3, id_4: 4, id_5: 5, id_6: 6, id_7: 7, id_8: 8, id_9: 9 )
-    .parallel( 4 )
+    each id_1: 1, id_2: 2, id_3: 3, id_4: 4, id_5: 5, id_6: 6, id_7: 7, id_8: 8, id_9: 9
+    .parallel 4
     .call (key, value, callback) ->
       current++
       key.should.eql "id_#{current}"
@@ -74,8 +74,8 @@ describe 'concurrent', ->
       
   it 'object sync callbacks', (next) ->
     current = 0
-    each( id_1: 1, id_2: 2, id_3: 3, id_4: 4, id_5: 5, id_6: 6, id_7: 7, id_8: 8, id_9: 9 )
-    .parallel( 4 )
+    each id_1: 1, id_2: 2, id_3: 3, id_4: 4, id_5: 5, id_6: 6, id_7: 7, id_8: 8, id_9: 9
+    .parallel 4
     .call (key, value, callback) ->
       current++
       key.should.eql "id_#{current}"
@@ -88,8 +88,8 @@ describe 'concurrent', ->
       
   it 'function', (next) ->
     current = 0
-    each( (c) -> c() )
-    .parallel( 4 )
+    each (c) -> c()
+    .parallel 4
     .call (element, index, callback) ->
       index.should.eql current
       current++

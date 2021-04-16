@@ -22,7 +22,7 @@ describe 'next', ->
   describe 'async', ->
     
     it 'run arguments only contains next', (next) ->
-      each( [ 'a', 'b', 'c' ] )
+      each [ 'a', 'b', 'c' ]
       .call (callback) ->
         arguments.length.should.eql 1
         callback()
@@ -30,7 +30,7 @@ describe 'next', ->
       
     it 'run arguments contains element and next', (next) ->
       elements = []
-      each( [ 'a', 'b', 'c' ] )
+      each [ 'a', 'b', 'c' ]
       .call (element, callback) ->
         elements.push element
         callback()
@@ -42,7 +42,7 @@ describe 'next', ->
   describe 'sync', ->
     
     it 'run arguments is empty', (next) ->
-      each( [ 'a', 'b', 'c' ] )
+      each [ 'a', 'b', 'c' ]
       .sync()
       .call ->
         arguments.length.should.eql 0
@@ -50,7 +50,7 @@ describe 'next', ->
       
     it 'run arguments contains element', (next) ->
       elements = []
-      each( [ 'a', 'b', 'c' ] )
+      each [ 'a', 'b', 'c' ]
       .sync()
       .call (element) ->
         elements.push element

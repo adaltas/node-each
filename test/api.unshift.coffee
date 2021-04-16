@@ -5,8 +5,8 @@ describe 'unshift', ->
 
   it 'accept array elements', (next) ->
     each()
-    .unshift('hello')
-    .unshift('each')
+    .unshift 'hello'
+    .unshift 'each'
     .call (item, index, callback) ->
       item.should.eql 'each' if index is 0
       callback()
@@ -17,8 +17,8 @@ describe 'unshift', ->
 
   it 'accept key value elements', (next) ->
     each()
-    .unshift('hello', 'each')
-    .unshift('youre', 'welcome')
+    .unshift 'hello', 'each'
+    .unshift 'youre', 'welcome'
     .call (key, value, callback) ->
       value.should.eql 'welcome' if key is 'youre'
       callback()
@@ -29,7 +29,7 @@ describe 'unshift', ->
 
   it 'should place the next element', (next) ->
     last = null
-    e = each(['a','b','c'])
+    e = each ['a','b','c']
     .call (value, callback) ->
       if value is 'a'
         e.unshift 'aa'

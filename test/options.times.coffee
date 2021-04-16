@@ -8,8 +8,8 @@ describe 'times', ->
     it 'should run nothing 10 times', (next) ->
       started = ended = 0
       each()
-      .parallel(null)
-      .times(10)
+      .parallel null
+      .times 10
       .call (element, index, callback) ->
         # Check provided values
         started.should.eql ended
@@ -29,9 +29,9 @@ describe 'times', ->
     it 'should run an array 10 times', (next) ->
       started = ended = 0
       data = ['a', 'b', 'c']
-      each(data)
-      .parallel(null)
-      .times(10)
+      each data
+      .parallel null
+      .times 10
       .call (element, index, callback) ->
         # Check provided values
         started.should.eql ended
@@ -53,8 +53,8 @@ describe 'times', ->
     it 'should run nothing 10 times', (next) ->
       started = ended = 0
       each()
-      .parallel(true)
-      .times(10)
+      .parallel true
+      .times 10
       .call (element, index, callback) ->
         started.should.eql 0
         ended.should.eql 0
@@ -71,9 +71,9 @@ describe 'times', ->
         
     it 'should run an array 10 times', (next) ->
       started = ended = 0
-      each(['a', 'b', 'c'])
-      .parallel(true)
-      .times(10)
+      each ['a', 'b', 'c']
+      .parallel true
+      .times 10
       .call (element, index, callback) ->
         started.should.eql 0
         ended.should.eql 0
@@ -93,8 +93,8 @@ describe 'times', ->
     it 'should run nothing 10 times', (next) ->
       started = ended = 0
       each()
-      .parallel(3)
-      .times(10)
+      .parallel 3
+      .times 10
       .call (element, index, callback) ->
         started++
         setTimeout ->
@@ -110,9 +110,9 @@ describe 'times', ->
         
     it 'should run an array 10 times', (next) ->
       started = ended = 0
-      each(['a', 'b', 'c'])
-      .parallel(3)
-      .times(10)
+      each ['a', 'b', 'c']
+      .parallel 3
+      .times 10
       .call (element, index, callback) ->
         started++
         setTimeout ->

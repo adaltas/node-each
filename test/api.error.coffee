@@ -13,7 +13,7 @@ describe 'error', ->
         process.on 'uncaughtException', lst
       next()
     eacher = each()
-    .times(10)
+    .times 10
     .call (element, index, callback) ->
       callback Error 'Trigger Error'
     .error (err) ->

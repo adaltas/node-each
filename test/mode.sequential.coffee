@@ -8,8 +8,8 @@ describe 'sequential', ->
     it 'is default', (next) ->
       current = 0
       id2_called = false
-      each( [ {id: 1}, {id: 2}, {id: 3} ] )
-      .parallel(null)
+      each [ {id: 1}, {id: 2}, {id: 3} ]
+      .parallel null
       .call (element, index, callback) ->
         id2_called = true if element.id is 2
         if index is 0 then setTimeout ->
@@ -23,7 +23,7 @@ describe 'sequential', ->
     it 'array', (next) ->
       current = 0
       end_called = false
-      each( [ {id: 1}, {id: 2}, {id: 3} ] )
+      each [ {id: 1}, {id: 2}, {id: 3} ]
       .call (element, index, callback) ->
         index.should.eql current
         current++
@@ -36,7 +36,7 @@ describe 'sequential', ->
         
     it 'object', (next) ->
       current = 0
-      each( {id_1: 1, id_2: 2, id_3: 3} )
+      each {id_1: 1, id_2: 2, id_3: 3}
       .call (key, value, callback) ->
         current++
         key.should.eql "id_#{current}"
@@ -49,7 +49,7 @@ describe 'sequential', ->
         
     it 'undefined', (next) ->
       current = 0
-      each( undefined )
+      each undefined
       .call (element, index, callback) ->
         should.not.exist true
       .error next
@@ -59,7 +59,7 @@ describe 'sequential', ->
         
     it 'null', (next) ->
       current = 0
-      each( null )
+      each null
       .call (element, index, callback) ->
         should.not.exist true
       .error next
@@ -69,7 +69,7 @@ describe 'sequential', ->
         
     it 'string', (next) ->
       current = 0
-      each( 'id_1' )
+      each 'id_1'
       .call (element, index, callback) ->
         index.should.eql current
         current++
@@ -82,7 +82,7 @@ describe 'sequential', ->
         
     it 'number', (next) ->
       current = 0
-      each( 3.14 )
+      each 3.14
       .call (element, index, callback) ->
         index.should.eql current
         current++
@@ -96,7 +96,7 @@ describe 'sequential', ->
     it 'function', (next) ->
       current = 0
       source = (c) -> c()
-      each(source)
+      each source
       .call (element, index, callback) ->
         index.should.eql current
         current++
@@ -137,8 +137,8 @@ describe 'sequential', ->
         
     it 'with end not yet thrown', (next) ->
       ended = false
-      each( [ 'a', 'b', 'c' ] )
-      .parallel(1)
+      each [ 'a', 'b', 'c' ]
+      .parallel 1
       .call (item, callback) ->
         process.nextTick ->
           callback()

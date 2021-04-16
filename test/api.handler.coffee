@@ -6,21 +6,21 @@ describe 'handler', ->
   describe 'arguments from array', ->
         
     it 'get next argument', (next) ->
-      each( [ 'a', 'b', 'c' ] )
+      each [ 'a', 'b', 'c' ]
       .call (callback) ->
         arguments.length.should.eql 1
         callback()
       .next next
       
     it 'get element and next argument', (next) ->
-      each( [ 'a', 'b', 'c' ] )
+      each [ 'a', 'b', 'c' ]
       .call (element, callback) ->
         ['a', 'b', 'c'].should.containEql element
         callback()
       .next next
       
     it 'get element, index and next argument', (next) ->
-      each( [ 'a', 'b', 'c' ] )
+      each [ 'a', 'b', 'c' ]
       .call (element, index, callback) ->
         ['a', 'b', 'c'].should.containEql element
         index.should.be.a.Number()
@@ -28,7 +28,7 @@ describe 'handler', ->
       .next next
       
     it 'throw error with no argument', (next) ->
-      each( ['a', 'b', 'c'] )
+      each ['a', 'b', 'c']
       .call () ->
         false.should.be.true()
       .next (err) ->
@@ -38,21 +38,21 @@ describe 'handler', ->
   describe 'arguments from object', ->
     
     it 'get next argument', (next) ->
-      each( {a: 1, b: 2, c: 3} )
+      each {a: 1, b: 2, c: 3}
       .call (callback) ->
         arguments.length.should.eql 1
         callback()
       .next next
       
     it 'get value and next argument', (next) ->
-      each( {a: 1, b: 2, c: 3} )
+      each {a: 1, b: 2, c: 3}
       .call (value, callback) ->
         value.should.be.a.Number()
         callback()
       .next next
       
     it 'get key, value and next argument', (next) ->
-      each( {a: 1, b: 2, c: 3} )
+      each {a: 1, b: 2, c: 3}
       .call (key, value, callback) ->
         ['a', 'b', 'c'].should.containEql key
         value.should.be.a.Number()
@@ -60,7 +60,7 @@ describe 'handler', ->
       .next next
       
     it 'get key, value, index and next argument', (next) ->
-      each( {a: 1, b: 2, c: 3} )
+      each {a: 1, b: 2, c: 3}
       .call (key, value, counter, callback) ->
         ['a', 'b', 'c'].should.containEql key
         value.should.be.a.Number()
@@ -69,7 +69,7 @@ describe 'handler', ->
       .next next
       
     it 'throw error with no argument', (next) ->
-      each( {a: 1, b: 2, c: 3} )
+      each {a: 1, b: 2, c: 3}
       .call () ->
         false.should.be.true()
       .next (err) ->
@@ -80,7 +80,7 @@ describe 'handler', ->
         
     it 'called immediatly', (next) ->
       data = []
-      each( [ '1', '2', '3' ] )
+      each [ '1', '2', '3' ]
       .call [
         (val, callback) -> data.push(val+'a') and callback()
         (val, callback) -> data.push(val+'b') and callback()
@@ -92,7 +92,7 @@ describe 'handler', ->
               
     it 'called with delay', (next) ->
       data = []
-      each( [ '1', '2', '3' ] )
+      each [ '1', '2', '3' ]
       .parallel true
       .call [
         (val, callback) -> data.push(val+'a') and callback()
@@ -109,7 +109,7 @@ describe 'handler', ->
         
     it 'called with delay', (next) ->
       data = []
-      each( [ '1', '2', '3' ] )
+      each [ '1', '2', '3' ]
       .parallel true
       .call (val, callback) -> data.push(val+'a') and callback()
       .call (val, callback) -> data.push(val+'b') and callback()
@@ -120,7 +120,7 @@ describe 'handler', ->
               
     it 'catch error in first handler', (next) ->
       data = []
-      each( [ '1', '2', '3' ] )
+      each [ '1', '2', '3' ]
       .parallel true
       .call (val, callback) -> throw Error 'Catchme'
       .call (val, callback) -> callback()
@@ -132,7 +132,7 @@ describe 'handler', ->
               
     it 'catch error in last handler', (next) ->
       data = []
-      each( [ '1', '2', '3' ] )
+      each [ '1', '2', '3' ]
       .parallel true
       .call (val, callback) -> callback()
       .call (val, callback) -> throw Error 'Catchme'
@@ -144,7 +144,7 @@ describe 'handler', ->
               
     it 'get error in first handler', (next) ->
       data = []
-      each( [ '1', '2', '3' ] )
+      each [ '1', '2', '3' ]
       .parallel true
       .call (val, callback) -> setImmediate -> callback Error 'Catchme'
       .call (val, callback) -> callback Error 'Dont call me'
@@ -157,7 +157,7 @@ describe 'handler', ->
               
     it 'get error in last handler', (next) ->
       data = []
-      each( [ '1', '2', '3' ] )
+      each [ '1', '2', '3' ]
       .parallel true
       .call (val, callback) -> callback()
       .call (val, callback) -> setImmediate -> callback Error 'Catchme'
@@ -170,7 +170,7 @@ describe 'handler', ->
               
     it 'get multiple call error in first handler', (next) ->
       data = []
-      each( [ '1', '2', '3' ] )
+      each [ '1', '2', '3' ]
       .parallel true
       .call (val, callback) -> setImmediate ->
         callback Error 'Catchme'
@@ -185,7 +185,7 @@ describe 'handler', ->
               
     it 'get multiple call error in last handler', (next) ->
       data = []
-      each( [ '1', '2', '3' ] )
+      each [ '1', '2', '3' ]
       .parallel true
       .call (val, callback) -> callback()
       .call (val, callback) -> setImmediate ->
