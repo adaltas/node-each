@@ -49,12 +49,12 @@ Each = (@_elements, @options={}) ->
   setImmediate =>
     @_run()
   @
-Each.prototype._has_next_handler = ->
+Each::_has_next_handler = ->
   @_listeners[0]?[0] is 'call'
-Each.prototype._get_current_handler = ->
+Each::_get_current_handler = ->
   throw Error 'No Found Handler' unless @_listeners[0]?[0] is 'call'
   @_listeners[0][1]
-Each.prototype._handle_close = (error, count) ->
+Each::_handle_close = (error, count) ->
   @_listeners.shift() while @_listeners[0]?[0] not in ['error', 'next', 'promise'] if error
   if @_listeners[0]?[0] is 'error'
     @_listeners[0][1].call null, error if error
@@ -75,7 +75,7 @@ Each.prototype._handle_close = (error, count) ->
     else @_listeners[0][1].resolve.call null
     return
   throw Error 'Invalid State: error, next or promise not defined'
-Each.prototype._run = () ->
+Each::_run = () ->
   return if @paused
   handlers = @_get_current_handler() unless @_errors.length
   # This is the end
@@ -155,7 +155,7 @@ Each.prototype._run = () ->
       # error, end or both callbacks
       if @readable then @_next err else throw err
   null
-Each.prototype._next = (err) ->
+Each::_next = (err) ->
   @_errors.push err if err? and err instanceof Error
   @done++
   @_run()
