@@ -98,8 +98,7 @@ The following functions are available:
   provisionned. The callback function is called with one argument, the error
   object. See the section `dealing with errors` for more information.
 - `queue`   
-  Enter the queue mode and listen to new values to pushed and processed. Call
-  `close` to exit.   
+  Enter the queue mode and listen to new values to pushed and processed. Call `close` to exit.   
 - `next(function)`   
   Called only once all the items have been handled. In case there was no error
   function previously set, the first argument is the error object if any. The
