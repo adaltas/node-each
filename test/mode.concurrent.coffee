@@ -5,31 +5,31 @@ describe 'mode.concurrent', ->
   
   it 'empty array', ->
     count = 0
-    await each [], 4, (element, index) ->
+    await each [], 4, (item, index) ->
       count++
     count.should.eql 0
   
-  it 'promise handler with multiple elements', ->
+  it 'promise handler with multiple items', ->
     count = 0
     await each [
       {id: 1}, {id: 2}, {id: 3},
       {id: 4}, {id: 5}, {id: 6},
       {id: 7}, {id: 8}, {id: 9}
-    ], 4, (element, index) ->
+    ], 4, (item, index) ->
       new Promise (resolve) ->
         index.should.eql count
         count++
-        element.id.should.eql count
+        item.id.should.eql count
         setTimeout resolve, 20
     count.should.eql 9
       
-  it 'promise handler with one element', ->
+  it 'promise handler with one item', ->
     count = 0
-    await each [ {id: 1} ], 4, (element, index) ->
+    await each [ {id: 1} ], 4, (item, index) ->
       new Promise (resolve) ->
         index.should.eql count
         count++
-        element.id.should.eql count
+        item.id.should.eql count
         setTimeout resolve, 20
     count.should.eql 1
       
@@ -39,13 +39,13 @@ describe 'mode.concurrent', ->
       {id: 1}, {id: 2}, {id: 3},
       {id: 4}, {id: 5}, {id: 6},
       {id: 7}, {id: 8}, {id: 9}
-    ], 4, (element, index) ->
+    ], 4, (item, index) ->
       index.should.eql count
       count++
-      element.id.should.eql count
+      item.id.should.eql count
     count.should.eql 9
       
-  it 'element sync functions', ->
+  it 'item sync functions', ->
     count = 0
     test = -> count++
     await each [
@@ -55,7 +55,7 @@ describe 'mode.concurrent', ->
     ], 4
     count.should.eql 9
       
-  it 'element sync functions', ->
+  it 'item sync functions', ->
     count = 0
     running = 0
     test = ->

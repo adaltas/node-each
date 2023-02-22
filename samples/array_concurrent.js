@@ -6,7 +6,7 @@ let running = 0
 const result = await each(
   [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}],
   2,
-  function(element, index) {
+  function(item, index) {
     running++
     if(running > 2){ throw Error('At most 2 running tasks') }
     return new Promise( (resolve, reject) =>
@@ -15,7 +15,7 @@ const result = await each(
         if(running > 2){
           reject(Error('At most 2 running tasks'))
         } else {
-          resolve(`${element.id}@${index}`)
+          resolve(`${item.id}@${index}`)
         }
       }, 100)
     )

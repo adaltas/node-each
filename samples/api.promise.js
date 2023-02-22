@@ -4,9 +4,9 @@ import assert from 'assert'
 
 const result = await each(
   [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}],
-  function(element, index){
+  function(item, index){
     return new Promise( (resolve) =>
-      setTimeout(() => resolve(`${element.id}@${index}`), 100)
+      setTimeout(() => resolve(`${item.id}@${index}`), 100)
     )
   }
 )

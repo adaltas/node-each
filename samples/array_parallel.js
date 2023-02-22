@@ -6,14 +6,14 @@ let running = 0
 const result = await each(
   [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}],
   true,
-  function(element, index) {
+  function(item, index) {
     if(running !== index){ throw Error('Invalid execution') }
     running++
     return new Promise( (resolve, reject) =>
       setTimeout(() => {
         if(running !== 4-index){ throw Error('Invalid execution') }
         running--
-        resolve(`${element.id}@${index}`)
+        resolve(`${item.id}@${index}`)
       }, 100)
     )
   }

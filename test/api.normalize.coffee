@@ -7,7 +7,7 @@ describe 'api.normalize', ->
     each()
     .should.be.a.Promise()
   
-  it '1 arg, accept `elements` argument', ->
+  it '1 arg, accept `items` argument', ->
     await each []
   
   it '1 arg, accept `option` argument', ->
@@ -22,7 +22,7 @@ describe 'api.normalize', ->
       await e
     )()
       
-  it '2 args, accept `elements, concurrency` argument', ->
+  it '2 args, accept `items, concurrency` argument', ->
     await (->
       e = each [], true
       e.get('concurrency').should.eql -1
@@ -34,14 +34,14 @@ describe 'api.normalize', ->
       await e
     )()
       
-  it '2 args, accept `elements, handler` argument', ->
+  it '2 args, accept `items, handler` argument', ->
     await (->
       e = each [], (-> 1)
       e.get('handler')().should.eql 1
       await e
     )()
       
-  it '3 args, accept `elements, concurrency, handler` argument', ->
+  it '3 args, accept `items, concurrency, handler` argument', ->
     await (->
       e = each [], true, (-> 1)
       e.get('concurrency').should.eql -1
@@ -55,7 +55,7 @@ describe 'api.normalize', ->
       await e
     )()
       
-  it '3 args, accept `elements, handler, concurrency` argument', ->
+  it '3 args, accept `items, handler, concurrency` argument', ->
     await (->
       e = each [], (-> 1), true
       e.get('handler')().should.eql 1

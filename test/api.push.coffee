@@ -1,7 +1,7 @@
 
 import each from '../src/index.coffee'
 
-describe 'api.elements', ->
+describe 'api.items', ->
 
   describe 'push parallel sync', ->
 

@@ -3,14 +3,14 @@ import each from '../src/index.coffee'
 
 describe 'mode.sequential', ->
     
-  it 'promise handler with multiple elements', ->
+  it 'promise handler with multiple items', ->
     count = 0
     running = 0
     await each [
       {id: 1}, {id: 2}, {id: 3},
       {id: 4}, {id: 5}, {id: 6},
       {id: 7}, {id: 8}, {id: 9}
-    ], (element, index, callback) ->
+    ], (item, index, callback) ->
       count++
       running++
       running.should.eql 1
@@ -23,17 +23,17 @@ describe 'mode.sequential', ->
         , 20
     count.should.eql 9
   
-  it 'sync handler with multiple elements', ->
+  it 'sync handler with multiple items', ->
     count = 0
     running = 0
     await each [
       {id: 1}, {id: 2}, {id: 3},
       {id: 4}, {id: 5}, {id: 6},
       {id: 7}, {id: 8}, {id: 9}
-    ], (element, index, callback) ->
+    ], (item, index, callback) ->
       index.should.eql index
       count++
-      element.id.should.eql count
+      item.id.should.eql count
     count.should.eql 9
         
   # describe 'multiple call error', ->

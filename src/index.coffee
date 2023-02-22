@@ -20,34 +20,34 @@ normalize_options = (options, argument, position) ->
     throw Error "Invalid argument: #{position} argument `option` must be one of object, boolean or number, got #{JSON.stringify argument}" unless is_object_literal argument
 
 normalize = () ->
-  # elements, [options]
+  # items, [options]
   # items, function, [options]
   # items, options, function
-  elements = undefined
+  items = undefined
   options =
     concurrency: 1
     pause: false
     relax: false
   if arguments.length is 0
-    elements = []
+    items = []
   else if arguments.length is 1
     if Array.isArray arguments[0]
-      elements = arguments[0]
+      items = arguments[0]
     else
       options = normalize_options options, arguments[0], 'first'
   else if arguments.length is 2
-    elements = arguments[0]
+    items = arguments[0]
     options = normalize_options options, arguments[1], 'second'
   else if arguments.length is 3
-    elements = arguments[0]
+    items = arguments[0]
     options = normalize_options options, arguments[1], 'second'
     options = normalize_options options, arguments[2], 'third'
   else
     throw Error "Invalid argument"
-  elements: elements, options: options
+  items: items, options: options
 
 export default (...args) ->
-  { elements, options } = normalize.apply null, arguments
+  { items, options } = normalize.apply null, arguments
   stack = []
   state =
     error: false
@@ -82,21 +82,21 @@ export default (...args) ->
           state.error = error
           item.reject.call null, error
           internal.pump()
-  all = (elements, options) ->
+  all = (items, options) ->
     new Promise (resolve, reject) ->
-      isArray = Array.isArray elements
+      isArray = Array.isArray items
       if isArray
         Promise.all(
-          all element, options for element in elements
+          all item, options for item in items
         ).then resolve, reject
       else
         stack.push
-          handler: elements
+          handler: items
           resolve: resolve
           reject: reject
           options: options
         internal.pump()
-  scheduler = all elements
+  scheduler = all items
   scheduler.get = () ->
     if arguments.length is 0
       return { ...options }
@@ -107,8 +107,8 @@ export default (...args) ->
   scheduler.pause = ->
     state.paused = true
     scheduler
-  scheduler.push = (elements) ->
-    all elements
+  scheduler.push = (items) ->
+    all items
   scheduler.resume = ->
     state.paused = false
     internal.pump()

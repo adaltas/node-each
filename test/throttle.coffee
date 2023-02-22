@@ -10,8 +10,8 @@ describe 'throttle', ->
         {id: 1}, {id: 2}, {id: 3},
         {id: 4}, {id: 5}, {id: 6},
         {id: 7}, {id: 8}, {id: 9}
-      ], 4, (element, index) ->
-        if element.id is 2
+      ], 4, (item, index) ->
+        if item.id is 2
           eacher.pause()
           setTimeout ->
             eacher.resume()
@@ -23,8 +23,8 @@ describe 'throttle', ->
         {id: 1}, {id: 2}, {id: 3},
         {id: 4}, {id: 5}, {id: 6},
         {id: 7}, {id: 8}, {id: 9}
-      ], 4, (element, index) ->
-        if element.id is 2
+      ], 4, (item, index) ->
+        if item.id is 2
           eacher.pause()
           new Promise (resolve) ->
             setTimeout ->
@@ -38,14 +38,14 @@ describe 'throttle', ->
         {id: 1}, {id: 2}, {id: 3},
         {id: 4}, {id: 5}, {id: 6},
         {id: 7}, {id: 8}, {id: 9}
-      ], 4, (element, index, callback) ->
-        if element.id % 2 is 0
+      ], 4, (item, index, callback) ->
+        if item.id % 2 is 0
           eacher.pause()
           new Promise (resolve) ->
             setTimeout ->
               eacher.resume()
               resolve()
-            , 10 * element.id
+            , 10 * item.id
       await eacher
         
     it 'resolve before resume with multiple pause', ->
@@ -53,12 +53,12 @@ describe 'throttle', ->
         {id: 1}, {id: 2}, {id: 3},
         {id: 4}, {id: 5}, {id: 6},
         {id: 7}, {id: 8}, {id: 9}
-      ], 4, (element, index) ->
-        if element.id % 2 is 0
+      ], 4, (item, index) ->
+        if item.id % 2 is 0
           eacher.pause()
           setTimeout ->
             eacher.resume()
-          , 10 * element.id
+          , 10 * item.id
       await eacher
   
   describe 'time validation', ->
