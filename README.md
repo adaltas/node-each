@@ -1,5 +1,5 @@
 
-[![Build Status]([![Build Status](https://github.com/adaltas/node-each/actions/workflows/test.yml/badge.svg))
+![Build Status](https://github.com/adaltas/node-each/actions/workflows/test.yml/badge.svg)
 
 Each is a single elegant function to iterate over elements  both in `sequential`, `parallel` and `concurrent` mode. It is a powerful and mature library.
 
