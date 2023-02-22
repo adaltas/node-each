@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/adaltas/node-each/compare/v2.0.0...v2.0.1) (2023-02-22)
+
+
+### Bug Fixes
+
+* cjs module name ([dd3c6ed](https://github.com/adaltas/node-each/commit/dd3c6ed4abbba2ec908c75334b2867df88e0e870))
+
 ## [2.0.0](https://github.com/adaltas/node-each/compare/v1.2.2...v2.0.0) (2023-02-22)
 
 
