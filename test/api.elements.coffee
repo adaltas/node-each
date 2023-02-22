@@ -10,7 +10,7 @@ describe 'api.items', ->
         result = await each []
         result.should.eql []
         # Push
-        result = await each().push []
+        result = await each().call []
         result.should.eql []
       
       it 'pass a value', ->
@@ -18,7 +18,7 @@ describe 'api.items', ->
         result = await each ['ok']
         result.should.eql ['ok']
         # Push
-        result = await each().push ['ok']
+        result = await each().call ['ok']
         result.should.eql ['ok']
       
       it 'pass a function which return a value', ->
@@ -26,7 +26,7 @@ describe 'api.items', ->
         result = await each [-> 'ok']
         result.should.eql ['ok']
         # Push
-        result = await each().push [-> 'ok']
+        result = await each().call [-> 'ok']
         result.should.eql ['ok']
           
   describe 'functions', ->
@@ -38,7 +38,7 @@ describe 'api.items', ->
       ]
       result.should.eql ['ok']
       # Push
-      result = await each().push [
+      result = await each().call [
         -> new Promise (resolve, reject) -> resolve 'ok'
       ]
       result.should.eql ['ok']
@@ -50,7 +50,7 @@ describe 'api.items', ->
       ]
       result.should.eql ['ok']
       # Push
-      result = await each().push [
+      result = await each().call [
         -> new Promise (resolve, reject) -> setImmediate resolve 'ok'
       ]
       result.should.eql ['ok']
@@ -64,7 +64,7 @@ describe 'api.items', ->
       ]
       result.should.eql ['ok']
       # Push
-      result = await each().push [
+      result = await each().call [
         new Promise (resolve, reject) -> resolve 'ok'
       ]
       result.should.eql ['ok']
@@ -77,7 +77,7 @@ describe 'api.items', ->
       ]
       result.should.eql [1, 2]
       # Push
-      result = await each().push [
+      result = await each().call [
         new Promise (resolve, reject) -> setImmediate resolve 1
         new Promise (resolve, reject) -> resolve 2
       ]

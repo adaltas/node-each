@@ -107,7 +107,7 @@ export default (...args) ->
   scheduler.pause = ->
     state.paused = true
     scheduler
-  scheduler.push = (items) ->
+  scheduler.call = (items) ->
     all items
   scheduler.resume = ->
     state.paused = false

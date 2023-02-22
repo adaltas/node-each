@@ -66,10 +66,10 @@ describe 'throttle', ->
     it 'pause in options', ->
       stack = []
       scheduler = each pause: true
-      prom1 = scheduler.push -> new Promise (resolve) ->
+      prom1 = scheduler.call -> new Promise (resolve) ->
         stack.push 1
         resolve 1
-      prom2 = scheduler.push -> new Promise (resolve) ->
+      prom2 = scheduler.call -> new Promise (resolve) ->
         stack.push 2
         resolve 2
       setTimeout ->
@@ -82,11 +82,11 @@ describe 'throttle', ->
     it 'pause as a function', ->
       stack = []
       scheduler = each()
-      prom1 = scheduler.push -> new Promise (resolve) ->
+      prom1 = scheduler.call -> new Promise (resolve) ->
         stack.push 1
         resolve 1
       scheduler.pause()
-      prom2 = scheduler.push -> new Promise (resolve) ->
+      prom2 = scheduler.call -> new Promise (resolve) ->
         stack.push 2
         resolve 2
       setTimeout ->

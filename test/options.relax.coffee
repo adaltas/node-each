@@ -11,13 +11,13 @@ describe 'options.relax', ->
     ]
     .should.be.rejectedWith 2
       
-  it 'default `false` and multiple push', ->
+  it 'default `false` and multiple call', ->
     scheduler = each()
-    prom1 = scheduler.push -> new Promise (resolve) ->
+    prom1 = scheduler.call -> new Promise (resolve) ->
       resolve 1
-    prom2 = scheduler.push -> new Promise (resolve, reject) ->
+    prom2 = scheduler.call -> new Promise (resolve, reject) ->
       reject 2
-    prom3 = scheduler.push -> new Promise (resolve) ->
+    prom3 = scheduler.call -> new Promise (resolve) ->
       resolve 3
     Promise.allSettled [prom1, prom2, prom3]
     .then (values) ->
@@ -37,11 +37,11 @@ describe 'options.relax', ->
         
   it 'when `true` and multiple push', ->
     scheduler = each(relax: true)
-    prom1 = scheduler.push -> new Promise (resolve) ->
+    prom1 = scheduler.call -> new Promise (resolve) ->
       resolve 1
-    prom2 = scheduler.push -> new Promise (resolve, reject) ->
+    prom2 = scheduler.call -> new Promise (resolve, reject) ->
       reject 2
-    prom3 = scheduler.push -> new Promise (resolve) ->
+    prom3 = scheduler.call -> new Promise (resolve) ->
       resolve 3
     Promise.allSettled [prom1, prom2, prom3]
     .then (values) ->
