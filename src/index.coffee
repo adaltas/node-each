@@ -60,6 +60,7 @@ export default (...args) ->
       if state.error and not options.relax
         while item = stack.shift()
           item.reject.call null, state.error
+        return
       return if state.paused
       return if options.concurrency > 0 and state.running is options.concurrency
       state.running++
