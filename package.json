@@ -26,11 +26,25 @@
   "devDependencies": {
     "coffeescript": "2.7.0",
     "mocha": "~10.2.0",
+    "rollup": "^3.17.2",
     "should": "~13.2.3"
   },
   "engines": {
     "node": ">= 0.9.0"
   },
+  "exports": {
+    ".": {
+      "import": {
+        "default": "./dist/each.esm.js"
+      },
+      "require": {
+        "default": "./dist/each.cjs.js"
+      }
+    }
+  },
+  "files": [
+    "/dist"
+  ],
   "homepage": "https://github.com/adaltas/node-each",
   "keywords": [
     "array",
@@ -40,7 +54,8 @@
     "object"
   ],
   "license": "BSD-3-Clause",
-  "main": "./lib/index",
+  "main": "dist/each.cjs.js",
+  "module": "dist/each.esm.js",
   "mocha": {
     "inline-diffs": true,
     "loader": "./test/loaders/coffee.js",
@@ -57,6 +72,7 @@
     "url": "https://github.com/adaltas/node-each.git"
   },
   "scripts": {
+    "build": "rollup -c",
     "preversion": "grep '## Trunk' CHANGELOG.md && rm -rf lib && npm test",
     "version": "version=`grep '^  \"version\": ' package.json | sed 's/.*\"\\([0-9\\.]*\\)\".*/\\1/'` && sed -i \"s/## Trunk/## Version $version/\" CHANGELOG.md && git add CHANGELOG.md",
     "postversion": "git push && git push --tags && npm publish",
