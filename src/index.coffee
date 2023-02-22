@@ -1,17 +1,21 @@
-import {is_object_literal, merge, mutate} from 'mixme'
 
-is_promise = (obj) ->
-  !!obj and (typeof obj is 'object' || typeof obj is 'function') and typeof obj.then is 'function'
+is_object_literal = (obj) ->
+  test = obj
+  if typeof obj isnt 'object' or obj is null then false else
+    return true if Object.getPrototypeOf(test) is null
+    while not false
+      break if Object.getPrototypeOf(test = Object.getPrototypeOf(test)) is null
+    return Object.getPrototypeOf(obj) is test
 
 normalize_options = (options, argument, position) ->
   if is_object_literal(argument)
-    mutate options, argument
+    {...options, ...argument}
   else if typeof argument is 'function'
-    options.handler = argument
+    {...options, handler: argument}
   else if typeof argument is 'boolean'
-    mutate options, concurrency: if typeof argument then -1 else 1
+    {...options, concurrency: if typeof argument then -1 else 1}
   else if typeof argument is 'number'
-    options.concurrency = argument
+    {...options, concurrency: argument}
   else
     throw Error "Invalid argument: #{position} argument `option` must be one of object, boolean or number, got #{JSON.stringify argument}" unless is_object_literal argument
 
@@ -30,34 +34,14 @@ normalize = () ->
     if Array.isArray arguments[0]
       elements = arguments[0]
     else
-      normalize_options options, arguments[0], 'first'
+      options = normalize_options options, arguments[0], 'first'
   else if arguments.length is 2
     elements = arguments[0]
-    normalize_options options, arguments[1], 'second'
+    options = normalize_options options, arguments[1], 'second'
   else if arguments.length is 3
     elements = arguments[0]
-    normalize_options options, arguments[1], 'second'
-    normalize_options options, arguments[2], 'third'
-    # # items, options, handler
-    # if is_object_literal(arguments[1]) or ['boolean', 'number'].includes(typeof arguments[1])
-    #   if is_object_literal(arguments[1])
-    #     mutate options, arguments[1]
-    #   else if typeof arguments[1] is 'boolean'
-    #     mutate options, concurrency: if typeof arguments[1] then -1 else 1
-    #   else
-    #     options.concurrency = arguments[1]
-    #   throw Error "Invalid argument: third argument `handler` must be a function, got #{JSON.stringify arguments[2]}" unless typeof arguments[2] is 'function'
-    #   options.handler = arguments[2]
-    # # items, handler, options
-    # if is_object_literal(arguments[2]) or ['boolean', 'number'].includes(typeof arguments[2])
-    #   throw Error "Invalid argument: third argument `handler` must be a function, got #{JSON.stringify arguments[1]}" unless typeof arguments[1] is 'function'
-    #   options.handler = arguments[1]
-    #   if is_object_literal(arguments[2])
-    #     mutate options, arguments[2]
-    #   else if typeof arguments[2] is 'boolean'
-    #     mutate options, concurrency: if typeof arguments[2] then -1 else 1
-    #   else
-    #     options.concurrency = arguments[2]
+    options = normalize_options options, arguments[1], 'second'
+    options = normalize_options options, arguments[2], 'third'
   else
     throw Error "Invalid argument"
   elements: elements, options: options
@@ -115,7 +99,7 @@ export default (...args) ->
   scheduler = all elements
   scheduler.get = () ->
     if arguments.length is 0
-      return merge options
+      return { ...options }
     if arguments.length is 1
       return options[arguments[0]]
     else
