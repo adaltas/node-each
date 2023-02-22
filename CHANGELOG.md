@@ -1,3 +1,20 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [2.0.0](https://github.com/adaltas/node-each/compare/v1.2.2...v2.0.0) (2023-02-22)
+
+
+### Features
+
+* initial argument merging or unordered ([257be03](https://github.com/adaltas/node-each/commit/257be0304539b3178cb6f011994628f18c97bfa2))
+* initial release for version 2 ([16ac09e](https://github.com/adaltas/node-each/commit/16ac09e053cfab42f5d2f2dd79f6ea5bfe628f89))
+
+
+### Bug Fixes
+
+* prevent stack execution on error ([fd21f2f](https://github.com/adaltas/node-each/commit/fd21f2f919e595d2e87956c1662ecd280d0ac0a9))
+
 
 ## Version 1.2.2
 
