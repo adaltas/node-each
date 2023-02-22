@@ -1,9 +1,7 @@
 
 [![Build Status]([![Build Status](https://github.com/adaltas/node-each/actions/workflows/test.yml/badge.svg))
 
-Node Each is a single elegant function to iterate over elements 
-both in `sequential`, `parallel` and `concurrent` mode. It is a
-powerful and mature library.
+Each is a single elegant function to iterate over elements  both in `sequential`, `parallel` and `concurrent` mode. It is a powerful and mature library.
 
 Main functionalities include:
 
@@ -17,429 +15,231 @@ Main functionalities include:
 
 ## Usage
 
-### Asynchronous and concurrent Mode
-
-```javascript
-each( [{id: 1}, {id: 2}, {id: 3}] )
-.parallel(2)
-.call( function(element, index, callback){
-  console.log('element: ', element, '@', index);
-  setTimeout(callback, 500);
-})
-.next( function(err){
-  console.log(err ? err.message : 'Done');
-});
-```
-
-### Synchronous and sequential Mode
-
-```javascript
-each( [{id: 1}, {id: 2}, {id: 3}] )
-.sync()
-.call( function(element, index){
-  console.log('element: ', element, '@', index);
-})
-.next( function(err){
-  console.log(err ? err.message : 'Done');
-});
-```
-
-## Installation
-
-Via git (or downloaded tarball):
-
-```bash
-git clone http://github.com/wdavidw/node-each.git
-```
-
-Then, simply copy or link the project inside a discoverable Node directory 
-(eg './node_modules').
-
-Via [npm](http://github.com/isaacs/npm):
+Use your favorite package manager to install the `each` package:
 
 ```bash
 npm install each
 ```
 
-Note:
+In ESM:
 
-* version above 0.8.0 renamed then to next
-* versions above 0.2.x, changed arguments of the item callback
+```js
+import each from 'each'
+```
+
+Notes:
+
+* Version 2 is a complete rewrite based on promise.
+* Version above 0.8.0 renamed then to next.
+* Versions above 0.2.x, changed arguments of the item callback.
+
+## Initialisation
+
+Signature is `each([items], ...[options|concurrency|handler])`.
+
+All arguments are optional.
+
+- `items`   
+  An array containing any type of value. Functions are executed and may return a promise. Promise are waiting to be resolved. Any other type is returned as is or pass as an argument of the `handler` function.
+- `option`   
+  An options object. See below for the list of supported options.
+- `concurrency`   
+  A boolean or an integer value. Similar to setting the `concurrency` option property. Jump to the concurrency section below.
+- `handler`   
+  A function which take each item as an argument.
+
+## Options
+
+- `concurrency` (default `1`)   
+  An integer value defining the number of function executed in parallel or a boolean value. Value `false` is converted to `1` where functions are executed sequentially. Value `true` is converted to `-1` where all functions run simultaneously.
+- `pause` (default `false`)   
+  Delay the execution of functions until `resume` is called.
+- `relax` (default `false`)   
+  Keep scheduling new functions when `call` is further executed.
 
 ## API
 
-The `each` function signature is: `each(subject, [options])`.
+- `call`   
+  Execute one or several items.
+- `get`   
+  Get all options with no argument, get a single option with one argument, and set the value of an option with two arguments.
+- `pause`   
+  Pause the scheduling of new functions, see the throttling section.
+- `resume`   
+  Resume the scheduling of new functions, see the throttling section.
 
-- `subject` (array|object, required)   
-  The subject to iterate. It is usually an array or an object.
-  Inserting a number or a string will behave like an array of one
-  element and inserting null or undefined won't iterate over any
-  element.
-- `options` (object, optional)   
-  Options may contain concurrency, repeat, sync, times. The option `concurrency`
-  may be "false" for sequential, "true" for parallel and a number for concurrent
-  mode. For other options, see below their associated function.
+## Iteration
 
-The return object is an instance of `EventEmitter`.
+Each iterates over any type of elements
 
-The following functions are available:
+```js
+const result = await each([
+  () => {},
+  () => (new Promise((resolve) => resolve())),
+  new Promise((resolve) => resolve()),
+  '',
+  1,
+  // ...
+])
+```
 
-- `call(function)`   
-  The function handler to call for each iterated element. Provided arguments
-  depends on the subject type and the number of arguments defined in the
-  callback. More information below.
-- `close()`   
-  Stop the iteration, garanty that no item will be emitted after it is called.
-- `end()`   
-  Stop the iteration, garanty that no item will be emitted after it is
-  called.
-- `error(function)`   
-  Called only if an error occured. The iteration will be stopped on error
-  meaning no `item` event will be called other than the ones already
-  provisionned. The callback function is called with one argument, the error
-  object. See the section `dealing with errors` for more information.
-- `queue`   
-  Enter the queue mode and listen to new values to pushed and processed. Call `close` to exit.   
-- `next(function)`   
-  Called only once all the items have been handled. In case there was no error
-  function previously set, the first argument is the error object if any. The
-  following argument is the number of traversed items as the second argument. In
-  case of an error, this number correspond to the number of item callbacks which
-  called next.
-- `parallel(mode)`   
-  The first argument is optional and indicate wether or not you want the
-  iteration to run in `sequential`, `parallel` or `concurrent` mode. See below
-  for more details about the different modes.
-- `promise`   
-  Return a Javascript promise called on error or completion.
-- `push(item)` or `push(key, value)`
-  Add array elements or key/value pairs at the end of iteration.
-- `repeat()`   
-  Repeat operation multiple times once all elements have been called, see
-  `times`.
-- `sync()`   
-  Run callbacks in synchronous mode, no next callback are provided,
-  may throw an error.
-- `times()`   
-  Repeat operation multiple times before passing to the next element,
-  see `repeat`.
-- `unshift(items)`   
-  Add array elements or key/value pairs at the begining of the iteration,
-  just after the last executed element.
-- `write(items)`   
-  Alias of `push`.
+Function are executed. Each handle both synchronuous and asynchronuous function. In the latter case, function returns a promise and each wait for its resolution.
 
-The following properties are available:
+Promise are waiting to be resolved. Thus, it behaves similar to `Promise.all` if the concurrency level is set to sequential (default).
 
-- `paused`   
-  Indicate the state of the current event emitter.
-- `readable`   
-  Indicate if the stream will emit more event.
-- `started`  
-  Number of callbacks which have been called.
-- `done`  
-  Number of callbacks which have finished.
-- `total`   
-  Total of registered elements.
+An other type is returned as is unless an handler function is defined.
 
-## Parallelization modes
+## Resolution order
+
+Output order is consistent with input order. The value returned by a function or resolved by a promise is always returned in the same position as it was originally defined.
+
+## Synchronous and asynchronous functions
+
+A function can be an item element or the `handler` option. In both cases, it behaves the same.
+
+It is called with the item as first argument and the index number as the second argument.
+
+Synchronous functions return a value. Asynchronous functions return a Promise.
+
+Here is a [synchronous handler](./samples/handler.synchronous.js) function:
+
+```javascript
+const result = await each(
+  [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}],
+  (item, index) =>
+    `${item.id}@${index}`
+)
+
+assert.deepStrictEqual(
+  result, 
+  ['a@0', 'b@1', 'c@2', 'd@3']
+)
+```
+
+Here is a [asynchronous handler](./samples/handler.asynchronous.js) function:
+
+```javascript
+const result = await each(
+  [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}],
+  (item, index) =>
+    new Promise( (resolve) =>
+      setTimeout(resolve(`${item.id}@${index}`), 100)
+    )
+)
+
+assert.deepStrictEqual(
+  result, 
+  ['a@0', 'b@1', 'c@2', 'd@3']
+)
+```
+
+## Concurrency modes
 
 - `sequential`   
-  Parallel is `false` or set to `1`, default if no parallel mode is defined.
-  Callbacks are chained meaning each callback is called once the previous
-  callback is completed (after calling the `next` function argument).
+  Concurrency is `false` or `1`. It is the default concurrency mode.
 - `parallel`   
-  Parallel is `true`. In asynchronous mode, the handler function is called at
-  the same time for all elements and run in parallel
+  Concurrency is `true` or `-1`. In asynchronous mode, all the items are executed in parallel.
 - `concurrent`   
-  Parallel is a number. Similar with the parallel mode, in asynchronous mode,
-  the number of parallel execution of the handler function is garanteed to not
-  exceed the user provided value.
+  Concurrency is a number. It defines the maximum number of function running in parallel at a given time.
 
-## Callback arguments in call handlers
-
-The last argument, `callback`, is a function to call once your action has
-complete. It may be called with an error instance to  trigger the `error` event.
-An example worth a tousand words,  see the code examples below for usage.
-
-Inside array iteration, callback signature is `function([value], [index], callback)`.
-
-```javascript
-each( [] )
-// 1 argument
-.call( (callback) => {} )
-// 2 arguments
-.call( (value, callback) => {} )
-// 3 arguments
-.call( (value, index, callback) => {} )
-// done
-.then( () => {} )
-```
-
-Inside object iteration, callback signature is `function([key], [value], [counter], callback)`.
-
-```javascript
-each( {} )
-// 1 argument
-.call( (callback) => {} )
-// 2 arguments
-.call( (value, callback) => {} )
-// 3 arguments
-.call( (key, value, callback) => {} )
-// 4 arguments
-.call( (key, value, counter, callback) => {} )
-// done
-.then( () => {} )
-```
-
-## Dealing with errors
-
-Error are provided by calling the `callback` function argument in the `item` event with an error 
-object as its first argument.
-
-```javascript
-each( ['a', 'b'] )
-.call( (element, next) =>
-  setImmediate( () =>
-    next(new Error("Catchme"))
-  )
-)
-.next( (err) =>
-  assert.equal(err.message, "Catchme")
-)
-```
-
-It is also possible to throw an Error as long as the error is attach to the function:
-
-```javascript
-each( ['a', 'b'] )
-.call( (element, next) =>
-  throw new Error("Catchme")
-  // Not ok:
-  // setImmediate( () => {
-  //   throw new Error("Catchme")
-  // })
-)
-.next( (err) => {
-  assert.equal(err.message, "Catchme")
-})
-```
-
-The error will be provided to the `next` function handler unless an `error` function handler is defined before.
-
-```javascript
-each( ['a', 'b'] )
-.call( (element, next) => {
-  setImmediate( () => {
-    next(new Error("Catchme"))
-  })
-})
-.error( (err) => {
-  assert.equal(err.message, "Catchme")
-})
-.next( (err) => {
-  assert.equal(err, undefined)
-})
-```
-
-In case of parallel and concurrent mode, the currently running callbacks are not
-canceled but no new element will be processed.
-
-The `error` argument is always an instance of error. However, it defers
-according to the execution mode. In `sequential` mode, it is always the error
-that was thrown inside the failed callback. In `parallel` and `concurrent`
-modes, there may be more than one event thrown asynchronously. In such case, the
-error has the generic message such as `Multiple errors $count` and the property
-`.errors` is an array giving access to each individual error.
-
-```javascript
-each( ['a', 'b'] )
-.parralel(true)
-.call( (element, next) => {
-  setImmediate( () => {
-    next(new Error(`Error ${element}`))
-  })
-})
-.error( (err) => {
-  assert.equal(err.message, `Multiple errors 2`)
-  const messages = err.errors.map( e => e.message )
-  assert.equal(messages, ["Catchme a", "Catchme b"])
-})
-```
-
-Note, it is possible to know [the number of successful handler functions](https://github.com/adaltas/node-each/blob/master/samples/error_count_succeed.js) in the `next` event by subtracting the number of executed callbacks provided as the second argument to the number of errors.
-
-```javascript
-each([1, 2, 3])
-.parallel(true)
-.call( (val, callback) => {
-  setImmediate( () => {
-    callback( val % 2 && new Error("Invalid") )
-  })
-})
-.next( (err, count) => {
-  const succeed = count - err.errors.length
-  assert.equal(succeed, 1)
-})
-```
-
-## Traversing an array
-
-In `sequential` mode:
-
-```javascript
-const each = require('each');
-each( [{id: 1}, {id: 2}, {id: 3}] )
-.call(  (element, index, callback) => {
-  setImmediate(callback)
-})
-.next( (err) =>
-  console.log(err ? err.message : 'success')
-)
-```
-
-In `parallel` mode:
-
-```javascript
-const each = require('each')
-each( [{id: 1}, {id: 2}, {id: 3}] )
-.parallel( true )
-.call( (element, index, callback) => {
-  console.log('element: ', element, '@', index)
-  setTimeout(callback, 500)
-})
-.next( (err)
-  console.log(err ? err.message : 'success')
-)
-```
-
-In `concurrent` mode (4 parallel executions):
-
-```javascript
-const each = require('each')
-each( [{id: 1}, {id: 2}, {id: 3}] )
-.parallel( 4 )
-.call( (element, index, callback) => {
-  console.log('element: ', element, '@', index)
-  setTimeout(callback, 500)
-})
-.next( (err) =>
-  console.log(err ? err.message : 'success')
-)
-```
-
-## Traversing an object
-
-In `sequential` mode:
-
-```javascript
-const each = require('each')
-each( {id_1: 1, id_2: 2, id_3: 3} )
-.call( (key, value, callback) => {
-  console.log('key: ', key)
-  console.log('value: ', value)
-  setTimeout(callback, 500)
-})
-.next( (err) =>
-  console.log(err ? err.message : 'success')
-)
-```
-
-In `concurrent` mode with 2 parallels executions
-
-```javascript
-const each = require('each')
-each( {id_1: 1, id_2: 2, id_3: 3} )
-.parallel( 2 )
-.call( (key, value, callback) => {
-  console.log('key: ', key)
-  console.log('value: ', value)
-  setTimeout(callback, 500)
-})
-.next( (err) =>
-  console.log(err ? err.message : 'success')
-)
-```
-
-## Manual Throttle
+## Manual throttling
 
 Use `pause` and `resume` functions to throttle the iteration.
 
-## Repetition with `times` and `repeat`
+On pause, executed functions pursue their execution and no further function is
+scheduled for execution.
 
-With the addition of the `times` and `repeat` functions, you may traverse an
-array or call a function multiple times. Note, you can not use those two
-functions at the same time.
+Using the `pause` option behaves like calling `pause` right after the initialization. Thus, `each({pause: true})` is an equivalent of `each().pause()`.
 
-We first implemented this functionality while doing performance assessment and
-needing to repeat a same set of metrics multiple times. The following sample
-will call 3 times the function `doSomeMetrics` with the same arguments.
+## Dealing with errors
 
-```javascript
-each(['a', 'b', 'c', 'd'])
-.times(3)
-.call( (id, callback) => {
-  setImmediate( () => {
-    process.stdout.write(id)
-    callback()
-  })
-})
-.next( () =>
-  console.log('done')
-)
+The iteration is stopped on error.
+
+With synchronous functions or when the concurrency mode is sequential, it behaves like `Promise.all`. On error, no additionnal function is scheduled for execution and the returned promise is rejected.
+
+With asynchronous function executed concurrently, no additionnal functions are scheduled. Function which are already executed will resolve or reject their promise but the result is discarded.
+
+Wether the items array is provided at initialisation or with the `call` function, the behavior is the same:
+
+```js
+try {
+  await each(2).call([
+    () => new Promise( (resolve) => 
+      setImmediate( () => resolve('ok') )
+    ),
+    () => new Promise( (resolve, reject) => 
+      setImmediate( () => reject(Error('Catchme')) )
+    ),
+    () => new Promise( (resolve) => 
+      setImmediate( () => resolve('ok') )
+    ),
+  ])
+} catch(error) {
+  assert.equal(error.message, 'Catchme')
+}
 ```
 
-The generated sequence is 'aaabbbcccddd'. In the same way, you could replace `times` by 
-`repeat` and in such case, the generated sequence would have been `abcdabcdabcd`.
+## Using the `relax` option
 
-It is also possible to use `times` and `repeat` without providing any data. Here's how:
+When the `relax` option is active, the internal scheduler permit the registration of new items with `call` even after an error.
 
-```javascript
-const count = 0
-each()
-.times(3)
-.call( callback =>
-  console.log(count++)
-)
-.next( () =>
-  console.log('total:' + count)
-)
+It doesn't affect the processing of an item list. An error when handling one of the item will prevent additionnal item execution and reject its promise. What it does is to provide the ability to register and execute new items with `call`.
+
+This is an example with the default behavior:
+
+```js
+const scheduler = each()
+const prom1 = scheduler.call( () => new Promise( (resolve) => resolve(1) ) )
+const prom2 = scheduler.call( () => new Promise( (resolve, reject) => reject(2) ) )
+const prom3 = scheduler.call( () => new Promise( (resolve) => resolve(3) ) )
+
+const result = await Promise.allSettled([prom1, prom2, prom3])
+assert.deepStrictEqual(result, [
+  {status: 'fulfilled', value: 1},
+  {status: 'rejected', reason: 2},
+  {status: 'rejected', reason: 2}
+])
 ```
 
-## Queue
+This is an example with the `relax` option in action:
 
-The `each` package can be leverage to be used as a queue. In queue mode, elements may be added before and after its initialisation until the queue is close. Call the `queue` function to enter the queue mode and the `close` function to finish it.
+```js
+const scheduler = each({relax: true})
+const prom1 = scheduler.call(
+  () => new Promise( (resolve) => resolve(1) )
+)
+const prom2 = scheduler.call(
+  () => new Promise( (resolve, reject) => reject(2) )
+)
+const prom3 = scheduler.call(
+  () => new Promise( (resolve) => resolve(3) )
+)
 
-```javascript
-const each = require('each')
-const queue = each().parallel(10).queue()
-queue.push('hello')
-setTimeout(() => {
-  queue.push('world')
-  queue.close()
-})
+const result = await Promise.allSettled([prom1, prom2, prom3])
+assert.deepStrictEqual(result, [
+  {status: 'fulfilled', value: 1},
+  {status: 'rejected', reason: 2},
+  {status: 'fulfilled', value: 3}
+])
 ```
 
-## Multiple call detection in callback
+## Developers
 
-An error will be throw with the message "Multiple call detected" if the `callback` argument in the `item` callback is called multiple times. However, if `end` event has already been thrown, the only way to catch the error is by registering to the "uncaughtException" event of `process`.
-
-## Examples
-
-Node Each comes with a few example, all present in the "samples" folder. Here's how you may run each of them :
+Tests are executed with [Mocha](https://mochajs.org/). To install it, simple run `npm install`, it will install the `mocha` package and its dependencies.
 
 ```bash
-node samples/array_concurrent.js
-node samples/array_parallel.js
-node samples/array_sequential.js
-node samples/object_concurrent.js
-node samples/object_sequential.js
-node samples/readable_stream.js
+npm run test
 ```
 
-Tests are executed with mocha. To install it, simple run `npm install`, it will install
-mocha and its dependencies in your project "node_modules" directory.
+To automatically generate a new version:
 
-```bash
-make test
 ```
+yarn run release
+git push --follow-tags origin master
+```
+
+Package publication is handled by the CI/CD with GitHub action.
+
+Note:
+- On release, both the publish and test workflows run in parallel. Not very happy about it but I haven't found a better way.
+- `yarn` does not call the "postrelease" script and `npm` fails if the `package-lock.json` file is present and git ignored.
