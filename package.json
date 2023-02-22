@@ -22,7 +22,9 @@
       "email": "david@adaltas.com"
     }
   ],
-  "dependencies": {},
+  "dependencies": {
+    "pinst": "^3.0.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "^17.4.4",
     "@commitlint/config-conventional": "^17.4.4",
