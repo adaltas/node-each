@@ -63,8 +63,6 @@
     "patch": "npm version patch -m 'Bump to version %s'",
     "minor": "npm version minor -m 'Bump to version %s'",
     "major": "npm version major -m 'Bump to version %s'",
-    "build": "coffee -b -o lib src",
-    "pretest": "coffee -b -o lib src",
     "test": "mocha test/**/*.coffee"
   },
   "type": "module"

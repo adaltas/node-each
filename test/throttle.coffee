@@ -1,5 +1,5 @@
 
-import each from '../src/index.coffee'
+import each from '../lib/index.js'
 
 describe 'throttle', ->
   
