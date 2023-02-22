@@ -1,17 +1,17 @@
 
-var each = require('..');
+import each from '../lib/index.js'
+import assert from 'assert'
 
-each( [{id: 1}, {id: 2}, {id: 3}] )
-.call( function(element, index, next){
-  console.log('element: ', element, '@', index);
-  setTimeout(next, 500);
-})
-.next( function(err){
-  console.log(err ? err.message : 'Done');
-});
+const result = await each(
+  [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}],
+  function(element, index){
+    return new Promise( (resolve) =>
+      setTimeout(() => resolve(`${element.id}@${index}`), 100)
+    )
+  }
+)
 
-// Print:
-// element:  { id: 1 } @ 0
-// element:  { id: 2 } @ 1
-// element:  { id: 3 } @ 2
-// Done
+assert.deepStrictEqual(
+  result, 
+  ['a@0', 'b@1', 'c@2', 'd@3']
+)

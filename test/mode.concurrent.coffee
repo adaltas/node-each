@@ -1,101 +1,122 @@
 
-each = require '../src'
+import each from '../src/index.coffee'
 
-describe 'concurrent', ->
+describe 'mode.concurrent', ->
   
-  it 'array # multiple elements # async callbacks', (next) ->
-    current = 0
-    end_called = false
-    each [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ]
-    .parallel( 4 )
-    .call (element, index, callback) ->
-      index.should.eql current
-      current++
-      element.id.should.eql current
-      setTimeout callback, 100
-    .error next
-    .next ->
-      current.should.eql 9
-      next()
+  it 'empty array', ->
+    count = 0
+    await each [], 4, (element, index) ->
+      count++
+    count.should.eql 0
+  
+  it 'promise handler with multiple elements', ->
+    count = 0
+    await each [
+      {id: 1}, {id: 2}, {id: 3},
+      {id: 4}, {id: 5}, {id: 6},
+      {id: 7}, {id: 8}, {id: 9}
+    ], 4, (element, index) ->
+      new Promise (resolve) ->
+        index.should.eql count
+        count++
+        element.id.should.eql count
+        setTimeout resolve, 20
+    count.should.eql 9
       
-  it 'array # one element # async callbacks', (next) ->
-    current = 0
-    each [ {id: 1} ]
-    .parallel 4
-    .call (element, index, callback) ->
-      index.should.eql current
-      current++
-      element.id.should.eql current
-      setTimeout callback, 100
-    .error next
-    .next ->
-      current.should.eql 1
-      setTimeout next, 100
+  it 'promise handler with one element', ->
+    count = 0
+    await each [ {id: 1} ], 4, (element, index) ->
+      new Promise (resolve) ->
+        index.should.eql count
+        count++
+        element.id.should.eql count
+        setTimeout resolve, 20
+    count.should.eql 1
       
-  it 'array # empty', (next) ->
-    current = 0
-    each []
-    .parallel 4
-    .call (element, index, callback) ->
-      current++
-      callback()
-    .error next
-    .next ->
-      current.should.eql 0
-      next()
+  it 'sync handler', ->
+    count = 0
+    await each [
+      {id: 1}, {id: 2}, {id: 3},
+      {id: 4}, {id: 5}, {id: 6},
+      {id: 7}, {id: 8}, {id: 9}
+    ], 4, (element, index) ->
+      index.should.eql count
+      count++
+      element.id.should.eql count
+    count.should.eql 9
       
-  it 'array sync callback', (next) ->
-    current = 0
-    each [ {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9} ]
-    .parallel 4
-    .call (element, index, callback) ->
-      index.should.eql current
-      current++
-      element.id.should.eql current
-      callback()
-    .error next
-    .next ->
-      current.should.eql 9
-      next()
+  it 'element sync functions', ->
+    count = 0
+    test = -> count++
+    await each [
+      test, test, test,
+      test, test, test,
+      test, test, test,
+    ], 4
+    count.should.eql 9
       
-  it 'object async callbacks', (next) ->
-    current = 0
-    each id_1: 1, id_2: 2, id_3: 3, id_4: 4, id_5: 5, id_6: 6, id_7: 7, id_8: 8, id_9: 9
-    .parallel 4
-    .call (key, value, callback) ->
-      current++
-      key.should.eql "id_#{current}"
-      value.should.eql current
-      setTimeout callback, 100
-    .error next
-    .next ->
-      current.should.eql 9
-      setTimeout next, 100
+  it 'element sync functions', ->
+    count = 0
+    running = 0
+    test = ->
+      running++
+      running.should.be.above 0
+      running.should.be.below 5
+      new Promise (resolve) ->
+        running.should.be.above 0
+        running.should.be.below 5
+        count++
+        setTimeout ->
+          running.should.be.above 0
+          running.should.be.below 5
+          running--
+          resolve()
+        , 20
+    await each [
+      test, test, test,
+      test, test, test,
+      test, test, test,
+    ], 4
+    count.should.eql 9
+    running.should.eql 0
       
-  it 'object sync callbacks', (next) ->
-    current = 0
-    each id_1: 1, id_2: 2, id_3: 3, id_4: 4, id_5: 5, id_6: 6, id_7: 7, id_8: 8, id_9: 9
-    .parallel 4
-    .call (key, value, callback) ->
-      current++
-      key.should.eql "id_#{current}"
-      value.should.eql current
-      callback()
-    .error next
-    .next ->
-      current.should.eql 9
-      next()
+  it 'handler with error thrown', ->
+    count = 0
+    test = ->
+      count++
+      throw Error 'catchme' if count is 6
+      new Promise (resolve) ->
+        setTimeout resolve, 20
+    try
+      await each [
+        test, test, test,
+        test, test, test,
+        test, test, test,
+      ], 4
+    catch error
+      error.message.should.eql 'catchme'
+    finally
+      count.should.eql 6
       
-  it 'function', (next) ->
-    current = 0
-    each (c) -> c()
-    .parallel 4
-    .call (element, index, callback) ->
-      index.should.eql current
-      current++
-      element.should.be.a.Function
-      element callback
-    .error next
-    .next ->
-      current.should.eql 1
-      next()
+  it 'handler with error rejected', ->
+    count = 0
+    test = ->
+      new Promise (resolve, reject) ->
+        setTimeout ->
+          count.should.be.below 6
+          count++
+          if count >= 4
+          then reject Error 'catchme'
+          else
+            resolve()
+        , 20
+    try
+      await each [
+        test, test, test,
+        test, test, test,
+        test, test, test,
+      ], 3
+    catch error
+      error.message.should.eql 'catchme'
+    finally
+      count.should.eql 4

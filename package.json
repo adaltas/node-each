@@ -22,11 +22,13 @@
       "email": "david@adaltas.com"
     }
   ],
-  "dependencies": {},
+  "dependencies": {
+    "mixme": "^0.5.5"
+  },
   "devDependencies": {
-    "coffeescript": "2.2.4",
-    "mocha": "~5.0.5",
-    "should": "~13.2.1"
+    "coffeescript": "2.7.0",
+    "mocha": "~10.2.0",
+    "should": "~13.2.3"
   },
   "engines": {
     "node": ">= 0.9.0"
@@ -41,6 +43,17 @@
   ],
   "license": "BSD-3-Clause",
   "main": "./lib/index",
+  "mocha": {
+    "inline-diffs": true,
+    "loader": "./test/loaders/coffee.js",
+    "recursive": true,
+    "reporter": "spec",
+    "require": [
+      "should"
+    ],
+    "throw-deprecation": true,
+    "timeout": 40000
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/adaltas/node-each.git"
@@ -55,5 +68,6 @@
     "build": "coffee -b -o lib src",
     "pretest": "coffee -b -o lib src",
     "test": "mocha test/**/*.coffee"
-  }
+  },
+  "type": "module"
 }

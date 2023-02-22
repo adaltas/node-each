@@ -1,153 +1,82 @@
 
-each = require '../src'
+import each from '../src/index.coffee'
 
-describe 'sequential', ->
+describe 'mode.sequential', ->
+    
+  it 'promise handler with multiple elements', ->
+    count = 0
+    running = 0
+    await each [
+      {id: 1}, {id: 2}, {id: 3},
+      {id: 4}, {id: 5}, {id: 6},
+      {id: 7}, {id: 8}, {id: 9}
+    ], (element, index, callback) ->
+      count++
+      running++
+      running.should.eql 1
+      new Promise (resolve) ->
+        running.should.eql 1
+        setTimeout ->
+          running.should.eql 1
+          running--
+          resolve()
+        , 20
+    count.should.eql 9
   
-  describe 'mode', ->
-    
-    it 'is default', (next) ->
-      current = 0
-      id2_called = false
-      each [ {id: 1}, {id: 2}, {id: 3} ]
-      .parallel null
-      .call (element, index, callback) ->
-        id2_called = true if element.id is 2
-        if index is 0 then setTimeout ->
-          id2_called.should.be.false()
-          callback()
-        , 100 else callback()
-      .next next
-  
-  describe 'input', ->
-    
-    it 'array', (next) ->
-      current = 0
-      end_called = false
-      each [ {id: 1}, {id: 2}, {id: 3} ]
-      .call (element, index, callback) ->
-        index.should.eql current
-        current++
-        element.id.should.eql current
-        setTimeout callback, 100
-      .error next
-      .next ->
-        current.should.eql 3
-        next()
+  it 'sync handler with multiple elements', ->
+    count = 0
+    running = 0
+    await each [
+      {id: 1}, {id: 2}, {id: 3},
+      {id: 4}, {id: 5}, {id: 6},
+      {id: 7}, {id: 8}, {id: 9}
+    ], (element, index, callback) ->
+      index.should.eql index
+      count++
+      element.id.should.eql count
+    count.should.eql 9
         
-    it 'object', (next) ->
-      current = 0
-      each {id_1: 1, id_2: 2, id_3: 3}
-      .call (key, value, callback) ->
-        current++
-        key.should.eql "id_#{current}"
-        value.should.eql current
-        setTimeout callback, 100
-      .error next
-      .next ->
-        current.should.eql 3
-        next()
-        
-    it 'undefined', (next) ->
-      current = 0
-      each undefined
-      .call (element, index, callback) ->
-        should.not.exist true
-      .error next
-      .next ->
-        current.should.eql 0
-        next()
-        
-    it 'null', (next) ->
-      current = 0
-      each null
-      .call (element, index, callback) ->
-        should.not.exist true
-      .error next
-      .next ->
-        current.should.eql 0
-        next()
-        
-    it 'string', (next) ->
-      current = 0
-      each 'id_1'
-      .call (element, index, callback) ->
-        index.should.eql current
-        current++
-        element.should.eql "id_1"
-        setTimeout callback, 100
-      .error next
-      .next ->
-        current.should.eql 1
-        next()
-        
-    it 'number', (next) ->
-      current = 0
-      each 3.14
-      .call (element, index, callback) ->
-        index.should.eql current
-        current++
-        element.should.eql 3.14
-        setTimeout callback, 100
-      .error next
-      .next ->
-        current.should.eql 1
-        next()
-        
-    it 'function', (next) ->
-      current = 0
-      source = (c) -> c()
-      each source
-      .call (element, index, callback) ->
-        index.should.eql current
-        current++
-        element.should.be.a.Function
-        element callback
-      .error next
-      .next ->
-        current.should.eql 1
-        next()
-        
-  describe 'multiple call error', ->
-    
-    it 'with end already thrown', (next) ->
-      # Nothing we can do here, end has been thrown and we can not wait for it
-      # Catch the uncatchable
-      lsts = process.listeners 'uncaughtException'
-      process.removeAllListeners 'uncaughtException'
-      process.on 'uncaughtException', (err) ->
-        # Test
-        ended.should.be.true()
-        err.message.should.eql 'Multiple call detected'
-        # Cleanup and finish
-        process.removeAllListeners 'uncaughtException'
-        for lst in lsts
-          process.on 'uncaughtException', lst
-        next()
-      # Run the test
-      ended = false
-      each( [ 'a', 'b', 'c' ] )
-      .parallel(1)
-      .call (item, callback) ->
-        callback()
-        # We only want to generate one error
-        return unless item is 'a'
-        process.nextTick callback
-      .next (err) ->
-        ended = true
-        
-    it 'with end not yet thrown', (next) ->
-      ended = false
-      each [ 'a', 'b', 'c' ]
-      .parallel 1
-      .call (item, callback) ->
-        process.nextTick ->
-          callback()
-          # We only want to generate one error
-          return unless item is 'a'
-          process.nextTick callback
-      .error (err) ->
-        ended.should.be.false()
-        err.message.should.eql 'Multiple call detected'
-        next()
-      .next ->
-        ended = true
+  # describe 'multiple call error', ->
+  # 
+  #   it 'with end already thrown', ->
+  #     # Nothing we can do here, end has been thrown and we can not wait for it
+  #     # Catch the uncatchable
+  #     lsts = process.listeners 'uncaughtException'
+  #     process.removeAllListeners 'uncaughtException'
+  #     process.on 'uncaughtException', (err) ->
+  #       # Test
+  #       ended.should.be.true()
+  #       err.message.should.eql 'Multiple call detected'
+  #       # Cleanup and finish
+  #       process.removeAllListeners 'uncaughtException'
+  #       for lst in lsts
+  #         process.on 'uncaughtException', lst
+  #       next()
+  #     # Run the test
+  #     ended = false
+  #     each( [ 'a', 'b', 'c' ] )
+  #     .parallel(1)
+  #     .call (item, callback) ->
+  #       callback()
+  #       # We only want to generate one error
+  #       return unless item is 'a'
+  #       process.nextTick callback
+  #     .next (err) ->
+  #       ended = true
+  # 
+  #   it 'with end not yet thrown', ->
+  #     ended = false
+  #     each [ 'a', 'b', 'c' ]
+  #     .parallel 1
+  #     .call (item, callback) ->
+  #       process.nextTick ->
+  #         callback()
+  #         # We only want to generate one error
+  #         return unless item is 'a'
+  #         process.nextTick callback
+  #     .error (err) ->
+  #       ended.should.be.false()
+  #       err.message.should.eql 'Multiple call detected'
+  #       next()
+  #     .next ->
+  #       ended = true

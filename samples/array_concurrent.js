@@ -1,18 +1,28 @@
 
-var each = require('..');
+import each from '../lib/index.js'
+import assert from 'assert'
 
-each( [{id: 1}, {id: 2}, {id: 3}] )
-.parallel( 4 )
-.call(function(element, index, next) {
-  console.log('element: ', element, '@', index);
-  setTimeout(next, 500);
-})
-.error(function(err){
-  console.log(err.message);
-  err.errors.forEach(function(error){
-    console.log('  '+error.message);
-  });
-})
-.then(function(){
-  console.log('Done');
-});
+let running = 0
+const result = await each(
+  [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}],
+  2,
+  function(element, index) {
+    running++
+    if(running > 2){ throw Error('At most 2 running tasks') }
+    return new Promise( (resolve, reject) =>
+      setTimeout(() => {
+        running--
+        if(running > 2){
+          reject(Error('At most 2 running tasks'))
+        } else {
+          resolve(`${element.id}@${index}`)
+        }
+      }, 100)
+    )
+  }
+)
+
+assert.deepStrictEqual(
+  result, 
+  ['a@0', 'b@1', 'c@2', 'd@3']
+)
