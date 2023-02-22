@@ -4,5 +4,5 @@ yarn.lock
 /node_modules
 /samples/out.csv
 /shell
-!.travis.yml
+!.github
 !.gitignore
