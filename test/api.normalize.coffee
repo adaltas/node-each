@@ -6,6 +6,18 @@ describe 'api.normalize', ->
   it '0 arg, is a promise', ->
     each()
     .should.be.a.Promise()
+      
+  it 'multi args, merge items', ->
+    result = await each([1,2,3], [4,5,6])
+    result.should.eql [1,2,3,4,5,6]
+      
+  it 'multi args, merge options', ->
+    each(2, {pause: true}, (->), relax: true)
+    .get().should.eql
+      concurrency: 2
+      pause: true
+      handler: (->)
+      relax: true
   
   it '1 arg, accept `items` argument', ->
     await each []

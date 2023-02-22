@@ -7,43 +7,26 @@ is_object_literal = (obj) ->
       break if Object.getPrototypeOf(test = Object.getPrototypeOf(test)) is null
     return Object.getPrototypeOf(obj) is test
 
-normalize_options = (options, argument, position) ->
-  if is_object_literal(argument)
-    {...options, ...argument}
-  else if typeof argument is 'function'
-    {...options, handler: argument}
-  else if typeof argument is 'boolean'
-    {...options, concurrency: if typeof argument then -1 else 1}
-  else if typeof argument is 'number'
-    {...options, concurrency: argument}
-  else
-    throw Error "Invalid argument: #{position} argument `option` must be one of object, boolean or number, got #{JSON.stringify argument}" unless is_object_literal argument
-
-normalize = () ->
-  # items, [options]
-  # items, function, [options]
-  # items, options, function
-  items = undefined
+normalize = (...args) ->
+  items = []
   options =
     concurrency: 1
     pause: false
     relax: false
-  if arguments.length is 0
-    items = []
-  else if arguments.length is 1
-    if Array.isArray arguments[0]
-      items = arguments[0]
+  for arg, i in args
+    if Array.isArray arg
+      items = [...items, ...arg]
+    else if is_object_literal(arg)
+      options = {...options, ...arg}
+    else if typeof arg is 'function'
+      options = {...options, handler: arg}
+    else if typeof arg is 'boolean'
+      options = {...options, concurrency: if typeof arg then -1 else 1}
+    else if typeof arg is 'number'
+      options = {...options, concurrency: arg}
     else
-      options = normalize_options options, arguments[0], 'first'
-  else if arguments.length is 2
-    items = arguments[0]
-    options = normalize_options options, arguments[1], 'second'
-  else if arguments.length is 3
-    items = arguments[0]
-    options = normalize_options options, arguments[1], 'second'
-    options = normalize_options options, arguments[2], 'third'
-  else
-    throw Error "Invalid argument"
+      throw Error "Invalid argument: argument at position #{i} must be one of array, object, function, boolean or number, got #{JSON.stringify argument}"
+    
   items: items, options: options
 
 export default (...args) ->

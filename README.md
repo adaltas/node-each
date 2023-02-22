@@ -35,9 +35,11 @@ Notes:
 
 ## Initialisation
 
-Signature is `each([items], ...[options|concurrency|handler])`.
+Signature is `each(...[items|options|concurrency|handler])`.
 
-All arguments are optional.
+All arguments are optional and can be defined in any order.
+
+Multiple items arrays are merged. Muliple options are merged as well.
 
 - `items`   
   An array containing any type of value. Functions are executed and may return a promise. Promise are waiting to be resolved. Any other type is returned as is or pass as an argument of the `handler` function.
