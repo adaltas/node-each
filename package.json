@@ -44,7 +44,7 @@
         "default": "./dist/each.esm.js"
       },
       "require": {
-        "default": "./dist/each.cjs.js"
+        "default": "./dist/each.cjs.cjs"
       }
     }
   },
@@ -60,7 +60,7 @@
     "object"
   ],
   "license": "BSD-3-Clause",
-  "main": "dist/each.cjs.js",
+  "main": "dist/each.cjs.cjs",
   "module": "dist/each.esm.js",
   "mocha": {
     "inline-diffs": true,

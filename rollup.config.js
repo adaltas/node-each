@@ -10,7 +10,7 @@ export default {
       format: 'umd'
     },
     {
-      file: `dist/${pkg.name}.cjs.js`,
+      file: `dist/${pkg.name}.cjs.cjs`,
       format: 'cjs'
     },
     {
