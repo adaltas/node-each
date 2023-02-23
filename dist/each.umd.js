@@ -98,7 +98,11 @@
         return setImmediate(async function() {
           try {
             state.count++;
-            const result = options.handler ? (await options.handler.call(null, item.handler, state.count)) : typeof item.handler === 'function' ? (await item.handler.call()) : (await item.handler);
+            const result = options.handler
+              ? await options.handler.call(null, item.handler, state.count)
+              : typeof item.handler === 'function'
+                ? await item.handler.call()
+                : await item.handler;
             state.running--;
             item.resolve.call(null, result);
             return internal.pump();

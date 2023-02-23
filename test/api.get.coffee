@@ -9,5 +9,4 @@ describe 'api.get', ->
       concurrency: 1
       flatten: 0
       pause: false
-      # handler: (it) -> it.should.be.a.Function()
       relax: false
