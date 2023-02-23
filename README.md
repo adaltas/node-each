@@ -1,14 +1,14 @@
 
 ![Build Status](https://github.com/adaltas/node-each/actions/workflows/test.yml/badge.svg)
 
-Each is a single elegant function to iterate over elements  both in `sequential`, `parallel` and `concurrent` mode. It is a powerful and mature library.
+Each is a single elegant function to iterate over values both in `sequential`, `parallel` and `concurrent` mode. It is a powerful and mature library.
 
 Main functionalities include:
 
 * User-defined concurrency level
-* Iteration over a list of promise
 * Iteration over a list of functions
-* Iteration with any items handled by a user-defined function
+* Iteration over a list of promise
+* Iteration with any type of values handled by a user-defined function
 * Full promise support
 * Full test coverage
 * Zero dependency
@@ -21,17 +21,23 @@ Use your favorite package manager to install the `each` package:
 npm install each
 ```
 
-In ESM:
+With ESM:
 
 ```js
-import each from 'each'
+import each from 'each';
+```
+
+With CommonJS:
+
+```js
+const each = require('each');
 ```
 
 Notes:
 
 * Version 2 is a complete rewrite based on promise.
 * Version above 0.8.0 renamed then to next.
-* Versions above 0.2.x, changed arguments of the item callback.
+* Versions above 0.2.x, changed arguments of the callback.
 
 ## Initialisation
 
@@ -41,13 +47,13 @@ All arguments are optional and can be defined in any order.
 
 Multiple items arrays are merged. Muliple options are merged as well.
 
-- `items`   
+- `items : array`   
   An array containing any type of value. Functions are executed and may return a promise. Promise are waiting to be resolved. Any other type is returned as is or pass as an argument of the `handler` function.
-- `option`   
+- `option : object`   
   An options object. See below for the list of supported options.
-- `concurrency`   
+- `concurrency : boolean | integer`   
   A boolean or an integer value. Similar to setting the `concurrency` option property. Jump to the concurrency section below.
-- `handler`   
+- `handler : function`   
   A function which take each item as an argument.
 
 ## Options
@@ -72,24 +78,79 @@ Multiple items arrays are merged. Muliple options are merged as well.
 
 ## Iteration
 
-Each iterates over any type of elements
+### Iteration with any type of values
+
+An other type is returned as is unless an handler function is defined.
+
+Each iterates over any type of items. If no handler is defined, functions and and promises get a special treatment. Functions are executed and may return a promise and promises are resolved.
+
+Here is a [quick example]('./samples/iteration.js'):
 
 ```js
 const result = await each([
-  () => {},
-  () => (new Promise((resolve) => resolve())),
-  new Promise((resolve) => resolve()),
-  '',
-  1,
-  // ...
+  // Item is a value
+  'a',
+  // Item is a function
+  () => (new Promise((resolve) => resolve('b'))),
+  // Item is a promise
+  new Promise((resolve) => resolve('c')),
 ])
+
+assert.deepStrictEqual(
+  result, 
+  ['a', 'b', 'c']
+)
 ```
 
-Function are executed. Each handle both synchronuous and asynchronuous function. In the latter case, function returns a promise and each wait for its resolution.
+Note, in the majority of cases, items arrays which does not contains function and promises are handled with an handler function.
 
-Promise are waiting to be resolved. Thus, it behaves similar to `Promise.all` if the concurrency level is set to sequential (default).
+### Iteration over a list of functions
 
-An other type is returned as is unless an handler function is defined.
+Function are executed. Each handles both synchronuous and asynchronuous functions. In the latter case, function returns a promise and Each wait for its resolution.
+
+Here a various way to [declare functions](./samples/iteration.functions.js):
+
+```js
+const result = await each([
+  // A synchronous function
+  function(){ return 'a' },
+  // A synchronous function with the fat arrow syntax
+  () => 'b',
+  // An asynchronous function
+  () => (
+    new Promise((resolve) => resolve('c'))
+  ),
+  // An asynchronous function which resolves after some delay
+  () => (
+    new Promise((resolve) => setTimeout (() => resolve('d')), 100)
+  ),
+])
+
+assert.deepStrictEqual(
+  result, 
+  ['a', 'b', 'c', 'd']
+)
+```
+
+### Iteration over a list of promises
+
+Promise are waiting to be resolved. When the concurrency level is set to sequential (default), the behavior is similar to `Promise.all`.
+
+```js
+const result = await each([
+  // A promise
+  new Promise((resolve) => resolve('a')),
+  // A promise which resolves after some delay
+  () => (
+    new Promise((resolve) => setTimeout (() => resolve('b')), 100)
+  ),
+])
+
+assert.deepStrictEqual(
+  result, 
+  ['a', 'b']
+)
+```
 
 ## Resolution order
 
@@ -97,9 +158,25 @@ Output order is consistent with input order. The value returned by a function or
 
 ## Synchronous and asynchronous functions
 
-A function can be an item element or the `handler` option. In both cases, it behaves the same.
+A function can be an item to iterate or defined with the `handler` option. In both cases, the behavior is the same.
 
-It is called with the item as first argument and the index number as the second argument.
+A function defined as an item:
+
+```js
+console.info(
+  await each([() => 1])
+)
+```
+
+A function which handles an item:
+
+```js
+console.info(
+  await each([1], (item) => item)
+)
+```
+
+Handlers are called with the item as first argument and the index number as the second argument.
 
 Synchronous functions return a value. Asynchronous functions return a Promise.
 
@@ -185,9 +262,9 @@ try {
 
 When the `relax` option is active, the internal scheduler permit the registration of new items with `call` even after an error.
 
-It doesn't affect the processing of an item list. An error when handling one of the item will prevent additionnal item execution and reject its promise. What it does is to provide the ability to register and execute new items with `call`.
+It doesn't affect the processing of an `items` list. An error while handling one of the item will prevent additionnal execution and reject its promise. What it does is to provide the ability to register and execute new items with `call`.
 
-This is an example with the default behavior:
+This is an example with the [default behavior](./samples/options.relax.false.js):
 
 ```js
 const scheduler = each()
@@ -203,7 +280,7 @@ assert.deepStrictEqual(result, [
 ])
 ```
 
-This is an example with the `relax` option in action:
+This is an example with the [`relax` option in action](./samples/options.relax.false.js):
 
 ```js
 const scheduler = each({relax: true})
