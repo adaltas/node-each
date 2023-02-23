@@ -123,15 +123,11 @@ function index(...args) {
     return new Promise(function(resolve, reject) {
       const isArray = Array.isArray(items);
       if (isArray) {
-        return Promise.all((function() {
-          let j, len;
-          const results = [];
-          for (j = 0, len = items.length; j < len; j++) {
-            const item = items[j];
-            results.push(all(item, options));
-          }
-          return results;
-        })()).then(resolve, reject);
+        return Promise.all(
+          items.map( item =>
+            all(item, options)
+          )
+        ).then(resolve, reject);
       } else {
         stack.push({
           handler: items,
