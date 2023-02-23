@@ -24,8 +24,7 @@ const normalize = function(...args) {
     pause: false,
     relax: false
   };
-  let i, j, len;
-  for (i = j = 0, len = args.length; j < len; i = ++j) {
+  for (let i in args) {
     const arg = args[i];
     if (Array.isArray(arg)) {
       items = [...items, ...arg];
@@ -47,7 +46,7 @@ const normalize = function(...args) {
         concurrency: arg
       };
     } else {
-      throw Error(`Invalid argument: argument at position ${i} must be one of array, object, function, boolean or number, got ${JSON.stringify(argument)}`);
+      throw Error(`Invalid argument: argument at position ${i} must be one of array, object, function, boolean or number, got ${JSON.stringify(arg)}`);
     }
   }
   return {

@@ -3,6 +3,11 @@ import each from '../lib/index.js'
 
 describe 'api.normalize', ->
   
+  it 'validation', ->
+    (->
+      each(new Promise( () => {}))
+    ).should.throw 'Invalid argument: argument at position 0 must be one of array, object, function, boolean or number, got {}'
+  
   it '0 arg, is a promise', ->
     each()
     .should.be.a.Promise()
