@@ -17,12 +17,11 @@ describe 'api.normalize', ->
     result.should.eql [1,2,3,4,5,6]
       
   it 'multi args, merge options', ->
-    each(2, {pause: true}, (->), relax: true)
-    .get().should.eql
-      concurrency: 2
-      pause: true
-      handler: (->)
-      relax: true
+    eacher = each(2, {pause: true}, (->), relax: true)
+    eacher.get('concurrency').should.eql 2
+    eacher.get('pause').should.eql true
+    eacher.get('handler').should.eql (->)
+    eacher.get('relax').should.eql true
   
   it '1 arg, accept `items` argument', ->
     await each []

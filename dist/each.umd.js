@@ -25,6 +25,7 @@
     let items = [];
     let options = {
       concurrency: 1,
+      flatten: false,
       pause: false,
       relax: false
     };
@@ -53,6 +54,12 @@
         throw Error(`Invalid argument: argument at position ${i} must be one of array, object, function, boolean or number, got ${JSON.stringify(arg)}`);
       }
     }
+    if(options.flatten === true){
+      options.flatten = Infinity;
+    } else if (options.flatten === false) {
+      options.flatten = 0;
+    }
+    items = items.flat(options.flatten);
     return {
       items: items,
       options: options
