@@ -1,10 +1,10 @@
 
-import each from '../lib/index.js'
-import assert from 'assert'
+import each from '../lib/index.js';
+import assert from 'assert';
 
 const result = await each([
   // A synchronous function
-  function(){ return 'a' },
+  function(){ return 'a'; },
   // A synchronous function with the fat arrow syntax
   () => 'b',
   // An asynchronous function
@@ -15,9 +15,9 @@ const result = await each([
   () => (
     new Promise((resolve) => setTimeout (() => resolve('d')), 100)
   ),
-])
+]);
 
 assert.deepStrictEqual(
   result, 
   ['a', 'b', 'c', 'd']
-)
+);

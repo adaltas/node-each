@@ -4,6 +4,7 @@ yarn.lock
 /node_modules
 /samples/out.csv
 /shell
+!.eslintrc
 !.husky
 !.github
 !.gitignore

@@ -8,10 +8,7 @@ const is_object_literal = function(obj) {
     if (Object.getPrototypeOf(test) === null) {
       return true;
     }
-    while (!false) {
-      if (Object.getPrototypeOf(test = Object.getPrototypeOf(test)) === null) {
-        break;
-      }
+    while (Object.getPrototypeOf(test = Object.getPrototypeOf(test)) !== null) {
     }
     return Object.getPrototypeOf(obj) === test;
   }
@@ -25,7 +22,7 @@ const normalize = function(...args) {
     pause: false,
     relax: false
   };
-  for (let i in args) {
+  for (const i in args) {
     const arg = args[i];
     if (Array.isArray(arg)) {
       items = [...items, ...arg];
@@ -39,7 +36,7 @@ const normalize = function(...args) {
     } else if (typeof arg === 'boolean') {
       options = {
         ...options,
-        concurrency: typeof arg ? -1 : 1
+        concurrency: arg === true ? -1 : 1
       };
     } else if (typeof arg === 'number') {
       options = {
@@ -62,7 +59,7 @@ const normalize = function(...args) {
   };
 };
 
-function index(...args) {
+function index() {
   const {items, options} = normalize.apply(null, arguments);
   const stack = [];
   const state = {
@@ -80,15 +77,15 @@ function index(...args) {
           return;
         }
         if (state.error && !options.relax) {
-          let item;
-          while (item = stack.shift()) {
+          while (stack.length) {
+            const item = stack.shift();
             item.reject.call(null, state.error);
           }
           return;
         }
         if (state.closed) {
-          let item;
-          while (item = stack.shift()) {
+          while (stack.length !== 0) {
+            const item = stack.shift();
             item.resolve.call();
           }
           return;
@@ -102,22 +99,22 @@ function index(...args) {
         }
         state.running++;
         const item = stack.shift();
-          try {
-            state.count++;
-            const result = options.handler
-              ? await options.handler.call(null, item.handler, state.count)
-              : typeof item.handler === 'function'
-                ? await item.handler.call()
-                : await item.handler;
-            state.running--;
-            item.resolve.call(null, result);
-            return internal.pump();
-          } catch (error) {
-            state.running--;
-            state.error = error;
-            item.reject.call(null, error);
-            return internal.pump();
-          }
+        try {
+          state.count++;
+          const result = options.handler
+            ? await options.handler.call(null, item.handler, state.count)
+            : typeof item.handler === 'function'
+              ? await item.handler.call()
+              : await item.handler;
+          state.running--;
+          item.resolve.call(null, result);
+          return internal.pump();
+        } catch (error) {
+          state.running--;
+          state.error = error;
+          item.reject.call(null, error);
+          return internal.pump();
+        }
       });
     }
   };
@@ -129,11 +126,11 @@ function index(...args) {
           reject: reject,
           items: items
         });
-        return
+        return;
       }
       if (Array.isArray(items)) {
         return Promise.all(
-          items.map( item =>
+          items.map(item =>
             all(item, options)
           )
         ).then(resolve, reject);
@@ -167,7 +164,7 @@ function index(...args) {
   };
   scheduler.call = function(items) {
     if (state.closed) {
-      throw Error('EACH_CLOSED: cannot schedule new items when closed.')
+      throw Error('EACH_CLOSED: cannot schedule new items when closed.');
     }
     return all(items);
   };
@@ -185,10 +182,10 @@ function index(...args) {
     state.defers = [];
     internal.pump(); // Revive scheduled items if any
     return Promise.all(
-      defers.map( (defer) =>
+      defers.map((defer) =>
         all(defer.items).then(defer.resolve, defer.reject)
       )
-    )
+    );
   };
   return scheduler;
 }

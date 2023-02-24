@@ -1,4 +1,5 @@
 
+import eslint from '@rollup/plugin-eslint';
 import pkg from './package.json' assert { type: 'json' }
 
 export default {
@@ -18,5 +19,7 @@ export default {
       format: 'esm'
     }
   ],
-  plugins: []
+  plugins: [eslint({
+    fix: true,
+  })]
 };

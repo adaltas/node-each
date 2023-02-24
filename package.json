@@ -28,7 +28,9 @@
   "devDependencies": {
     "@commitlint/cli": "^17.4.4",
     "@commitlint/config-conventional": "^17.4.4",
+    "@rollup/plugin-eslint": "^9.0.3",
     "coffeescript": "2.7.0",
+    "eslint": "^8.34.0",
     "husky": "^8.0.3",
     "mocha": "~10.2.0",
     "rollup": "^3.17.2",
@@ -82,13 +84,16 @@
     "postinstall": "husky install",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
-    "test": "mocha test/**/*.coffee",
+    "lint": "npm run lint:lib && npm run lint:samples",
+    "lint:lib": "eslint --fix lib/*.js",
+    "lint:samples": "eslint --fix samples/*.js",
     "prerelease": "npm run build",
     "release": "standard-version",
     "release:minor": "standard-version --release-as minor",
     "release:patch": "standard-version --release-as patch",
     "release:major": "standard-version --release-as major",
-    "postrelease": "git push --follow-tags origin master"
+    "postrelease": "git push --follow-tags origin master",
+    "test": "mocha test/**/*.coffee"
   },
   "type": "module"
 }

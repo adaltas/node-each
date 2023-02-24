@@ -1,6 +1,6 @@
 
-import each from '../lib/index.js'
-import assert from 'assert'
+import each from '../lib/index.js';
+import assert from 'assert';
 
 const result = await each([
   // A promise
@@ -9,9 +9,9 @@ const result = await each([
   () => (
     new Promise((resolve) => setTimeout (() => resolve('b')), 100)
   ),
-])
+]);
 
 assert.deepStrictEqual(
   result, 
   ['a', 'b']
-)
+);

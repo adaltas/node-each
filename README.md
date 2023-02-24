@@ -5,7 +5,7 @@ Each is a single elegant function to iterate over values both in `sequential`, `
 
 Main functionalities include:
 
-* User-defined concurrency level
+* User-defined concurrency level: sequential, parallel or custom
 * Iteration over a list of functions
 * Iteration over a list of promise
 * Iteration with any type of values handled by a user-defined function
@@ -94,12 +94,12 @@ const result = await each([
   () => (new Promise((resolve) => resolve('b'))),
   // Item is a promise
   new Promise((resolve) => resolve('c')),
-])
+]);
 
 assert.deepStrictEqual(
   result, 
   ['a', 'b', 'c']
-)
+);
 ```
 
 Note, in the majority of cases, items arrays which does not contains function and promises are handled with an handler function.
@@ -113,7 +113,7 @@ Here a various way to [declare functions](./samples/iteration.functions.js):
 ```js
 const result = await each([
   // A synchronous function
-  function(){ return 'a' },
+  function(){ return 'a'; },
   // A synchronous function with the fat arrow syntax
   () => 'b',
   // An asynchronous function
@@ -124,17 +124,17 @@ const result = await each([
   () => (
     new Promise((resolve) => setTimeout (() => resolve('d')), 100)
   ),
-])
+]);
 
 assert.deepStrictEqual(
   result, 
   ['a', 'b', 'c', 'd']
-)
+);
 ```
 
 ### Iteration over a list of promises
 
-Promise are waiting to be resolved. When the concurrency level is set to sequential (default), the behavior is similar to `Promise.all`.
+Promise are [waiting to be resolved](./samples/iteration.promise.js). When the concurrency level is set to sequential (default), the behavior is similar to `Promise.all`.
 
 ```js
 const result = await each([
@@ -144,12 +144,12 @@ const result = await each([
   () => (
     new Promise((resolve) => setTimeout (() => resolve('b')), 100)
   ),
-])
+]);
 
 assert.deepStrictEqual(
   result, 
   ['a', 'b']
-)
+);
 ```
 
 ## Resolution order
@@ -187,12 +187,12 @@ const result = await each(
   [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}],
   (item, index) =>
     `${item.id}@${index}`
-)
+);
 
 assert.deepStrictEqual(
   result, 
   ['a@0', 'b@1', 'c@2', 'd@3']
-)
+);
 ```
 
 Here is a [asynchronous handler](./samples/handler.asynchronous.js) function:
@@ -201,15 +201,15 @@ Here is a [asynchronous handler](./samples/handler.asynchronous.js) function:
 const result = await each(
   [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}],
   (item, index) =>
-    new Promise( (resolve) =>
+    new Promise((resolve) =>
       setTimeout(resolve(`${item.id}@${index}`), 100)
     )
-)
+);
 
 assert.deepStrictEqual(
   result, 
   ['a@0', 'b@1', 'c@2', 'd@3']
-)
+);
 ```
 
 ## Concurrency modes
@@ -220,6 +220,92 @@ assert.deepStrictEqual(
   Concurrency is `true` or `-1`. In asynchronous mode, all the items are executed in parallel.
 - `concurrent`   
   Concurrency is a number. It defines the maximum number of function running in parallel at a given time.
+
+### Sequential mode (default)
+
+When the `concurrent` option is `undefined`, `false` or `1`, items are executed [in order one after the other](./samples/mode_concurrent.js).
+
+```js
+let running = 0;
+const result = await each(
+  [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}],
+  function(item, index) {
+    running++;
+    if(running !== 1){ throw Error('Invalid execution'); }
+    return new Promise((resolve) =>
+      setTimeout(() => {
+        if(running !== 1){ throw Error('Invalid execution'); }
+        running--;
+        resolve(`${item.id}@${index}`);
+      }, 100)
+    );
+  }
+);
+
+assert.deepStrictEqual(
+  result, 
+  ['a@0', 'b@1', 'c@2', 'd@3']
+);
+```
+
+### Parallel mode
+
+When the `concurrent` option is `true` or `-1`, items are all scheduled at the same time and [run in parralel](./samples/mode_parallel.js).
+
+```js
+let running = 0;
+const result = await each(
+  [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}],
+  true,
+  function(item, index) {
+    if(running !== index){ throw Error('Invalid execution'); }
+    running++;
+    return new Promise((resolve) =>
+      setTimeout(() => {
+        if(running !== 4-index){ throw Error('Invalid execution'); }
+        running--;
+        resolve(`${item.id}@${index}`);
+      }, 100)
+    );
+  }
+);
+
+assert.deepStrictEqual(
+  result, 
+  ['a@0', 'b@1', 'c@2', 'd@3']
+);
+```
+
+### Concurrent mode
+
+When the `concurrent` mode is a value above `1`, the number of items running simultaneously is [cap to the `concurrent` value](./samples/mode_concurrent.js).
+
+```js
+let running = 0;
+const result = await each(
+  [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}],
+  2,
+  function(item, index) {
+    running++;
+    if(running > 2){ throw Error('At most 2 running tasks'); }
+    return new Promise((resolve, reject) =>
+      setTimeout(() => {
+        running--;
+        if(running > 2){
+          reject(Error('At most 2 running tasks'));
+        } else {
+          resolve(`${item.id}@${index}`);
+        }
+      }, 100)
+    );
+  }
+);
+
+assert.deepStrictEqual(
+  result, 
+  ['a@0', 'b@1', 'c@2', 'd@3']
+);
+```
 
 ## Manual throttling
 
@@ -233,46 +319,46 @@ scheduled for execution.
 When the iteration's state is paused, new scheduled items [will not resolve the returned promise](./samples/throttle.state.js) until the iteration is resumed.
 
 ```js
-let state = 'paused'
-const scheduler = each({pause: true})
+let state = 'paused';
+const scheduler = each({pause: true});
 scheduler.then(() =>
   assert.deepStrictEqual(
     state, 'resumed'
   )
-)
+);
 setTimeout(() => {
-  state = 'resumed'
-  scheduler.resume()
-}, 100)
+  state = 'resumed';
+  scheduler.resume();
+}, 100);
 ```
 
 The `resume` and `end` methods return a promise which [resolves once all the element's executions complete](./samples/throttle.resume.js). This is an example with `resume`.
 
 ```js
-const stack = []
-const scheduler = each({pause: true})
-scheduler.call( () =>
-  new Promise( (resolve) => {
-    stack.push(1); resolve()
+const stack = [];
+const scheduler = each({pause: true});
+scheduler.call(() =>
+  new Promise((resolve) => {
+    stack.push(1); resolve();
   })
-)
-scheduler.call( () =>
-  new Promise( (resolve) => {
-    stack.push(2); resolve()
+);
+scheduler.call(() =>
+  new Promise((resolve) => {
+    stack.push(2); resolve();
   })
-)
-setTimeout( async () => {
+);
+setTimeout(async () => {
   // Before resume, not processing occurs
   assert.deepStrictEqual(
     stack, []
-  )
+  );
   // Resume and wait for execution
-  await scheduler.resume()
+  await scheduler.resume();
   // After resume, every element was processed
   assert.deepStrictEqual(
     stack, [1, 2]
-  )
-}, 100)
+  );
+}, 100);
 ```
 
 ## Dealing with errors
@@ -312,39 +398,45 @@ It doesn't affect the processing of an `items` list. An error while handling one
 This is an example with the [default behavior](./samples/options.relax.false.js):
 
 ```js
-const scheduler = each()
-const prom1 = scheduler.call( () => new Promise( (resolve) => resolve(1) ) )
-const prom2 = scheduler.call( () => new Promise( (resolve, reject) => reject(2) ) )
-const prom3 = scheduler.call( () => new Promise( (resolve) => resolve(3) ) )
+const scheduler = each();
+const prom1 = scheduler.call(
+  () => new Promise((resolve) => resolve(1))
+);
+const prom2 = scheduler.call(
+  () => new Promise((resolve, reject) => reject(2))
+);
+const prom3 = scheduler.call(
+  () => new Promise((resolve) => resolve(3))
+);
 
-const result = await Promise.allSettled([prom1, prom2, prom3])
+const result = await Promise.allSettled([prom1, prom2, prom3]);
 assert.deepStrictEqual(result, [
   {status: 'fulfilled', value: 1},
   {status: 'rejected', reason: 2},
   {status: 'rejected', reason: 2}
-])
+]);
 ```
 
-This is an example with the [`relax` option in action](./samples/options.relax.false.js):
+This is an example with the [`relax` option in action](./samples/options.relax.true.js):
 
 ```js
-const scheduler = each({relax: true})
+const scheduler = each({relax: true});
 const prom1 = scheduler.call(
-  () => new Promise( (resolve) => resolve(1) )
-)
+  () => new Promise((resolve) => resolve(1))
+);
 const prom2 = scheduler.call(
-  () => new Promise( (resolve, reject) => reject(2) )
-)
+  () => new Promise((resolve, reject) => reject(2))
+);
 const prom3 = scheduler.call(
-  () => new Promise( (resolve) => resolve(3) )
-)
+  () => new Promise((resolve) => resolve(3))
+);
 
-const result = await Promise.allSettled([prom1, prom2, prom3])
+const result = await Promise.allSettled([prom1, prom2, prom3]);
 assert.deepStrictEqual(result, [
   {status: 'fulfilled', value: 1},
   {status: 'rejected', reason: 2},
   {status: 'fulfilled', value: 3}
-])
+]);
 ```
 
 ## Developers
