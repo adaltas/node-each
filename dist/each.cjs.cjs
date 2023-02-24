@@ -151,14 +151,13 @@ function index(...args) {
     });
   };
   const scheduler = all(items);
-  scheduler.get = function() {
+  scheduler.options = function() {
     if (arguments.length === 0) {
       return {...options};
-    }
-    if (arguments.length === 1) {
+    }else if (arguments.length === 1) {
       return options[arguments[0]];
     } else {
-      throw Error(`EACH_GET_ARGUMENT_LENGTH: \`get\` expect one or two arguments, got ${arguments.length}`);
+      throw Error(`EACH_OPTIONS_ARGUMENT_LENGTH: \`options\` expect one or two arguments, got ${arguments.length}`);
     }
   };
   scheduler.pause = function() {

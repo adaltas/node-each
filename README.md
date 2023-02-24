@@ -69,7 +69,7 @@ Multiple items arrays are merged. Muliple options are merged as well.
 
 - `call`   
   Execute one or several items.
-- `get`   
+- `options`   
   Get all options with no argument, get a single option with one argument, and set the value of an option with two arguments.
 - `pause`   
   Pause the scheduling of new functions, see the throttling section.
