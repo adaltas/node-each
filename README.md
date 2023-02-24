@@ -225,10 +225,55 @@ assert.deepStrictEqual(
 
 Use `pause` and `resume` functions to throttle the iteration.
 
+The `pause` option define the initial status. Its value default to `false`.
+
 On pause, executed functions pursue their execution and no further function is
 scheduled for execution.
 
-Using the `pause` option behaves like calling `pause` right after the initialization. Thus, `each({pause: true})` is an equivalent of `each().pause()`.
+When the iteration's state is paused, new scheduled items [will not resolve the returned promise](./samples/throttle.state.js) until the iteration is resumed.
+
+```js
+let state = 'paused'
+const scheduler = each({pause: true})
+scheduler.then(() =>
+  assert.deepStrictEqual(
+    state, 'resumed'
+  )
+)
+setTimeout(() => {
+  state = 'resumed'
+  scheduler.resume()
+}, 100)
+```
+
+The `resume` and `end` methods return a promise which [resolves once all the element's executions complete](./samples/throttle.resume.js). This is an example with `resume`.
+
+```js
+const stack = []
+const scheduler = each({pause: true})
+scheduler.call( () =>
+  new Promise( (resolve) => {
+    stack.push(1); resolve()
+  })
+)
+scheduler.call( () =>
+  new Promise( (resolve) => {
+    stack.push(2); resolve()
+  })
+)
+setTimeout( async () => {
+  // Before resume, not processing occurs
+  assert.deepStrictEqual(
+    stack, []
+  )
+  // Resume and wait for execution
+  await scheduler.resume()
+  // After resume, every element was processed
+  assert.deepStrictEqual(
+    stack, [1, 2]
+  )
+}, 100)
+```
 
 ## Dealing with errors
 

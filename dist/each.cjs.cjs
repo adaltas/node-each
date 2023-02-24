@@ -66,6 +66,7 @@ function index(...args) {
   const {items, options} = normalize.apply(null, arguments);
   const stack = [];
   const state = {
+    defers: [],
     error: false,
     paused: options.pause,
     closed: false,
@@ -124,6 +125,14 @@ function index(...args) {
   const all = function(items, options) {
     return new Promise(function(resolve, reject) {
       const isArray = Array.isArray(items);
+      if(state.paused){
+        state.defers.push({
+          resolve: resolve,
+          reject: reject,
+          items: isArray ? items : [items]
+        });
+        return
+      }
       if (isArray) {
         return Promise.all(
           items.map( item =>
@@ -163,16 +172,23 @@ function index(...args) {
     return all(items);
   };
   scheduler.end = function(error) {
+    const result = scheduler.resume();
     state.closed = true;
     if (error){
       state.error = error;
     }
-    return scheduler;
+    return result;
   };
   scheduler.resume = function() {
     state.paused = false;
-    internal.pump();
-    return scheduler;
+    const defers = state.defers;
+    state.defers = [];
+    internal.pump(); // Revive scheduled items if any
+    return Promise.all(
+      defers.map( (defer) =>
+        all(defer.items).then(defer.resolve, defer.reject)
+      )
+    )
   };
   return scheduler;
 }
