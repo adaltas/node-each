@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.1](https://github.com/adaltas/node-each/compare/v2.2.0...v2.2.1) (2023-02-24)
+
+
+### Bug Fixes
+
+* preserve items structure when paused ([e12c018](https://github.com/adaltas/node-each/commit/e12c018b62ecef6ff001e28731d54ccb06f7ef31))
+
 ## [2.2.0](https://github.com/adaltas/node-each/compare/v2.1.0...v2.2.0) (2023-02-24)
 
 
