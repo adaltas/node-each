@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/adaltas/node-each/compare/v2.1.0...v2.2.0) (2023-02-24)
+
+
+### Features
+
+* normalize get arguments length error ([3c8f377](https://github.com/adaltas/node-each/commit/3c8f37718793d8e47428b5e5308368614d9714ab))
+* options get value ([04a748e](https://github.com/adaltas/node-each/commit/04a748e7bdd55f5b5f704a8a0a7d57a840a2af8b))
+* rename set to options ([1afced9](https://github.com/adaltas/node-each/commit/1afced9821b2c354aad518e31b64bd5bea080ef7))
+
 ## [2.1.0](https://github.com/adaltas/node-each/compare/v2.0.1...v2.1.0) (2023-02-24)
 
 
