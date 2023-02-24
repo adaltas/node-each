@@ -13,8 +13,28 @@ describe 'api.normalize', ->
     eacher.resume()
     eacher.resume()
     await eacher.end()
+  
+  describe 'resulution', ->
+    
+    it 'array resolve to an array', ->
+      scheduler = each [1, 2, 3], pause: true
+      promRoot = scheduler
+      promCall = scheduler.call [4, 5, 6]
+      scheduler.resume()
+      result = await Promise.all [promRoot, promCall]
+      result.should.eql [ [1, 2, 3], [4, 5, 6] ]
+        
+    it 'scalar resolve to scalar', ->
+      # each only accept arrays at initialization
+      # but call accept scalar
+      scheduler = each ['a'], pause: true
+      promRoot = scheduler
+      promCall = scheduler.call 'b'
+      scheduler.resume()
+      result = await Promise.all [promRoot, promCall]
+      result.should.eql [ ['a'], 'b' ]
       
-  describe 'resolution', ->
+  describe 'throttling', ->
   
     it 'resolve before resume', ->
       eacher = each [
@@ -44,7 +64,7 @@ describe 'api.normalize', ->
             , 100
       await eacher
         
-    it 'resolve after resume with multiple pause', ->
+    it 'resolve after resume with multiple pause/resume', ->
       eacher = each [
         {id: 1}, {id: 2}, {id: 3},
         {id: 4}, {id: 5}, {id: 6},

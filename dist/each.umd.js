@@ -127,16 +127,15 @@
     };
     const all = function(items, options) {
       return new Promise(function(resolve, reject) {
-        const isArray = Array.isArray(items);
         if(state.paused){
           state.defers.push({
             resolve: resolve,
             reject: reject,
-            items: isArray ? items : [items]
+            items: items
           });
           return
         }
-        if (isArray) {
+        if (Array.isArray(items)) {
           return Promise.all(
             items.map( item =>
               all(item, options)
