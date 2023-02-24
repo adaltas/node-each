@@ -162,7 +162,7 @@
       if (arguments.length === 1) {
         return options[arguments[0]];
       } else {
-        throw Error(`Invalid argument: \`get\` expect one or two arguments, got ${arguments.length}`);
+        throw Error(`EACH_GET_ARGUMENT_LENGTH: \`get\` expect one or two arguments, got ${arguments.length}`);
       }
     };
     scheduler.pause = function() {
