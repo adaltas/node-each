@@ -154,6 +154,9 @@ function index(...args) {
       return {...options};
     }else if (arguments.length === 1) {
       return options[arguments[0]];
+    }else if (arguments.length === 2) {
+      options[arguments[0]] = arguments[1];
+      return scheduler;
     } else {
       throw Error(`EACH_OPTIONS_ARGUMENT_LENGTH: \`options\` expect one or two arguments, got ${arguments.length}`);
     }

@@ -19,3 +19,8 @@ describe 'api.options', ->
   it '1 arg, get an options', ->
     each()
     .options('concurrency').should.equal 1
+  
+  it '2 args, set an options', ->
+    each()
+    .options('concurrency', 2)
+    .options('concurrency').should.equal 2
