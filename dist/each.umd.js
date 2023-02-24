@@ -91,7 +91,6 @@
             return;
           }
           if (state.closed) {
-            // items.splice(0, items.length)
             let item;
             while (item = stack.shift()) {
               item.resolve.call();
