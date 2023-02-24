@@ -13,3 +13,61 @@ describe 'api.normalize', ->
     eacher.resume()
     eacher.resume()
     await eacher.end()
+      
+  describe 'resolution', ->
+  
+    it 'resolve before resume', ->
+      eacher = each [
+        {id: 1}, {id: 2}, {id: 3},
+        {id: 4}, {id: 5}, {id: 6},
+        {id: 7}, {id: 8}, {id: 9}
+      ], 4, (item, index) ->
+        if item.id is 2
+          eacher.pause()
+          setTimeout ->
+            eacher.resume()
+          , 100
+      await eacher
+    
+    it 'resolve after resume', ->
+      eacher = each [
+        {id: 1}, {id: 2}, {id: 3},
+        {id: 4}, {id: 5}, {id: 6},
+        {id: 7}, {id: 8}, {id: 9}
+      ], 4, (item, index) ->
+        if item.id is 2
+          eacher.pause()
+          new Promise (resolve) ->
+            setTimeout ->
+              eacher.resume()
+              resolve()
+            , 100
+      await eacher
+        
+    it 'resolve after resume with multiple pause', ->
+      eacher = each [
+        {id: 1}, {id: 2}, {id: 3},
+        {id: 4}, {id: 5}, {id: 6},
+        {id: 7}, {id: 8}, {id: 9}
+      ], 4, (item, index, callback) ->
+        if item.id % 2 is 0
+          eacher.pause()
+          new Promise (resolve) ->
+            setTimeout ->
+              eacher.resume()
+              resolve()
+            , 10 * item.id
+      await eacher
+        
+    it 'resolve before resume with multiple pause', ->
+      eacher = each [
+        {id: 1}, {id: 2}, {id: 3},
+        {id: 4}, {id: 5}, {id: 6},
+        {id: 7}, {id: 8}, {id: 9}
+      ], 4, (item, index) ->
+        if item.id % 2 is 0
+          eacher.pause()
+          setTimeout ->
+            eacher.resume()
+          , 10 * item.id
+      await eacher
