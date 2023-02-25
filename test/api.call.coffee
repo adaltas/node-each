@@ -61,6 +61,29 @@ describe 'api.call', ->
           ]
         ]
       .should.be.resolvedWith [[1, 2, 3], [4, 5, 6]]
+  
+  describe 'error', ->
+    
+    it 'throw error', ->
+      scheduler = each()
+      scheduler.call -> 'ok'
+      scheduler.call -> throw Error 'catchme'
+      scheduler.call -> 'ok'
+      .should.be.rejectedWith 'catchme'
+    
+    it 'reject error in same tick', ->
+      scheduler = each()
+      scheduler.call -> 'ok'
+      scheduler.call -> new Promise (resolve, reject) -> reject Error 'catchme'
+      scheduler.call -> 'ok'
+      .should.be.rejectedWith 'catchme'
+    
+    it 'reject error in next tick', ->
+      scheduler = each()
+      scheduler.call -> 'ok'
+      scheduler.call -> new Promise (resolve, reject) -> setImmediate -> reject Error 'catchme'
+      scheduler.call -> 'ok'
+      .should.be.rejectedWith 'catchme'
     
 
     
