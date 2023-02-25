@@ -62,6 +62,50 @@ describe 'api.call', ->
         ]
       .should.be.resolvedWith [[1, 2, 3], [4, 5, 6]]
   
+  describe 'fluent', ->
+    
+    it 'return the last value', ->
+      each()
+      .call -> 1
+      .call -> 2
+      .call -> 3
+      .should.be.resolvedWith 3
+        
+    it 'return the last promise', ->
+      each()
+      .call -> new Promise (resolve) -> setImmediate -> resolve 1
+      .call -> new Promise (resolve) -> setImmediate -> resolve 2
+      .call -> new Promise (resolve) -> setImmediate -> resolve 3
+      .should.be.resolvedWith 3
+        
+    it 'return the first rejected error in strict mode', ->
+      each()
+      .call -> new Promise (resolve) -> setImmediate -> resolve 1
+      .call -> new Promise (resolve, reject) -> setImmediate -> reject 2
+      .call -> new Promise (resolve, reject) -> setImmediate -> reject 3
+      .should.be.rejectedWith 2
+        
+    it 'return the first thrown error in strict mode', ->
+      each()
+      .call -> new Promise (resolve) -> throw Error 1
+      .call -> new Promise (resolve, reject) -> throw Error 2
+      .call -> new Promise (resolve, reject) -> throw Error 3
+      .should.be.rejectedWith 2
+        
+    it 'return the last rejected error in relax mode', ->
+      each relax: true
+      .call -> new Promise (resolve) -> setImmediate -> resolve 1
+      .call -> new Promise (resolve, reject) -> setImmediate -> reject 2
+      .call -> new Promise (resolve, reject) -> setImmediate -> reject 3
+      .should.be.rejectedWith 3
+        
+    it 'return the last thrown error in relax mode', ->
+      each relax: true
+      .call -> new Promise (resolve) -> throw Error 1
+      .call -> new Promise (resolve, reject) -> throw Error 2
+      .call -> new Promise (resolve, reject) -> throw Error 3
+      .should.be.rejectedWith 3
+  
   describe 'error', ->
     
     it 'throw error', ->

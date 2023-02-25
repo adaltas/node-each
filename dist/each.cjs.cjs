@@ -145,49 +145,51 @@ function index() {
       }
     });
   };
-  const scheduler = all(items);
-  scheduler.options = function() {
-    if (arguments.length === 0) {
-      return {...options};
-    }else if (arguments.length === 1) {
-      return options[arguments[0]];
-    }else if (arguments.length === 2) {
-      options[arguments[0]] = arguments[1];
-      return scheduler;
-    } else {
-      throw Error(`EACH_OPTIONS_ARGUMENT_LENGTH: \`options\` expect one or two arguments, got ${arguments.length}`);
-    }
+  const wrap = (promise) => {
+    promise.options = function() {
+      if (arguments.length === 0) {
+        return {...options};
+      }else if (arguments.length === 1) {
+        return options[arguments[0]];
+      }else if (arguments.length === 2) {
+        options[arguments[0]] = arguments[1];
+        return promise;
+      } else {
+        throw Error(`EACH_OPTIONS_ARGUMENT_LENGTH: \`options\` expect one or two arguments, got ${arguments.length}`);
+      }
+    };
+    promise.pause = function() {
+      state.paused = true;
+      return promise;
+    };
+    promise.call = function(items) {
+      if (state.closed) {
+        throw Error('EACH_CLOSED: cannot schedule new items when closed.');
+      }
+      return wrap(all(items));
+    };
+    promise.end = function(error) {
+      const result = promise.resume();
+      state.closed = true;
+      if (error){
+        state.error = error;
+      }
+      return result;
+    };
+    promise.resume = function() {
+      state.paused = false;
+      const defers = state.defers;
+      state.defers = [];
+      internal.pump(); // Revive scheduled items if any
+      return Promise.all(
+        defers.map((defer) =>
+          all(defer.items).then(defer.resolve, defer.reject)
+        )
+      );
+    };
+    return promise;
   };
-  scheduler.pause = function() {
-    state.paused = true;
-    return scheduler;
-  };
-  scheduler.call = function(items) {
-    if (state.closed) {
-      throw Error('EACH_CLOSED: cannot schedule new items when closed.');
-    }
-    return all(items);
-  };
-  scheduler.end = function(error) {
-    const result = scheduler.resume();
-    state.closed = true;
-    if (error){
-      state.error = error;
-    }
-    return result;
-  };
-  scheduler.resume = function() {
-    state.paused = false;
-    const defers = state.defers;
-    state.defers = [];
-    internal.pump(); // Revive scheduled items if any
-    return Promise.all(
-      defers.map((defer) =>
-        all(defer.items).then(defer.resolve, defer.reject)
-      )
-    );
-  };
-  return scheduler;
+  return wrap(all(items));
 }
 
 module.exports = index;

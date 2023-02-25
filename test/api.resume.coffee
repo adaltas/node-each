@@ -1,7 +1,7 @@
 
 import each from '../lib/index.js'
 
-describe 'api.normalize', ->
+describe 'api.resume', ->
   
   it 'return a promise', ->
     each()
