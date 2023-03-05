@@ -61,32 +61,25 @@ const normalize = function(...args) {
 
 function index() {
   const {items, options} = normalize.apply(null, arguments);
-  const stack = [];
   const state = {
     defers: [],
     error: false,
     paused: options.pause,
     closed: false,
     running: 0,
-    count: -1
+    count: -1,
+    stack: [],
   };
   const internal = {
     pump: function() {
       setImmediate(async function() {
-        if (!stack.length) {
+        if (!state.stack.length) {
           return;
         }
         if (state.error && !options.relax) {
-          while (stack.length) {
-            const item = stack.shift();
+          while (state.stack.length) {
+            const item = state.stack.shift();
             item.reject.call(null, state.error);
-          }
-          return;
-        }
-        if (state.closed) {
-          while (stack.length !== 0) {
-            const item = stack.shift();
-            item.resolve.call();
           }
           return;
         }
@@ -96,8 +89,13 @@ function index() {
         if (options.concurrency > 0 && state.running === options.concurrency) {
           return;
         }
+        const item = state.stack.shift();
+        if (item.type === 'END') {
+          if(state.stack.length !== 0) console.error('INVALID_STATE');
+          item.resolve();
+          return;
+        }
         state.running++;
-        const item = stack.shift();
         try {
           state.count++;
           const result = options.handler
@@ -134,7 +132,8 @@ function index() {
           )
         ).then(resolve, reject);
       } else {
-        stack.push({
+        state.stack.push({
+          type: 'ITEM',
           handler: items,
           resolve: resolve,
           reject: reject,
@@ -157,6 +156,9 @@ function index() {
         throw Error(`EACH_OPTIONS_ARGUMENT_LENGTH: \`options\` expect one or two arguments, got ${arguments.length}`);
       }
     };
+    promise.state = function() {
+      return state;
+    };
     promise.pause = function() {
       state.paused = true;
       return promise;
@@ -167,12 +169,24 @@ function index() {
       }
       return wrap(all(items));
     };
-    promise.end = async function(error) {
+    promise.end = async function(options = {}) {
+      if(!is_object_literal(options) && typeof options === 'object'){
+        options = { error: options };
+      }
       state.paused = false;
       state.closed = true;
-      if (error){
-        state.error = error;
+      if (options.error){
+        state.error = options.error;
       }
+      // In force mode, unschedule all scheduled items
+      if (options.force) {
+        while (state.stack.length !== 0) {
+          const item = state.stack.shift();
+          item.resolve.call();
+        }
+        return;
+      }
+      // Free all defers items
       const defers = state.defers;
       state.defers = [];
       await Promise.all(
@@ -184,22 +198,23 @@ function index() {
           }
         })
       );
-      internal.pump(); // could be removed
       if (state.error){
         return Promise.reject(state.error);
       }
-      return Promise.resolve();
+      return new Promise(function(resolve, reject) {
+        state.stack.push({
+          type: 'END',
+          resolve: resolve,
+          reject: reject,
+        });
+        internal.pump();
+      });
     };
     promise.resume = async function() {
       state.paused = false;
       const defers = state.defers;
       state.defers = [];
       internal.pump(); // Revive scheduled items if any
-      // return Promise.all(
-      //   defers.map((defer) =>
-      //     all(defer.items).then(defer.resolve, defer.reject)
-      //   )
-      // );
       const prom = Promise.all(
         defers.map((defer) =>
           all(defer.items)
