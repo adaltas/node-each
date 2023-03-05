@@ -87,7 +87,6 @@ function index() {
             item.resolve.call();
           }
           return;
-          
         }
         if (state.paused) {
           return;
@@ -166,24 +165,52 @@ function index() {
       }
       return wrap(all(items));
     };
-    promise.end = function(error) {
-      const result = promise.resume();
+    promise.end = async function(error) {
+      state.paused = false;
       state.closed = true;
       if (error){
         state.error = error;
       }
-      return result;
+      const defers = state.defers;
+      state.defers = [];
+      await Promise.all(
+        defers.map((defer) => {
+          if (state.error) {
+            defer.reject(state.error);
+          } else {
+            defer.resolve(undefined);
+          }
+        })
+      );
+      internal.pump(); // could be removed
+      if (state.error){
+        return Promise.reject(state.error);
+      }
+      return Promise.resolve();
     };
-    promise.resume = function() {
+    promise.resume = async function() {
       state.paused = false;
       const defers = state.defers;
       state.defers = [];
       internal.pump(); // Revive scheduled items if any
-      return Promise.all(
+      // return Promise.all(
+      //   defers.map((defer) =>
+      //     all(defer.items).then(defer.resolve, defer.reject)
+      //   )
+      // );
+      const prom = Promise.all(
         defers.map((defer) =>
-          all(defer.items).then(defer.resolve, defer.reject)
+          all(defer.items)
+            .then((data) => {
+              defer.resolve(data);
+              return Promise.resolve(data);
+            }, (err) => {
+              defer.reject(err);
+              return Promise.reject(err);
+            })
         )
       );
+      return prom;
     };
     return promise;
   };

@@ -33,7 +33,7 @@ describe 'options.pause', ->
         resolve()
       , 50
   
-  it 'each resolves before call on resume', ->
+  it 'resume resolves scheduled item when paused', ->
     stack = []
     eacher = each pause: true
     eacher.call([1, 2]).then ->
@@ -43,20 +43,6 @@ describe 'options.pause', ->
     new Promise (resolve) ->
       setTimeout ->
         await eacher.resume()
-        stack.should.eql [1, 2]
-        resolve()
-      , 20
-  
-  it 'each resolves before call on end', ->
-    stack = []
-    eacher = each pause: true
-    eacher.call([1, 2]).then ->
-      stack.push 2
-    eacher.then ->
-      stack.push 1
-    new Promise (resolve) ->
-      setTimeout ->
-        await eacher.end()
         stack.should.eql [1, 2]
         resolve()
       , 20

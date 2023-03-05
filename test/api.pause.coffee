@@ -2,6 +2,19 @@
 import each from '../lib/index.js'
 
 describe 'api.pause', ->
+      
+  it 'call pause after initialisation does not resolve', ->
+    count = 0
+    scheduler = each ['a', 'b', 'c']
+    scheduler.pause()
+    scheduler.then (items) ->
+      count.should.eql 1
+      # Note, implementation might change
+      items.should.eql [undefined, undefined, undefined]
+    setTimeout ->
+      count++
+      scheduler.end()
+    , 50
   
   it 'timing', ->
     stack = []

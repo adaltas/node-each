@@ -69,12 +69,14 @@ Multiple items arrays are merged. Muliple options are merged as well.
 
 - `call`   
   Execute one or several items.
+- `end(error|options)`   
+  Close the scheduler. No further items is allowed to register with `call`. In such case, an error is thrown. It returns a promise which resolve once all previously scheduled items resolved. When `end` is called and each is in paused state, all paused items are resolved with `undefined` or an error if any.
 - `options`   
   Get all options with no argument, get a single option with one argument, and set the value of an option with two arguments.
 - `pause`   
   Pause the scheduling of new functions, see the throttling section.
 - `resume`   
-  Resume the scheduling of new functions, see the throttling section.
+  Resume the scheduling of new functions, see the throttling section. It returns a promise which resolve once all previously scheduled and paused items resolved.
 
 ## Iteration
 

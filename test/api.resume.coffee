@@ -14,9 +14,9 @@ describe 'api.resume', ->
     eacher.resume()
     await eacher.end()
   
-  describe 'resulution', ->
+  describe 'resolution', ->
     
-    it 'array resolve to an array', ->
+    it 'items resolve to an items', ->
       scheduler = each [1, 2, 3], pause: true
       promRoot = scheduler
       promCall = scheduler.call [4, 5, 6]
@@ -24,9 +24,9 @@ describe 'api.resume', ->
       result = await Promise.all [promRoot, promCall]
       result.should.eql [ [1, 2, 3], [4, 5, 6] ]
         
-    it 'scalar resolve to scalar', ->
+    it 'scalar item resolve to scalar item', ->
       # each only accept arrays at initialization
-      # but call accept scalar
+      # but call accept single items
       scheduler = each ['a'], pause: true
       promRoot = scheduler
       promCall = scheduler.call 'b'
@@ -91,3 +91,15 @@ describe 'api.resume', ->
             eacher.resume()
           , 10 * item.id
       await eacher
+  
+  describe 'error', ->
+    
+    it 'pass error while in pause', ->
+      stack = []
+      eacher = each pause: true
+      eacher.call -> new Promise (resolve) -> setImmediate resolve 'before'
+      eacher.call -> new Promise (resolve, reject) -> setImmediate reject new Error 'catchme'
+      eacher.call -> new Promise (resolve) -> setImmediate resolve 'after'
+      eacher.resume()
+      .should.be.rejectedWith 'catchme'
+      # await eacher.end()
