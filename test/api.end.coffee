@@ -110,6 +110,17 @@ describe 'api.end', ->
             resolve()
           .catch reject
         , 20
+    
+    it 'has no effect if each.relax is active', ->
+      scheduler = each [
+        new Promise (resolve) -> setTimeout (-> resolve 1), 10
+        new Promise (resolve) -> setTimeout (-> resolve 2), 100
+        new Promise (resolve) -> setTimeout (-> resolve 3), 100
+      ], relax: true
+      setTimeout (->
+        scheduler.end(new Error('closing'))
+      ), 20
+      scheduler.should.be.resolvedWith [ 1, 2, 3 ]
 
   describe 'state.pause', ->
 
