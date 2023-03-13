@@ -73,7 +73,7 @@ Multiple items arrays are merged. Muliple options are merged as well.
   Close the scheduler. No further items is allowed to register with `call`, or an error is thrown. It returns a promise which resolve once all previously scheduled items resolved. When `end` is called and each is in paused state, all paused items are resolved with `undefined` or an error if any.    
   Available options:
   - `error`   
-    Reject the returned promise and every registered items which is not yet executed with an error. In `relax` mode, only the returned promise is rejected with an error.
+    Reject the returned promise and every registered items which is not yet executed with an error. All scheduled items not yet executed are resolved with an error. In `relax` mode, only the promise returned by `end` is rejected with an error.
   - `force`   
     Skip the execution of registered items which are not yet scheduled for execution. The items resolve with undefined or the value associated with the error option.
 - `options`   

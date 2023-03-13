@@ -73,7 +73,7 @@ describe 'api.end', ->
   
   describe 'options.error', ->
           
-    it 'error is rejected by the promise', ->
+    it 'when new items are to be scheduled', ->
       scheduler = each [
         new Promise (resolve) -> setTimeout (-> resolve 1), 10
         new Promise (resolve) -> setTimeout (-> resolve 2), 100
@@ -83,6 +83,17 @@ describe 'api.end', ->
         scheduler.end(new Error('closing'))
       ), 20
       scheduler.should.be.rejectedWith 'closing'
+              
+    it 'when no new items are to be scheduled', ->
+      scheduler = each [
+        new Promise (resolve) -> setTimeout (-> resolve 1), 10
+        new Promise (resolve) -> setTimeout (-> resolve 2), 100
+        new Promise (resolve) -> setTimeout (-> resolve 3), 100
+      ]
+      setTimeout (->
+        scheduler.end(new Error('closing'))
+      ), 200
+      scheduler.should.be.resolvedWith [1, 2, 3]
             
     it 'cannot call push when closed with an error', ->
       scheduler = each()
@@ -91,25 +102,6 @@ describe 'api.end', ->
       (->
         scheduler.call () => 2
       ).should.throw 'EACH_CLOSED: cannot schedule new items when closed.'
-  
-    it 'pass error while in pause', ->
-      stack = []
-      eacher = each pause: true
-      eacher.call([1, 2]).then ->
-        stack.push 2
-      eacher.then ->
-        stack.push 1
-      new Promise (resolve, reject) ->
-        setTimeout ->
-          eacher.end new Error 'catch me'
-          .then ->
-            reject new Error 'oh no'
-          .catch (err) ->
-            err.message.should.eql 'catch me'
-            stack.should.eql []
-            resolve()
-          .catch reject
-        , 20
     
     it 'has no effect if each.relax is active', ->
       scheduler = each [
@@ -127,10 +119,10 @@ describe 'api.end', ->
     it 'end resolve as undefined if not error', ->
       stack = []
       eacher = each pause: true
-      eacher.call([1, 2]).then (value) ->
-        stack.push value
-      eacher.then (value) ->
-        stack.push value
+      eacher.call([1, 2])
+      .then (value) -> stack.push value
+      eacher
+      .then (value) -> stack.push value
       new Promise (resolve, reject) ->
         setTimeout ->
           try
@@ -141,22 +133,22 @@ describe 'api.end', ->
         , 20
     
     it 'end reject error when provided', ->
-      stack = []
+      stack = resolve: [], reject: []
       eacher = each pause: true
-      eacher.call([1, 2]).catch (err) ->
-        stack.push err
-      eacher.catch (err) ->
-        stack.push err
+      eacher.call([1, 2])
+      .then (value) -> stack.resolve.push value
+      .catch (err) -> stack.reject.push err.message
+      eacher
+      .then (value) -> stack.resolve.push value
+      .catch (err) -> stack.reject.push err.message
       new Promise (resolve, reject) ->
         setTimeout ->
           try
             await eacher.end Error 'catchme'
-            reject Error 'oh no'
+            reject Error 'ohno'
           catch err
             err.message.should.eql 'catchme'
-            stack.should.match [
-              Error 'catchme'
-              Error 'catchme'
-            ]
+            stack.resolve.should.eql []
+            stack.reject.should.match ['catchme', 'catchme']
             resolve()
         , 20

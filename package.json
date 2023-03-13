@@ -92,7 +92,7 @@
     "release:patch": "standard-version --release-as patch",
     "release:major": "standard-version --release-as major",
     "postrelease": "git push --follow-tags origin master",
-    "test": "mocha test/**/*.coffee"
+    "test": "mocha --node-flags '--unhandled-rejections=strict' test/**/*.coffee"
   },
   "type": "module"
 }
