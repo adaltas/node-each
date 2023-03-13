@@ -202,9 +202,6 @@
             }
           })
         );
-        if (state.error){
-          return Promise.reject(state.error);
-        }
         return new Promise(function(resolve, reject) {
           state.stack.push({
             type: 'END',
@@ -219,7 +216,7 @@
         const defers = state.defers;
         state.defers = [];
         internal.pump(); // Revive scheduled items if any
-        const prom = Promise.all(
+        const promise = Promise.all(
           defers.map((defer) =>
             all(defer.items)
               .then((data) => {
@@ -231,7 +228,7 @@
               })
           )
         );
-        return prom;
+        return promise;
       };
       return promise;
     };
