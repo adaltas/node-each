@@ -456,11 +456,10 @@ Tests are executed with [Mocha](https://mochajs.org/). To install it, simple run
 npm run test
 ```
 
-To automatically generate a new version:
+To automatically generate a new version and publish it:
 
 ```
 yarn run release
-git push --follow-tags origin master
 ```
 
 Package publication is handled by the CI/CD with GitHub action.
