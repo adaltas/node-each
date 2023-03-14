@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/adaltas/node-each/compare/v2.2.1...v2.3.0) (2023-03-14)
+
+
+### Features
+
+* end resolve schedule items unless force ([9e1533c](https://github.com/adaltas/node-each/commit/9e1533cc745e43a536662dfecde2ef77ab9f8501))
+* end with an error in relax mode ([cc781b4](https://github.com/adaltas/node-each/commit/cc781b411d18be26972254230ff95f12e3b0de6c))
+* get fluent api ([90f3d3a](https://github.com/adaltas/node-each/commit/90f3d3a3144d00cdd4a532eaf26736d381353653))
+* new api error function ([3743472](https://github.com/adaltas/node-each/commit/37434727699a4fa46c689463c6554d2514039388))
+* pause and resume return a promise ([960fc91](https://github.com/adaltas/node-each/commit/960fc91a17a17c256bac9c0dac3d0111f8f1ac02))
+* strict unhandled rejections mode ([6f8e542](https://github.com/adaltas/node-each/commit/6f8e5422efd6703096a85b19c1d09cba559d1b62))
+
+
+### Bug Fixes
+
+* move pinst to dev dependency ([3102fd0](https://github.com/adaltas/node-each/commit/3102fd014ffd0bc110189b25e6c4e074ea1bc611))
+
 ### [2.2.1](https://github.com/adaltas/node-each/compare/v2.2.0...v2.2.1) (2023-02-24)
 
 
