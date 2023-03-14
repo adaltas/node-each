@@ -79,13 +79,6 @@ function index() {
         if (!state.stack.length) {
           return;
         }
-        if (state.error && !options.relax) {
-          while (state.stack.length) {
-            const item = state.stack.shift();
-            item.reject.call(null, state.error);
-          }
-          return;
-        }
         if (state.paused) {
           return;
         }
@@ -95,7 +88,19 @@ function index() {
         const item = state.stack.shift();
         if (item.type === 'END') {
           if(state.stack.length !== 0) console.error('INVALID_STATE');
+          if(state.error && !options.relax){
+            item.reject(state.error);
+          }else {
+            item.resolve();
+          }
+          return;
+        } else if (item.type === 'ERROR') {
+          state.error = item.value;
           item.resolve();
+          return;
+        }
+        if (state.error && !options.relax) {
+          item.reject.call(null, state.error);
           return;
         }
         state.running++;
@@ -205,6 +210,19 @@ function index() {
             type: 'END',
             resolve: resolve,
             reject: reject,
+          });
+          internal.pump();
+        })
+      );
+    };
+    promise.error = function(error) {
+      return catcher(
+        new Promise(function(resolve, reject) {
+          state.stack.push({
+            type: 'ERROR',
+            resolve: resolve,
+            reject: reject,
+            value: error,
           });
           internal.pump();
         })

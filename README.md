@@ -76,6 +76,8 @@ Multiple items arrays are merged. Muliple options are merged as well.
     Reject the returned promise and every registered items which is not yet executed with an error. All scheduled items not yet executed are resolved with an error. In `relax` mode, only the promise returned by `end` is rejected with an error.
   - `force`   
     Skip the execution of registered items which are not yet scheduled for execution. The items resolve with undefined or the value associated with the error option.
+- `error(error|null)`   
+  Place the scheduler in an error state, all future registered items will be rejected. Use `null` to set the scheduler to a normal state. 
 - `options`   
   Get all options with no argument, get a single option with one argument, and set the value of an option with two arguments.
 - `pause`   
