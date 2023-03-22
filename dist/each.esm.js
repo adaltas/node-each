@@ -50,6 +50,11 @@ const normalize = function(...args) {
   } else if (options.flatten === false) {
     options.flatten = 0;
   }
+  if(options.fluent === null || options.fluent === undefined || options.fluent === true){
+    options.fluent = true;
+  }else if(options.fluent !== false){
+    throw Error(`Invalid argument: option fluent must be true or false.`);
+  }
   items = items.flat(options.flatten);
   return {
     items: items,
@@ -153,7 +158,10 @@ function index() {
       })
     );
   };
-  const wrap = (promise) => {
+  const wrap = (promise, fluent) => {
+    if (!fluent){
+      return promise;
+    }
     promise.options = function() {
       if (arguments.length === 0) {
         return {...options};
@@ -177,7 +185,7 @@ function index() {
       if (state.closed) {
         throw Error('EACH_CLOSED: cannot schedule new items when closed.');
       }
-      return wrap(all(items));
+      return wrap(all(items), options.fluent);
     };
     promise.end = function(opts = {}) {
       if(!is_object_literal(opts) && typeof opts === 'object'){
@@ -251,7 +259,7 @@ function index() {
     };
     return promise;
   };
-  return wrap(all(items));
+  return wrap(all(items), true);
 }
 
 export { index as default };

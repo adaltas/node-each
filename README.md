@@ -60,6 +60,8 @@ Multiple items arrays are merged. Muliple options are merged as well.
 
 - `concurrency` (default `1`)   
   An integer value defining the number of function executed in parallel or a boolean value. Value `false` is converted to `1` where functions are executed sequentially. Value `true` is converted to `-1` where all functions run simultaneously.
+- `fluent` (default `true`)
+  Expose a fluent API where function may be chained.
 - `pause` (default `false`)   
   Delay the execution of functions until `resume` is called.
 - `relax` (default `false`)   
@@ -68,7 +70,7 @@ Multiple items arrays are merged. Muliple options are merged as well.
 ## API
 
 - `call`   
-  Execute one or several items.
+  Execute one or several items and return a promise with the resolved value. Unless the `fluent` option is `false`, it is also possible to chain additionnal functions.
 - `end(error|options)`   
   Close the scheduler. No further items is allowed to register with `call`, or an error is thrown. It returns a promise which resolve once all previously scheduled items resolved. When `end` is called and each is in paused state, all paused items are resolved with `undefined` or an error if any.    
   Available options:
