@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/adaltas/node-each/compare/v2.3.0...v2.4.0) (2023-03-22)
+
+
+### Features
+
+* fluent option ([1bc3060](https://github.com/adaltas/node-each/commit/1bc3060e4eba111c3d0b508d4403c4c29e1c5ee0))
+
 ## [2.3.0](https://github.com/adaltas/node-each/compare/v2.2.1...v2.3.0) (2023-03-14)
 
 
