@@ -261,7 +261,7 @@ assert.deepStrictEqual(
 
 ### Parallel mode
 
-When the `concurrent` option is `true` or `-1`, items are all scheduled at the same time and [run in parralel](./samples/mode_parallel.js).
+When the `concurrent` option is `true` or `-1`, items are all scheduled at the same time and [run in parallel](./samples/mode_parallel.js).
 
 ```js
 let running = 0;
