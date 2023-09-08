@@ -123,15 +123,15 @@ Here a various way to [declare functions](./samples/iteration.functions.js):
 
 ```js
 const result = await each([
-  // A synchronous function
+  // Synchronous function
   function(){ return 'a'; },
-  // A synchronous function with the fat arrow syntax
+  // Synchronous function with the fat arrow syntax
   () => 'b',
-  // An asynchronous function
+  // Asynchronous function
   () => (
     new Promise((resolve) => resolve('c'))
   ),
-  // An asynchronous function which resolves after some delay
+  // Asynchronous function which resolves after some delay
   () => (
     new Promise((resolve) => setTimeout (() => resolve('d')), 100)
   ),
@@ -149,17 +149,19 @@ Promise are [waiting to be resolved](./samples/iteration.promise.js). When the c
 
 ```js
 const result = await each([
-  // A promise
+  // Instantly resolution
   new Promise((resolve) => resolve('a')),
-  // A promise which resolves after some delay
+  // Delayed resolution
   () => (
     new Promise((resolve) => setTimeout (() => resolve('b')), 100)
   ),
+  // Instantly resolution
+  new Promise((resolve) => resolve('c')),
 ]);
 
 assert.deepStrictEqual(
   result, 
-  ['a', 'b']
+  ['a', 'b', 'c']
 );
 ```
 
@@ -179,7 +181,7 @@ console.info(
 )
 ```
 
-A function which handles an item:
+A function handling an item:
 
 ```js
 console.info(
@@ -467,5 +469,6 @@ yarn run release
 Package publication is handled by the CI/CD with GitHub action.
 
 Note:
+
 - On release, both the publish and test workflows run in parallel. Not very happy about it but I haven't found a better way.
 - `yarn` does not call the "postrelease" script and `npm` fails if the `package-lock.json` file is present and git ignored.

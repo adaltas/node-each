@@ -3,15 +3,17 @@ import each from '../lib/index.js';
 import assert from 'assert';
 
 const result = await each([
-  // A promise
+  // Instantly resolution
   new Promise((resolve) => resolve('a')),
-  // A promise which resolves after some delay
+  // Delayed resolution
   () => (
     new Promise((resolve) => setTimeout (() => resolve('b')), 100)
   ),
+  // Instantly resolution
+  new Promise((resolve) => resolve('c')),
 ]);
 
 assert.deepStrictEqual(
   result, 
-  ['a', 'b']
+  ['a', 'b', 'c']
 );
