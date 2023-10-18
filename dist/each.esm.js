@@ -75,7 +75,7 @@ function index() {
     paused: options.pause,
     closed: false,
     running: 0,
-    count: -1,
+    count: 0,
     stack: [],
   };
   const internal = {
@@ -112,7 +112,7 @@ function index() {
         try {
           state.count++;
           const result = options.handler
-            ? await options.handler.call(null, item.handler, state.count)
+            ? await options.handler.call(null, item.handler, state.count-1)
             : typeof item.handler === 'function'
               ? await item.handler.call()
               : await item.handler;
