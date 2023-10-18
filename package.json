@@ -86,7 +86,7 @@
     "lint": "npm run lint:lib && npm run lint:samples",
     "lint:lib": "eslint --fix lib/*.js",
     "lint:samples": "eslint --fix samples/*.js",
-    "prerelease": "npm run build",
+    "prerelease": "npm run build && git update-index --refresh && git diff-index --quiet HEAD --",
     "release": "standard-version",
     "release:minor": "standard-version --release-as minor",
     "release:patch": "standard-version --release-as patch",
