@@ -402,6 +402,39 @@ try {
 }
 ```
 
+## Using the `fluent` option
+
+The `fluent` option apply when using the `each().call` function. By default, it is enabled. The API is designed to allow [multiple calls to be chained](./samples/options.fluent.true.js) where the value of the last call is returned:
+
+```js
+const result = await each()
+  .call(
+    () => new Promise((resolve) => resolve(1))
+  )
+  .call(
+    () => new Promise((resolve) => resolve(2))
+  )
+  .call(
+    () => new Promise((resolve) => resolve(3))
+  );
+
+assert.strictEqual(result, 3)
+```
+
+The returned promise is enriched with the same functions as the promise returned by `each()`, thus exposing the [`each` API](#api).
+
+Set the `fluent` option to `false` to [not overload the returned promise](./samples/options.fluent.false.js) with the each API:
+
+```js
+const promise = each({ fluent: false })
+  .call(
+    () => new Promise((resolve) => resolve(1))
+  );
+
+assert.strictEqual(promise.call, undefined);
+assert.strictEqual(promise.options, undefined);
+```
+
 ## Using the `relax` option
 
 When the `relax` option is active, the internal scheduler permit the registration of new items with `call` even after an error.
