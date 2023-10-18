@@ -435,6 +435,10 @@ assert.strictEqual(promise.call, undefined);
 assert.strictEqual(promise.options, undefined);
 ```
 
+## Using the `pause` option
+
+The `pause` set the initial mode of the scheduler. It is `false` by default. Setting the scheduler in pause mode implies calling `resume` to start the execution.
+
 ## Using the `relax` option
 
 When the `relax` option is active, the internal scheduler permit the registration of new items with `call` even after an error.
