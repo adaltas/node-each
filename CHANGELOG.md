@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0](https://github.com/adaltas/node-each/compare/v2.4.4...v2.5.0) (2023-12-16)
+
+
+### Features
+
+* support browser environments (see [#4](https://github.com/adaltas/node-each/issues/4)) ([ee14d7b](https://github.com/adaltas/node-each/commit/ee14d7b3f35b1b273d2eab26c7838ef4ac51e1af))
+
 ### [2.4.4](https://github.com/adaltas/node-each/compare/v2.4.3...v2.4.4) (2023-10-18)
 
 
