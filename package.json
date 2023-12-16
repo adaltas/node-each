@@ -1,6 +1,6 @@
 {
   "name": "each",
-  "description": "Chained and parallel async iterator in one elegant function",
+  "description": "Chained and parallel async iterator in one elegant function.",
   "version": "2.4.4",
   "author": "David Worms <david@adaltas.com> (https://www.adaltas.com)",
   "coffeelintConfig": {
@@ -55,10 +55,16 @@
   "homepage": "https://github.com/adaltas/node-each",
   "keywords": [
     "array",
+    "async",
     "asynchronous",
     "control flow",
     "each",
-    "object"
+    "object",
+    "promise",
+    "iteration",
+    "loop",
+    "backend",
+    "frontend"
   ],
   "license": "BSD-3-Clause",
   "main": "dist/each.cjs.cjs",
