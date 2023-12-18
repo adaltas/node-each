@@ -1,16 +1,16 @@
 
 ![Build Status](https://github.com/adaltas/node-each/actions/workflows/test.yml/badge.svg)
 
-Each is a single elegant function to iterate over values both in `sequential`, `parallel` and `concurrent` mode. It is a powerful and mature library.
+Each is a single elegant function to iterate over values both in `sequential`, `parallel`, and `concurrent` mode. It is a powerful and mature library.
 
 Main functionalities include:
 
-* User-defined concurrency level: sequential, parallel or custom
+* User-defined concurrency level: sequential, parallel, or custom
 * Iteration over a list of functions
 * Iteration over a list of promise
 * Iteration with any type of values handled by a user-defined function
 * Full promise support
-* ESM package distributed as CommonJS, ESM and UMD
+* ESM package distributed as CommonJS, ESM, and UMD
 * Full test coverage
 * Zero dependency
 
@@ -38,7 +38,7 @@ History:
 
 * Version 2 is a complete rewrite based on promise.
 * Version above 0.8.0 renamed then to next.
-* Versions above 0.2.x, changed arguments of the callback.
+* Versions above 0.2.x, changed the arguments of the callback.
 
 ## Initialisation
 
@@ -46,23 +46,23 @@ Signature is `each(...[items|options|concurrency|handler])`.
 
 All arguments are optional and can be defined in any order.
 
-Multiple items arrays are merged. Muliple options are merged as well.
+Multiple items (arrays) are merged. Muliple options (objects) are merged as well.
 
-- `items : array`   
-  An array containing any type of value. Functions are executed and may return a promise. Promise are waiting to be resolved. Any other type is returned as is or pass as an argument of the `handler` function.
-- `option : object`   
+- `items: array`   
+  An array containing any type of value. Functions are executed and may return a promise. Promise are waiting to be resolved. Any other type is returned as is or passed as an argument of the `handler` function.
+- `option: object`   
   An options object. See below for the list of supported options.
-- `concurrency : boolean | integer`   
+- `concurrency: boolean | integer`   
   A boolean or an integer value. Similar to setting the `concurrency` option property. Jump to the concurrency section below.
-- `handler : function`   
+- `handler: function`   
   A function which take each item as an argument.
 
 ## Options
 
 - `concurrency` (default `1`)   
-  An integer value defining the number of function executed in parallel or a boolean value. Value `false` is converted to `1` where functions are executed sequentially. Value `true` is converted to `-1` where all functions run simultaneously.
+  An integer value defining the number of functions executed in parallel or a boolean value. Value `false` is converted to `1` where functions are executed sequentially. The value `true` is converted to `-1` where all functions run simultaneously.
 - `fluent` (default `true`)
-  Expose a fluent API where function may be chained.
+  Expose a fluent API where the functions may be chained.
 - `pause` (default `false`)   
   Delay the execution of functions until `resume` is called.
 - `relax` (default `false`)   
@@ -71,14 +71,14 @@ Multiple items arrays are merged. Muliple options are merged as well.
 ## API
 
 - `call`   
-  Execute one or several items and return a promise with the resolved value. Unless the `fluent` option is `false`, it is also possible to chain additionnal functions.
+  Execute one or several items and return a promise with the resolved value. Unless the `fluent` option is `false`, it is also possible to chain additional functions.
 - `end(error|options)`   
-  Close the scheduler. No further items is allowed to register with `call`, or an error is thrown. It returns a promise which resolve once all previously scheduled items resolved. When `end` is called and each is in paused state, all paused items are resolved with `undefined` or an error if any.    
+  Close the scheduler. No further items are allowed to register with `call`, or an error is thrown. It returns a promise that resolves once all previously scheduled items are resolved. When `end` is called and each is in paused state, all paused items are resolved with `undefined` or an error if any.    
   Available options:
   - `error`   
-    Reject the returned promise and every registered items which is not yet executed with an error. All scheduled items not yet executed are resolved with an error. In `relax` mode, only the promise returned by `end` is rejected with an error.
+    Reject the returned promise and every registered item that is not yet executed with an error. All scheduled items not yet executed are resolved with an error. In `relax` mode, only the promise returned by `end` is rejected with an error.
   - `force`   
-    Skip the execution of registered items which are not yet scheduled for execution. The items resolve with undefined or the value associated with the error option.
+    Skip the execution of registered items that are not yet scheduled for execution. The items resolve with undefined or the value associated with the error option.
 - `error(error|null)`   
   Place the scheduler in an error state, all future registered items will be rejected. Use `null` to set the scheduler to a normal state. 
 - `options`   
@@ -86,15 +86,15 @@ Multiple items arrays are merged. Muliple options are merged as well.
 - `pause`   
   Pause the scheduling of new functions, see the throttling section.
 - `resume`   
-  Resume the scheduling of new functions, see the throttling section. It returns a promise which resolve once all previously scheduled and paused items resolved.
+  Resume the scheduling of new functions, see the throttling section. It returns a promise that resolves once all previously scheduled and paused items are resolved.
 
 ## Iteration
 
 ### Iteration with any type of values
 
-An other type is returned as is unless an handler function is defined.
+Another type is returned as is unless a handler function is defined.
 
-Each iterates over any type of items. If no handler is defined, functions and and promises get a special treatment. Functions are executed and may return a promise and promises are resolved.
+Each iterates over any type of item. If no handler is defined, functions and and promises get a special treatment. Functions are executed and may return a promise and promises are resolved.
 
 Here is a [quick example]('./samples/iteration.js'):
 
@@ -114,13 +114,13 @@ assert.deepStrictEqual(
 );
 ```
 
-Note, in the majority of cases, items arrays which does not contains function and promises are handled with an handler function.
+Note, in the majority of cases, items (arrays) which do not contain functions and promises are handled with a handler function.
 
 ### Iteration over a list of functions
 
-Function are executed. Each handles both synchronuous and asynchronuous functions. In the latter case, function returns a promise and Each wait for its resolution.
+Functions are executed. Each handles both synchronous and asynchronous functions. In the latter case, functions return a Promise and Each wait for their resolution.
 
-Here a various way to [declare functions](./samples/iteration.functions.js):
+Here are various ways to [declare functions](./samples/iteration.functions.js):
 
 ```js
 const result = await each([
@@ -146,7 +146,7 @@ assert.deepStrictEqual(
 
 ### Iteration over a list of promises
 
-Promise are [waiting to be resolved](./samples/iteration.promise.js). When the concurrency level is set to sequential (default), the behavior is similar to `Promise.all`.
+Promises are [waiting to be resolved](./samples/iteration.promise.js). When the concurrency level is set to sequential (default), the behavior is similar to `Promise.all`.
 
 ```js
 const result = await each([
@@ -190,7 +190,7 @@ console.info(
 )
 ```
 
-Handlers are called with the item as first argument and the index number as the second argument.
+Handlers are called with the item as the first argument and the index number as the second argument.
 
 Synchronous functions return a value. Asynchronous functions return a Promise.
 
@@ -209,7 +209,7 @@ assert.deepStrictEqual(
 );
 ```
 
-Here is a [asynchronous handler](./samples/handler.asynchronous.js) function:
+Here is an [asynchronous handler](./samples/handler.asynchronous.js) function:
 
 ```javascript
 const result = await each(
@@ -233,11 +233,11 @@ assert.deepStrictEqual(
 - `parallel`   
   Concurrency is `true` or `-1`. In asynchronous mode, all the items are executed in parallel.
 - `concurrent`   
-  Concurrency is a number. It defines the maximum number of function running in parallel at a given time.
+  Concurrency is a number. It defines the maximum number of functions running in parallel at a given time.
 
 ### Sequential mode (default)
 
-When the `concurrent` option is `undefined`, `false` or `1`, items are executed [in order one after the other](./samples/mode_concurrent.js).
+When the `concurrent` option is `undefined`, `false`, or `1`, items are executed [in order one after the other](./samples/mode_concurrent.js).
 
 ```js
 let running = 0;
@@ -292,7 +292,7 @@ assert.deepStrictEqual(
 
 ### Concurrent mode
 
-When the `concurrent` mode is a value above `1`, the number of items running simultaneously is [cap to the `concurrent` value](./samples/mode_concurrent.js).
+When the `concurrent` mode is a value above `1`, the number of items running simultaneously is [bounded to the `concurrent` value](./samples/mode_concurrent.js).
 
 ```js
 let running = 0;
@@ -325,7 +325,7 @@ assert.deepStrictEqual(
 
 Use `pause` and `resume` functions to throttle the iteration.
 
-The `pause` option define the initial status. Its value default to `false`.
+The `pause` option defines the initial status. Its value defaults to `false`.
 
 On pause, executed functions pursue their execution and no further function is
 scheduled for execution.
@@ -346,7 +346,7 @@ setTimeout(() => {
 }, 100);
 ```
 
-The `resume` and `end` methods return a promise which [resolves once all the element's executions complete](./samples/throttle.resume.js). This is an example with `resume`.
+The `resume` and `end` methods return a promise that [resolves once all the element's executions are complete](./samples/throttle.resume.js). This is an example using the `resume` function.
 
 ```js
 const stack = [];
@@ -381,9 +381,9 @@ The iteration is stopped on error.
 
 With synchronous functions or when the concurrency mode is sequential, it behaves like `Promise.all`. On error, no additionnal function is scheduled for execution and the returned promise is rejected.
 
-With asynchronous function executed concurrently, no additionnal functions are scheduled. Function which are already executed will resolve or reject their promise but the result is discarded.
+With asynchronous functions executed concurrently, no additional functions are scheduled. Already executed functions resolves or rejects their promise but the result is discarded.
 
-Wether the items array is provided at initialisation or with the `call` function, the behavior is the same:
+Whether the items array is provided at initialization or with the `call` function, the behavior is the same:
 
 ```js
 try {
@@ -405,7 +405,7 @@ try {
 
 ## Using the `fluent` option
 
-The `fluent` option apply when using the `each().call` function. By default, it is enabled. The API is designed to allow [multiple calls to be chained](./samples/options.fluent.true.js) where the value of the last call is returned:
+The `fluent` option applies when using the `each().call` function. By default, it is enabled. The API is designed to allow [multiple calls to be chained](./samples/options.fluent.true.js) where the value of the last call is returned:
 
 ```js
 const result = await each()
@@ -442,9 +442,9 @@ The `pause` set the initial mode of the scheduler. It is `false` by default. Set
 
 ## Using the `relax` option
 
-When the `relax` option is active, the internal scheduler permit the registration of new items with `call` even after an error.
+When the `relax` option is active, the internal scheduler permits the registration of new items with the `call` function even after an error.
 
-It doesn't affect the processing of an `items` list. An error while handling one of the item will prevent additionnal execution and reject its promise. What it does is to provide the ability to register and execute new items with `call`.
+It doesn't affect the processing of an `items` list. An error while handling one of the items prevents additionnal execution and rejects the items' promise. However, it provides the ability to register and execute new items with `call`.
 
 This is an example with the [default behavior](./samples/options.relax.false.js):
 
@@ -492,7 +492,7 @@ assert.deepStrictEqual(result, [
 
 ## Developers
 
-Tests are executed with [Mocha](https://mochajs.org/). To install it, simple run `npm install`, it will install the `mocha` package and its dependencies.
+Tests are executed with [Mocha](https://mochajs.org/). To install the `mocha` package and its dependencies, run `npm install`.
 
 ```bash
 npm run test
@@ -502,7 +502,7 @@ yarn run test
 
 To automatically generate a new version and publish it:
 
-```
+```bash
 yarn run release
 ```
 
