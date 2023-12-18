@@ -83,7 +83,7 @@
     return promise;
   };
 
-  const detach = typeof toto !== setImmediate ? setImmediate : setTimeout;
+  const detach = setImmediate !== undefined ? setImmediate : setTimeout;
 
   function index () {
     const { items, options } = normalize.apply(null, arguments);
