@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.5.1](https://github.com/adaltas/node-each/compare/v2.5.0...v2.5.1) (2023-12-18)
+
+
+### Bug Fixes
+
+* setImmediate discovery ([b9cfdee](https://github.com/adaltas/node-each/commit/b9cfdee924f01413cd559d5d3afc419cf99ba0fa))
+
 ## [2.5.0](https://github.com/adaltas/node-each/compare/v2.4.4...v2.5.0) (2023-12-16)
 
 
