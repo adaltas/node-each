@@ -10,6 +10,7 @@ Main functionalities include:
 * Iteration over a list of promise
 * Iteration with any type of values handled by a user-defined function
 * Full promise support
+* ESM package distributed as CommonJS, ESM and UMD
 * Full test coverage
 * Zero dependency
 
@@ -33,7 +34,7 @@ With CommonJS:
 const each = require('each');
 ```
 
-Notes:
+History:
 
 * Version 2 is a complete rewrite based on promise.
 * Version above 0.8.0 renamed then to next.
