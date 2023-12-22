@@ -73,7 +73,7 @@ Multiple items (arrays) are merged. Muliple options (objects) are merged as well
 - `call`   
   Execute one or several items and return a promise with the resolved value. Unless the `fluent` option is `false`, it is also possible to chain additional functions.
 - `end(error|options)`   
-  Close the scheduler. No further items are allowed to register with `call`, or an error is thrown. It returns a promise that resolves once all previously scheduled items are resolved. When `end` is called and each is in paused state, all paused items are resolved with `undefined` or an error if any.    
+  Close the scheduler. No further items are allowed to register with `call`, or the returned promise is rejected. It returns a promise that resolves once all previously scheduled items resolve. When `end` is called and the scheduler is in paused state, all paused items are resolved with `undefined` or an error if any.    
   Available options:
   - `error`   
     Reject the returned promise and every registered item that is not yet executed with an error. All scheduled items not yet executed are resolved with an error. In `relax` mode, only the promise returned by `end` is rejected with an error.
