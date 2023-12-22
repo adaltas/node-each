@@ -444,7 +444,8 @@ assert.deepStrictEqual(history, [
   "2:end",
 ]);
 ```
-## Using the `fluent` option
+
+## Option `fluent`
 
 The `fluent` option applies when using the `each().call` function. By default, it is enabled. The API is designed to allow [multiple calls to be chained](./samples/options.fluent.true.js) where the value of the last call is returned:
 
@@ -477,11 +478,11 @@ assert.strictEqual(promise.call, undefined);
 assert.strictEqual(promise.options, undefined);
 ```
 
-## Using the `pause` option
+## Option `pause`
 
 The `pause` set the initial mode of the scheduler. It is `false` by default. Setting the scheduler in pause mode implies calling `resume` to start the execution.
 
-## Using the `relax` option
+## Option `relax`
 
 When the `relax` option is active, the internal scheduler permits the registration of new items with the `call` function even after an error.
 
