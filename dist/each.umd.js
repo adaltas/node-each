@@ -277,7 +277,7 @@
       };
       promise.call = function (items) {
         if (state.closed) {
-          throw Error("EACH_CLOSED: cannot schedule new items when closed.");
+          return Promise.reject(Error("EACH_CLOSED: cannot schedule new items when closed."));
         }
         return wrap(all(items), options.fluent);
       };

@@ -51,9 +51,9 @@ describe 'api.end', ->
     scheduler = each()
     await scheduler.call () => 1
     scheduler.end()
-    (->
-      scheduler.call () => 2
-    ).should.throw 'EACH_CLOSED: cannot schedule new items when closed.'
+    scheduler
+    .call () => 2
+    .should.be.rejectedWith 'EACH_CLOSED: cannot schedule new items when closed.'
           
   it 'error in an item propaged to close', ->
     scheduler = each()
@@ -131,9 +131,9 @@ describe 'api.end', ->
       scheduler = each()
       await scheduler.call () => 1
       scheduler.end(new Error('closing'))
-      (->
-        scheduler.call () => 2
-      ).should.throw 'EACH_CLOSED: cannot schedule new items when closed.'
+      scheduler
+      .call () => 2
+      .should.be.rejectedWith 'EACH_CLOSED: cannot schedule new items when closed.'
     
     it 'has no effect if each.relax is active', ->
       scheduler = each [

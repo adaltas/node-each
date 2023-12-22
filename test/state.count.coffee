@@ -23,8 +23,6 @@ describe 'state.count', ->
       -> new Promise (resolve, reject) -> reject 2
       -> new Promise (resolve) -> resolve 3
     ]
-    try
-      await scheduler
-    catch err
+    await scheduler.catch(->)
     scheduler.state().count.should.eql 2
   
