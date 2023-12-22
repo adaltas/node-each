@@ -1,6 +1,5 @@
-
-import each from '../lib/index.js';
-import assert from 'assert';
+import assert from "assert";
+import each from "each";
 
 let running = 0;
 const result = await each(
