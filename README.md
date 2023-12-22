@@ -403,6 +403,47 @@ try {
 }
 ```
 
+## API `end`
+
+`end([error|options])`
+
+- `error` <Error>   
+  Reject the returned promise and every registered item that is not yet executed with an error. All scheduled items not yet executed are resolved with an error. In `relax` mode, only the promise returned by `end` is rejected with an error.
+- `force` <boolean>   
+  Skip the execution of registered items that are not yet scheduled for execution. The items resolve with undefined or the value associated with the error option.
+
+Close the scheduler. The returned promise waits for all previously scheduled items to resolve.
+
+No further items are allowed to register with `call`. In such case, the returned promise is rejected. When `end` is called and the scheduler is in paused state, all paused items are resolved with `undefined` or an error if any.
+
+This example wait for the completion of two scheduled items before completion.
+
+```js
+import assert from "assert";
+import each from "each";
+
+const history = [];
+const handler = (id) => {
+  return new Promise((resolve) =>
+    setTimeout(() => {
+      history.push(`${id}:end`);
+      resolve();
+    }, 20)
+  );
+};
+
+const scheduler = each(-1);
+// Schedule parallel execution
+scheduler.call(() => handler(1));
+scheduler.call(() => handler(2));
+// Wait for completion
+await scheduler.end();
+
+assert.deepStrictEqual(history, [
+  "1:end",
+  "2:end",
+]);
+```
 ## Using the `fluent` option
 
 The `fluent` option applies when using the `each().call` function. By default, it is enabled. The API is designed to allow [multiple calls to be chained](./samples/options.fluent.true.js) where the value of the last call is returned:
