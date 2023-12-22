@@ -70,19 +70,16 @@ Multiple items (arrays) are merged. Muliple options (objects) are merged as well
 
 ## API
 
-- `call`   
-  Execute one or several items and return a promise with the resolved value. Unless the `fluent` option is `false`, it is also possible to chain additional functions.
-- `end(error|options)`   
-  Close the scheduler. No further items are allowed to register with `call`, or the returned promise is rejected. It returns a promise that resolves once all previously scheduled items resolve. When `end` is called and the scheduler is in paused state, all paused items are resolved with `undefined` or an error if any.    
-  Available options:
-  - `error`   
-    Reject the returned promise and every registered item that is not yet executed with an error. All scheduled items not yet executed are resolved with an error. In `relax` mode, only the promise returned by `end` is rejected with an error.
-  - `force`   
-    Skip the execution of registered items that are not yet scheduled for execution. The items resolve with undefined or the value associated with the error option.
+- `call(handler)`   
+  Execute one or several items and return a promise with the resolved value(s). Unless the `fluent` option is `false`, it is also possible to chain additional functions.
+- `concurrency([level])`   
+  Change the number of items executed in parallel.
+- `end([error|options])`   
+  Close the scheduler and ensure no additionnal items is registered. The returned promise is resolved once all the scheduled items resolve.
 - `error(error|null)`   
   Place the scheduler in an error state, all future registered items will be rejected. Use `null` to set the scheduler to a normal state. 
 - `options`   
-  Get all options with no argument, get a single option with one argument, and set the value of an option with two arguments.
+  Return a promise with all options when no argument or with a single option value when one argument. When two arguments are provide as key and value, the promise is resolved when the value is effective.
 - `pause`   
   Pause the scheduling of new functions, see the throttling section.
 - `resume`   
@@ -401,6 +398,60 @@ try {
 } catch(error) {
   assert.equal(error.message, 'Catchme')
 }
+```
+
+## API `concurrency`
+
+`concurrency([level])`
+
+- `level` <integer|boolean>   
+  New concurrency value
+
+It defines the number of items to be executed in parallel. The new level takes effect for all new scheduled items. Previously scheduled items are unaffected.
+
+Calling the `concurrency` function change the number of items executed in parrallel. Previously scheduled items are not affected. Only the items scheduled after calling the `concurrency` function will honor the new value.
+
+This example [change the `concurrency` level](./samples/api.concurrency.js). The first 3 items are executed in parallel and the next 3 items are executed sequentially.
+
+```js
+import assert from "assert";
+import each from "each";
+
+const history = [];
+const handler = (id) => {
+  history.push(`${id}:start`);
+  return new Promise((resolve) =>
+    setTimeout(() => {
+      history.push(`${id}:end`);
+      resolve();
+    }, 20)
+  );
+};
+
+const scheduler = each(-1);
+// Schedule parallel execution
+scheduler.call(() => handler(1));
+scheduler.call(() => handler(2));
+// Change the concurrency level
+scheduler.concurrency(1);
+// Schedule sequential execution
+scheduler.call(() => handler(4));
+scheduler.call(() => handler(5));
+// Wait for completion
+await scheduler.end();
+
+assert.deepStrictEqual(history, [
+  // Parallel execution
+  "1:start",
+  "2:start",
+  "1:end",
+  "2:end",
+  // Sequential execution
+  "4:start",
+  "4:end",
+  "5:start",
+  "5:end",
+]);
 ```
 
 ## API `end`

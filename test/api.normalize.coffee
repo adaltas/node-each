@@ -17,11 +17,11 @@ describe 'api.normalize', ->
     result.should.eql [1,2,3,4,5,6]
       
   it 'multi args, merge options', ->
-    eacher = each(2, {pause: true}, (->), relax: true)
-    eacher.options('concurrency').should.eql 2
-    eacher.options('pause').should.eql true
-    eacher.options('handler').should.eql (->)
-    eacher.options('relax').should.eql true
+    eacher = each(2, (->), relax: true)
+    await eacher.options('concurrency').should.be.resolvedWith 2
+    await eacher.options('pause').should.be.resolvedWith false
+    await eacher.options('handler').should.be.resolvedWith (->)
+    await eacher.options('relax').should.be.resolvedWith true
   
   it '1 arg, accept `items` argument', ->
     await each []
@@ -29,58 +29,60 @@ describe 'api.normalize', ->
   it '1 arg, accept `option` argument', ->
     await (->
       e = each true
-      e.options('concurrency').should.eql -1
+      e.options('concurrency').should.be.resolvedWith -1
       await e
     )()
     await (->
       e = each 2
-      e.options('concurrency').should.eql 2
+      e.options('concurrency').should.be.resolvedWith 2
       await e
     )()
       
   it '2 args, accept `items, concurrency` argument', ->
     await (->
       e = each [], true
-      e.options('concurrency').should.eql -1
+      e.options('concurrency').should.be.resolvedWith -1
       await e
     )()
     await (->
       e = each [], 2
-      e.options('concurrency').should.eql 2
+      e.options('concurrency').should.be.resolvedWith 2
       await e
     )()
       
   it '2 args, accept `items, handler` argument', ->
-    await (->
-      e = each [], (-> 1)
-      e.options('handler')().should.eql 1
-      await e
-    )()
+    each [], (-> 42)
+    .options('handler').then (handler) ->
+      handler().should.equal 42
       
   it '3 args, accept `items, concurrency, handler` argument', ->
     await (->
-      e = each [], true, (-> 1)
-      e.options('concurrency').should.eql -1
-      e.options('handler')().should.eql 1
+      e = each [], true, (-> 42)
+      await e.options('concurrency').should.be.resolvedWith -1
+      await e.options('handler').then (handler) ->
+        handler().should.equal 42
       await e
     )()
     await (->
-      e = each [], 2, (-> 1)
-      e.options('concurrency').should.eql 2
-      e.options('handler')().should.eql 1
+      e = each [], 2, (-> 42)
+      await e.options('concurrency').should.be.resolvedWith 2
+      await e.options('handler').then (handler) ->
+        handler().should.equal 42
       await e
     )()
       
   it '3 args, accept `items, handler, concurrency` argument', ->
     await (->
-      e = each [], (-> 1), true
-      e.options('handler')().should.eql 1
-      e.options('concurrency').should.eql -1
+      e = each [], (-> 42), true
+      await e.options('concurrency').should.be.resolvedWith -1
+      await e.options('handler').then (handler) ->
+        handler().should.equal 42
       await e
     )()
     await (->
-      e = each [], (-> 1), 2
-      e.options('handler')().should.eql 1
-      e.options('concurrency').should.eql 2
+      e = each [], (-> 42), 2
+      await e.options('concurrency').should.be.resolvedWith 2
+      await e.options('handler').then (handler) ->
+        handler().should.equal 42
       await e
     )()

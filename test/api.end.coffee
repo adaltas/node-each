@@ -2,6 +2,38 @@
 import each from '../lib/index.js'
 
 describe 'api.end', ->
+  
+  it 'wait for running items before resolution', ->
+    stack = []
+    handler = (id) ->
+      stack.push "#{id}:start"
+      new Promise (resolve) ->
+        setTimeout ->
+          stack.push "#{id}:end"
+          resolve()
+        , 20
+    n = each(-1)
+    n.call -> handler 1
+    n.call -> handler 2 
+    n.call -> handler 3
+    n.concurrency 1
+    n.call -> handler 4
+    n.call -> handler 5 
+    n.call -> handler 6
+    n.concurrency -1
+    n.call -> handler 7
+    n.call -> handler 8 
+    n.call -> handler 9
+    await n.end()
+    stack.should.eql [
+      '1:start', '2:start', '3:start'
+      '1:end', '2:end', '3:end'
+      '4:start', '4:end'
+      '5:start', '5:end'
+      '6:start', '6:end'
+      '7:start', '8:start', '9:start'
+      '7:end', '8:end', '9:end'
+    ]
           
   it 'scheduled items are handled and root is resolved', ->
     scheduler = each [

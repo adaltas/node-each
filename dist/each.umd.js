@@ -92,40 +92,63 @@
       error: false,
       paused: options.pause,
       closed: false,
+      concurrency: options.concurrency,
       running: 0,
       count: 0,
       stack: [],
+      stack_running: [],
+      close_item: undefined,
     };
     const internal = {
       pump: function () {
         detach(async function () {
+          if (state.closed && state.close_item && state.stack_running.length === 0) {
+            if (state.error && !options.relax) {
+              state.close_item.reject(state.error);
+            } else {
+              state.close_item.resolve();
+            }
+            return;
+          }
           if (!state.stack.length) {
             return;
           }
           if (state.paused) {
             return;
           }
-          if (options.concurrency > 0 && state.running === options.concurrency) {
+          if (state.concurrency > 0 && state.running >= state.concurrency) {
             return;
           }
           const item = state.stack.shift();
           if (item.type === "END") {
-            if (state.stack.length !== 0) console.error("INVALID_STATE");
-            if (state.error && !options.relax) {
-              item.reject(state.error);
-            } else {
-              item.resolve();
-            }
+            // Place the item on the side to ensure that running item are completed.
+            state.close_item = item;
+            internal.pump();
             return;
           } else if (item.type === "ERROR") {
             state.error = item.value;
             item.resolve();
+            return;
+          } else if (item.type === "CONCURRENCY") {
+            if (item.value !== undefined) {
+              state.concurrency = item.value;
+              item.resolve(state.concurrency);
+            } else {
+              item.resolve(state.concurrency);
+            }
+            // Pump the necessary amount of item between the number of running
+            // items and the targeted possible concurrency level.
+            const repeat = state.concurrency === -1 ? state.stack.length : state.concurrency - state.running;
+            for(let i = 0; i < repeat; i++){
+              internal.pump();
+            }
             return;
           }
           if (state.error && !options.relax) {
             item.reject.call(null, state.error);
             return;
           }
+          state.stack_running.push(item);
           state.running++;
           try {
             state.count++;
@@ -134,10 +157,14 @@
               : typeof item.handler === "function"
                 ? await item.handler.call()
                 : await item.handler;
+            const position = state.stack_running.map(i => i === item ? i : -1).filter(i => i !== -1);
+            state.stack_running.splice(position, 1);
             state.running--;
             item.resolve.call(null, result);
             internal.pump();
           } catch (error) {
+            const position = state.stack_running.map(i => i === item ? i : -1).filter(i => i !== -1);
+            state.stack_running.splice(position, 1);
             state.running--;
             state.error = error;
             item.reject.call(null, error);
@@ -146,7 +173,7 @@
         });
       },
     };
-    const all = function (items, options) {
+    const all = function (items) {
       return catcher(
         new Promise(function (resolve, reject) {
           if (state.paused) {
@@ -158,7 +185,7 @@
             return;
           }
           if (Array.isArray(items)) {
-            Promise.all(items.map((item) => all(item, options))).then(
+            Promise.all(items.map((item) => all(item))).then(
               resolve,
               reject
             );
@@ -179,17 +206,65 @@
       if (!fluent) {
         return promise;
       }
+      promise.concurrency = function () {
+        if (arguments.length === 0) {
+          return wrap(
+            new Promise(function (resolve, reject) {
+              state.stack.push({
+                type: "CONCURRENCY",
+                value: undefined,
+                resolve: resolve,
+                reject: reject,
+              });
+              internal.pump();
+            }),
+            options.fluent
+          );
+        } else if (arguments.length === 1) {
+          const [value] = arguments;
+          return wrap(
+            new Promise(function (resolve, reject) {
+              state.stack.push({
+                type: "CONCURRENCY",
+                value: value,
+                resolve: resolve,
+                reject: reject,
+              });
+              internal.pump();
+            }),
+            options.fluent
+          );
+        } else {
+          Promise.reject(
+            Error(
+              `EACH_CONCURRENCY_ARGUMENT_LENGTH: \`concurrency\` expect zero or one argument, got ${arguments.length}.`
+            )
+          );
+        }
+      };
       promise.options = function () {
         if (arguments.length === 0) {
           return { ...options };
         } else if (arguments.length === 1) {
-          return options[arguments[0]];
+          const [key] = arguments;
+          if (key === "concurrency") {
+            return promise.concurrency();
+          } else {
+            return Promise.resolve(options[arguments[0]]);
+          }
         } else if (arguments.length === 2) {
-          options[arguments[0]] = arguments[1];
-          return promise;
+          const [key, value] = arguments;
+          if (key === "concurrency") {
+            return promise.concurrency(value);
+          } else {
+            options[arguments[0]] = arguments[1];
+            return promise;
+          }
         } else {
-          throw Error(
-            `EACH_OPTIONS_ARGUMENT_LENGTH: \`options\` expect one or two arguments, got ${arguments.length}`
+          return Promise.reject(
+            Error(
+              `EACH_OPTIONS_ARGUMENT_LENGTH: \`options\` expect one or two arguments, got ${arguments.length}.`
+            )
           );
         }
       };
