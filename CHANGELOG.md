@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.0](https://github.com/adaltas/node-each/compare/v2.5.2...v2.6.0) (2023-12-22)
+
+
+### Features
+
+* concurrency api function ([f128991](https://github.com/adaltas/node-each/commit/f128991d65ff179fe4eafdaf61a394d8a05295e5))
+
+
+### Bug Fixes
+
+* call resolve on closed error ([574a79e](https://github.com/adaltas/node-each/commit/574a79e523a22cd4aa37d22e7eaf6d8bf81da143))
+* wait for running items before end resolution ([f2212fe](https://github.com/adaltas/node-each/commit/f2212fe6c0428dbcf8e29d014458638414c6ceb2))
+
 ### [2.5.2](https://github.com/adaltas/node-each/compare/v2.5.1...v2.5.2) (2023-12-18)
 
 ### [2.5.1](https://github.com/adaltas/node-each/compare/v2.5.0...v2.5.1) (2023-12-18)
