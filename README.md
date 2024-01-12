@@ -147,24 +147,19 @@ assert.deepStrictEqual(
 
 ### Iteration over a list of promises
 
-Promises are [waiting to be resolved](./samples/iteration.promise.js). When the concurrency level is set to sequential (option `concurrency` equals `1`, default), the behavior is similar to `Promise.all`.
+Each wait for all promises to be resolved before returning their result. Just like with `Promise.all`, [result orders respect registration orders](./samples/iteration.promise.js).
 
 ```js
 const result = await each([
-  // Instantly resolution
-  new Promise((resolve) => resolve('a')),
+  // Instant resolution
+  new Promise((resolve) => resolve("a")),
   // Delayed resolution
-  () => (
-    new Promise((resolve) => setTimeout (() => resolve('b')), 100)
-  ),
-  // Instantly resolution
-  new Promise((resolve) => resolve('c')),
+  new Promise((resolve) => setTimeout(() => resolve("b")), 100),
+  // Instant resolution
+  new Promise((resolve) => resolve("c")),
 ]);
 
-assert.deepStrictEqual(
-  result, 
-  ['a', 'b', 'c']
-);
+assert.deepStrictEqual(result, ["a", "b", "c"]);
 ```
 
 ### Resolution order

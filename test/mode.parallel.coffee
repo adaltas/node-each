@@ -2,6 +2,40 @@
 import each from '../lib/index.js'
 
 describe 'mode.concurrent', ->
+
+  it 'list of functions', ->
+    stacks = start: [], end: []
+    item = (index, timeout) -> ->
+      stacks.start.push(index)
+      new Promise (resolve) -> setTimeout ->
+        stacks.end.push(index) and resolve(index)
+      , timeout
+    result = await each [
+      item(1, 20)
+      item(2, 40)
+      item(3, 10)
+    ], true
+    result.should.eql [1, 2, 3]
+    stacks.start.should.eql [1, 2, 3]
+    stacks.end.should.eql [3, 1, 2]
+
+  it 'ordered like Promise.all', ->
+    item = (index, timeout) ->
+      new Promise (resolve) -> setTimeout ->
+        resolve(index)
+      , timeout
+    result = 
+      each: await each [
+        item(1, 20)
+        item(2, 40)
+        item(3, 10)
+      ], true
+      all: await Promise.all [
+        item(1, 20)
+        item(2, 40)
+        item(3, 10)
+      ]
+    result.each.should.eql result.all
   
   it 'promise handler with multiple items', ->
     count = 0
