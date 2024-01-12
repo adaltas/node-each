@@ -1,6 +1,8 @@
 
 ![Build Status](https://github.com/adaltas/node-each/actions/workflows/test.yml/badge.svg)
 
+## About
+
 Each is a single elegant function to iterate over values both in `sequential`, `parallel`, and `concurrent` mode. It is a powerful and mature library.
 
 Main functionalities include:
@@ -14,7 +16,7 @@ Main functionalities include:
 * Full test coverage
 * Zero dependency
 
-## Usage
+## Getting started
 
 Use your favorite package manager to install the `each` package:
 
@@ -40,7 +42,9 @@ History:
 * Version above 0.8.0 renamed then to next.
 * Versions above 0.2.x, changed the arguments of the callback.
 
-## Initialisation
+## Usage
+
+### Initialisation
 
 Signature is `each(...[items|options|concurrency|handler])`.
 
@@ -57,7 +61,7 @@ Multiple items (arrays) are merged. Muliple options (objects) are merged as well
 - `handler: function`   
   A function which take each item as an argument.
 
-## Options
+### Options
 
 - `concurrency` (default `1`)   
   An integer value defining the number of functions executed in parallel or a boolean value. Value `false` is converted to `1` where functions are executed sequentially. The value `true` is converted to `-1` where all functions run simultaneously.
@@ -68,7 +72,7 @@ Multiple items (arrays) are merged. Muliple options (objects) are merged as well
 - `relax` (default `false`)   
   Keep scheduling new functions when `call` is further executed.
 
-## API
+### Functions
 
 - `call(handler)`   
   Execute one or several items and return a promise with the resolved value(s). Unless the `fluent` option is `false`, it is also possible to chain additional functions.
@@ -143,7 +147,7 @@ assert.deepStrictEqual(
 
 ### Iteration over a list of promises
 
-Promises are [waiting to be resolved](./samples/iteration.promise.js). When the concurrency level is set to sequential (default), the behavior is similar to `Promise.all`.
+Promises are [waiting to be resolved](./samples/iteration.promise.js). When the concurrency level is set to sequential (option `concurrency` equals `1`, default), the behavior is similar to `Promise.all`.
 
 ```js
 const result = await each([
@@ -163,7 +167,7 @@ assert.deepStrictEqual(
 );
 ```
 
-## Resolution order
+### Resolution order
 
 Output order is consistent with input order. The value returned by a function or resolved by a promise is always returned in the same position as it was originally defined.
 
@@ -374,7 +378,7 @@ setTimeout(async () => {
 
 ## Dealing with errors
 
-The iteration is stopped on error.
+Iterations are stopped on error.
 
 With synchronous functions or when the concurrency mode is sequential, it behaves like `Promise.all`. On error, no additionnal function is scheduled for execution and the returned promise is rejected.
 
