@@ -18,6 +18,8 @@ Main functionalities include:
 
 ## Getting started
 
+### Installation
+
 Use your favorite package manager to install the `each` package:
 
 ```bash
@@ -36,11 +38,60 @@ With CommonJS:
 const each = require('each');
 ```
 
-History:
+### Simple example
 
-* Version 2 is a complete rewrite based on promise.
-* Version above 0.8.0 renamed then to next.
-* Versions above 0.2.x, changed the arguments of the callback.
+In its simplest form, Each is used as a single function, a bit like `Promise.all` or `Promise.allSettled` but, arguably, with more flexibility and easier to read.
+
+This example defines list 3 items to process along the concurrency level and a [function hander](./docs/example.simple.handler.js) as it last argument:
+
+```js
+const stack = [];
+const result = await each(
+  [
+    { message: "Is", timeout: 30},
+    { message: "Gollum", timeout: 20},
+    { message: "Around", timeout: 10},
+  ],
+  { concurrency: true },
+  ({message, timeout}) =>
+    new Promise((resolve) =>
+      setTimeout(() => stack.push(message) && resolve(message), timeout)
+    )
+);
+
+assert.equal(result.join(" "), "Is Gollum Around");
+assert.equal(stack.join(" "), "Around Gollum Is");
+```
+
+It is equivalent to passing [items as functions](./docs/example.simple.items.js) without a function handler and with the concurrency level defined as `true`.
+
+```js
+const stack = [];
+const result = await each(
+  [
+    () =>
+      new Promise((resolve) => {
+        setTimeout(() => stack.push("Is") && resolve("Is"), 30);
+      }),
+    () =>
+      new Promise((resolve) => {
+        setTimeout(() => stack.push("Gollum") && resolve("Gollum"), 20);
+      }),
+    () =>
+      new Promise((resolve) => {
+        setTimeout(() => stack.push("Around") && resolve("Around"), 10);
+      }),
+  ],
+  true
+);
+
+assert.equal(result.join(" "), "Is Gollum Around");
+assert.equal(stack.join(" "), "Around Gollum Is");
+```
+
+## Advanced usage
+
+In its advanced form, Each behave like a scheduler with a few functions used to register new items to schedule and to control the execution process.
 
 ## Usage
 
@@ -599,3 +650,9 @@ yarn run release
 ```
 
 Package publication is handled by the CI/CD with GitHub action.
+
+## History
+
+* Version 2 is a complete rewrite based on promise.
+* Version above 0.8.0 renamed then to next.
+* Versions above 0.2.x, changed the arguments of the callback.
