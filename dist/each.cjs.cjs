@@ -16,7 +16,7 @@ const is_object_literal = function (obj) {
   }
 };
 
-const normalize = function (...args) {
+const normalize = function (args) {
   let items = [];
   let options = {
     concurrency: 1,
@@ -38,7 +38,7 @@ const normalize = function (...args) {
     } else if (typeof arg === "boolean") {
       options = {
         ...options,
-        concurrency: arg === true ? -1 : 1,
+        concurrency: arg,
       };
     } else if (typeof arg === "number") {
       options = {
@@ -52,6 +52,13 @@ const normalize = function (...args) {
         )}`
       );
     }
+  }
+  if (options.concurrency === true) {
+    options.concurrency = -1;
+  } else if (options.concurrency === false) {
+    options.concurrency = 1;
+  } else if (typeof options.concurrency !== 'number') {
+    throw Error(`Invalid argument: option concurrency must be a boolean or a number.`);
   }
   if (options.flatten === true) {
     options.flatten = Infinity;
@@ -81,8 +88,8 @@ const catcher = (promise) => {
 
 const detach = setImmediate !== undefined ? setImmediate : setTimeout;
 
-function index () {
-  const { items, options } = normalize.apply(null, arguments);
+function index (...args) {
+  const { items, options } = normalize(args);
   const state = {
     defers: [],
     error: false,
