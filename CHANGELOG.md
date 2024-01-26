@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.7.0](https://github.com/adaltas/node-each/compare/v2.6.0...v2.7.0) (2024-01-26)
+
+
+### Features
+
+* concurrency option validaiton ([be1fb3e](https://github.com/adaltas/node-each/commit/be1fb3ebab0c8492554ad60f3d65407826f107c6))
+
 ## [2.6.0](https://github.com/adaltas/node-each/compare/v2.5.2...v2.6.0) (2023-12-22)
 
 
