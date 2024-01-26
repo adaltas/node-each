@@ -91,7 +91,25 @@ assert.equal(stack.join(" "), "Around Gollum Is");
 
 ## Advanced usage
 
-In its advanced form, Each behave like a scheduler with a few functions used to register new items to schedule and to control the execution process.
+In its advanced form, Each is a scheduler with advanced functionalities to control the execution process.
+
+```js
+const scheduler = each({ concurrency: true });
+const result = await Promise.all([
+  scheduler.call([
+    () => new Promise((resolve) => resolve(1)),
+    () => new Promise((resolve) => resolve(2)),
+  ]),
+  scheduler.call([
+    () => new Promise((resolve) => resolve(3)),
+    () => new Promise((resolve) => resolve(4)),
+  ]),
+]);
+assert.deepStrictEqual(result, [
+  [1, 2],
+  [3, 4],
+]);
+```
 
 ## Usage
 
@@ -141,6 +159,10 @@ Multiple items (arrays) are merged. Muliple options (objects) are merged as well
   Resume the scheduling of new functions, see the throttling section. It returns a promise that resolves once all previously scheduled and paused items are resolved.
 
 ## Iteration
+
+### Resolution order
+
+Output order is consistent with input order. The value returned by a function or resolved by a promise is always returned in the same position as it was originally defined.
 
 ### Iteration with any type of values
 
@@ -212,10 +234,6 @@ const result = await each([
 
 assert.deepStrictEqual(result, ["a", "b", "c"]);
 ```
-
-### Resolution order
-
-Output order is consistent with input order. The value returned by a function or resolved by a promise is always returned in the same position as it was originally defined.
 
 ## Synchronous and asynchronous functions
 
