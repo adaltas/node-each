@@ -3,19 +3,6 @@
   "description": "Chained and parallel async iterator in one elegant function.",
   "version": "2.7.0",
   "author": "David Worms <david@adaltas.com> (https://www.adaltas.com)",
-  "coffeelintConfig": {
-    "indentation": {
-      "level": "error",
-      "value": 2
-    },
-    "line_endings": {
-      "level": "error",
-      "value": "unix"
-    },
-    "max_line_length": {
-      "level": "ignore"
-    }
-  },
   "contributors": [
     {
       "name": "David Worms",
@@ -27,7 +14,6 @@
     "@commitlint/config-conventional": "^19.5.0",
     "@eslint/core": "^0.8.0",
     "@eslint/js": "^9.14.0",
-    "coffeescript": "2.7.0",
     "eslint": "^9.14.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-mocha": "^10.5.0",
@@ -80,7 +66,6 @@
   "module": "dist/each.esm.js",
   "mocha": {
     "inline-diffs": true,
-    "loader": "./test/loaders/coffee.js",
     "recursive": true,
     "reporter": "spec",
     "require": [
@@ -107,7 +92,7 @@
     "release:patch": "standard-version --release-as patch",
     "release:major": "standard-version --release-as major",
     "postrelease": "git push --follow-tags origin master",
-    "test": "mocha --node-flags '--unhandled-rejections=strict' test/**/*.coffee"
+    "test": "mocha --node-flags '--unhandled-rejections=strict' test/*.js"
   },
   "type": "module"
 }
