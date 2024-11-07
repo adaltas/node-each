@@ -8,7 +8,7 @@ const handler = (id) => {
     setTimeout(() => {
       history.push(`${id}:end`);
       resolve();
-    }, 20)
+    }, 20),
   );
 };
 

@@ -7,7 +7,7 @@ const handler = (id) => {
     setTimeout(() => {
       history.push(`${id}:end`);
       resolve();
-    }, 20)
+    }, 20),
   );
 };
 
@@ -18,7 +18,4 @@ scheduler.call(() => handler(2));
 // Wait for completion
 await scheduler.end();
 
-assert.deepStrictEqual(history, [
-  "1:end",
-  "2:end",
-]);
+assert.deepStrictEqual(history, ["1:end", "2:end"]);

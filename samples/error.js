@@ -6,7 +6,7 @@ try {
     () => new Promise((resolve) => setImmediate(() => resolve("ok"))),
     () =>
       new Promise((resolve, reject) =>
-        setImmediate(() => reject(Error("Catchme")))
+        setImmediate(() => reject(Error("Catchme"))),
       ),
     () => new Promise((resolve) => setImmediate(() => resolve("ok"))),
   ]);

@@ -17,7 +17,7 @@ const result = await each(
         setTimeout(() => stack.push("Around") && resolve("Around"), 10);
       }),
   ],
-  true
+  true,
 );
 
 assert.equal(result.join(" "), "Is Gollum Around");

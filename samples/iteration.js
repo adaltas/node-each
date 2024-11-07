@@ -3,14 +3,11 @@ import each from "each";
 
 const result = await each([
   // Item is a value
-  'a',
+  "a",
   // Item is a function
-  () => (new Promise((resolve) => resolve('b'))),
+  () => new Promise((resolve) => resolve("b")),
   // Item is a promise
-  new Promise((resolve) => resolve('c')),
+  new Promise((resolve) => resolve("c")),
 ]);
 
-assert.deepStrictEqual(
-  result, 
-  ['a', 'b', 'c']
-);
+assert.deepStrictEqual(result, ["a", "b", "c"]);
