@@ -33,6 +33,7 @@
     "eslint-plugin-mocha": "^10.5.0",
     "eslint-plugin-prettier": "^5.2.1",
     "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
     "mocha": "~10.8.2",
     "pinst": "^3.0.0",
     "prettier": "^3.3.3",
@@ -71,6 +72,10 @@
     "frontend"
   ],
   "license": "BSD-3-Clause",
+  "lint-staged": {
+    "*.js": "npm run lint:fix",
+    "*.md": "prettier -w"
+  },
   "main": "dist/each.cjs.cjs",
   "module": "dist/each.esm.js",
   "mocha": {
@@ -95,6 +100,7 @@
     "postpack": "pinst --enable",
     "lint:check": "eslint",
     "lint:fix": "eslint --fix",
+    "lint:staged": "npx lint-staged",
     "prerelease": "npm run build && git update-index --refresh && git diff-index --quiet HEAD --",
     "release": "standard-version",
     "release:minor": "standard-version --release-as minor",
