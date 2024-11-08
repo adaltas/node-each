@@ -1,5 +1,5 @@
 import assert from "assert";
-import each from "each";
+import each from "../lib/index.js";
 
 const promise = each({ fluent: false }).call(
   () => new Promise((resolve) => resolve(1)),

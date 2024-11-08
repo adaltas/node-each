@@ -1,5 +1,5 @@
 import assert from "assert";
-import each from "each";
+import each from "../lib/index.js";
 
 const stack = [];
 const scheduler = each({ pause: true });

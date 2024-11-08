@@ -1,5 +1,5 @@
 import assert from "assert";
-import each from "each";
+import each from "../lib/index.js";
 
 const result = await each(
   [{ id: "a" }, { id: "b" }, { id: "c" }, { id: "d" }],

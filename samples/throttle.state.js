@@ -1,5 +1,5 @@
 import assert from "assert";
-import each from "each";
+import each from "../lib/index.js";
 
 let state = "paused";
 const scheduler = each({ pause: true });
