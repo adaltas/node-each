@@ -40,7 +40,9 @@
     }
   },
   "files": [
-    "/dist"
+    "/dist/each.cjs.js",
+    "/dist/each.esm.js",
+    "/dist/each.umd.js"
   ],
   "homepage": "https://github.com/adaltas/node-each",
   "keywords": [
